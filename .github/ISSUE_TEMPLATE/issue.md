@@ -7,5 +7,4 @@ assignees: ''
 
 ---
 
-# Description :
----
+# Description
