@@ -1,4 +1,4 @@
 package com.heeverse.member.controller;
 
-public class MemberContorller {
+public class MemberController {
 }
