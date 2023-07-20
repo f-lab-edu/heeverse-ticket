@@ -4,7 +4,7 @@ import com.heeverse.common.BaseEntity;
 
 public class Member extends BaseEntity {
 
-    private Integer memberId;
+    private Long memberId;
     private String id;
     private String password;
     private String userName;
