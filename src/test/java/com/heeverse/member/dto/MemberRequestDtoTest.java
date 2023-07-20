@@ -10,11 +10,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class MemberRequestDtoTest {
 
-    static final String MEMBER_ID_REGEX = "^[a-z]+[a-z0-9]{5,15}$";
-    static final String PWD_REGEX = "^(?=.*[a-zA-Z])(?=.*[@\\!\\?$%^*+=-])(?=.*[0-9]).{8,15}$";
-    static final String USER_NAME_REGEX = "^[a-zA-Zㄱ-힣 ]{1,20}$";
-    static final String EMAIL_REGEX = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
-
     @DisplayName("아이디_정규표현식_검사")
     @Test
     void memberIdRegexTrueTest() {
@@ -22,8 +17,7 @@ class MemberRequestDtoTest {
         String memberId = "gutenlee1128";
 
         //when
-        boolean result = regexMatching(memberId, MEMBER_ID_REGEX
-        );
+        boolean result = regexMatching(memberId, MemberRequestDto.MEMBER_ID_REGEX);
 
         //then
         Assertions.assertTrue(result);
@@ -36,7 +30,7 @@ class MemberRequestDtoTest {
         String memberId = "gu&ten_lee1128";
 
         //when
-        boolean result = regexMatching(memberId, MEMBER_ID_REGEX);
+        boolean result = regexMatching(memberId, MemberRequestDto.MEMBER_ID_REGEX);
 
         //then
         Assertions.assertFalse(result);
@@ -49,7 +43,7 @@ class MemberRequestDtoTest {
         String memberPwd = "sjk!fsl@f99393A";
 
         //when
-        boolean result = regexMatching(memberPwd, PWD_REGEX);
+        boolean result = regexMatching(memberPwd, MemberRequestDto.PWD_REGEX);
 
         //then
         Assertions.assertTrue(result);
@@ -62,7 +56,7 @@ class MemberRequestDtoTest {
         String memberPwd = "sjk!fsl@f9<>9393A";
 
         //when
-        boolean result = regexMatching(memberPwd, PWD_REGEX);
+        boolean result = regexMatching(memberPwd, MemberRequestDto.PWD_REGEX);
 
         //then
         Assertions.assertFalse(result);
@@ -74,7 +68,7 @@ class MemberRequestDtoTest {
     @ValueSource(strings = {"홍길동", "Romeo", "데이비드 Kim"})
     void userNameRegexTrueTest(String userName) {
         //when
-        boolean result = regexMatching(userName, USER_NAME_REGEX);
+        boolean result = regexMatching(userName, MemberRequestDto.USER_NAME_REGEX);
 
         //then
         Assertions.assertTrue(result);
@@ -85,7 +79,7 @@ class MemberRequestDtoTest {
     @ValueSource(strings = {"abcdefghijabcdefghija", "Romeo!"})
     void userNameRegexFalseTest(String userName) {
         //when
-        boolean result = regexMatching(userName, USER_NAME_REGEX);
+        boolean result = regexMatching(userName, MemberRequestDto.USER_NAME_REGEX);
 
         //then
         Assertions.assertFalse(result);
@@ -97,7 +91,7 @@ class MemberRequestDtoTest {
         //given
         String email = "hello342@gmail.com";
         //when
-        boolean result = regexMatching(email, EMAIL_REGEX);
+        boolean result = regexMatching(email, MemberRequestDto.EMAIL_REGEX);
 
         //then
         Assertions.assertTrue(result);
@@ -109,7 +103,7 @@ class MemberRequestDtoTest {
         //given
         String email = "hello342#gmail.com";
         //when
-        boolean result = regexMatching(email, EMAIL_REGEX);
+        boolean result = regexMatching(email, MemberRequestDto.EMAIL_REGEX);
 
         //then
         Assertions.assertFalse(result);

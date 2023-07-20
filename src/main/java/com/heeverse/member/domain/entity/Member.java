@@ -1,6 +1,7 @@
 package com.heeverse.member.domain.entity;
 
 import com.heeverse.common.BaseEntity;
+import lombok.Builder;
 
 public class Member extends BaseEntity {
 
@@ -10,6 +11,7 @@ public class Member extends BaseEntity {
     private String userName;
     private String email;
 
+    @Builder
     public Member(String id, String password, String userName, String email) {
         this.id = id;
         this.password = password;
