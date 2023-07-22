@@ -1,16 +1,19 @@
 package com.heeverse.member.domain.entity;
 
 import com.heeverse.common.BaseEntity;
+import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 
 public class Member extends BaseEntity {
 
-    private Integer memberId;
+    private Long memberId;
     private String id;
     private String password;
     private String userName;
     private String email;
 
-    public Member(String id, String password, String userName, String email) {
+    @Builder
+    public Member(@NotNull String id, @NotNull String password, String userName, String email) {
         this.id = id;
         this.password = password;
         this.userName = userName;

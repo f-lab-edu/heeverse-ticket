@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
  * @author gutenlee
  * @since 2023/07/19
  */
-public class BaseEntity {
+public abstract class BaseEntity {
     private final LocalDateTime createDateTime;
 
     protected BaseEntity() {
