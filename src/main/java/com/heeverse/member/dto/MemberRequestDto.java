@@ -1,17 +1,22 @@
 package com.heeverse.member.dto;
 
-import jakarta.validation.constraints.NotNull;
+import com.heeverse.common.util.RegexUtils;
 import jakarta.validation.constraints.Pattern;
+import lombok.Getter;
 
+@Getter
 public class MemberRequestDto {
 
-    @NotNull
-    @Pattern(regexp = "^[a-z]+[a-z0-9]{5,15}$", message = "id형식에 맞지 않습니다.")
+    @Pattern(regexp = RegexUtils.MEMBER_ID_REGEX, message = "id형식에 맞지 않습니다.")
     private String id;
-    @NotNull
-    @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[@\\!\\?$%^*+=-])(?=.*[0-9]).{8,15}$", message = "비밀번호 형식에 맞지 않습니다.")
+
+    @Pattern(regexp = RegexUtils.PWD_REGEX, message = "비밀번호 형식에 맞지 않습니다.")
     private String password;
+
+    @Pattern(regexp = RegexUtils.USER_NAME_REGEX, message = "사용자 이름 형식에 맞지 않습니다.")
     private String userName;
+
+    @Pattern(regexp = RegexUtils.EMAIL_REGEX, message = "이메일 형식에 맞지 않습니다.")
     private String email;
 
 }
