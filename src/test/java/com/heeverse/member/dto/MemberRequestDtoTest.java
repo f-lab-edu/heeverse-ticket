@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-class MemberRequestDtoDuplicatedMemberException {
+class MemberRequestDtoTest {
 
     @DisplayName("아이디_정규표현식_검사")
     @Test
