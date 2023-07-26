@@ -7,6 +7,8 @@ import com.heeverse.member.exception.DuplicatedMemberException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class MemberService {
 
@@ -32,7 +34,15 @@ public class MemberService {
             .build();
     }
 
+
+    public Optional<Member> findMember(String id) {
+        // TODO : memberMapper.findById(id) 로 변경
+        return Optional.of(Member.builder().build());
+    }
+
+
     private boolean isExistMember(MemberRequestDto memberRequestDto) {
         return false;
     }
+
 }

@@ -3,7 +3,9 @@ package com.heeverse.member.domain.entity;
 import com.heeverse.common.BaseEntity;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
+import lombok.Getter;
 
+@Getter
 public class Member extends BaseEntity {
 
     private Long memberId;

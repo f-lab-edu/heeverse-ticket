@@ -1,5 +1,7 @@
 package com.heeverse.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -20,6 +22,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfig {
 
+    private final ObjectMapper objectMapper;
+
+    public SecurityConfig(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     @Bean
     public static PasswordEncoder passwordEncoder() {
@@ -30,9 +37,11 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http.csrf(AbstractHttpConfigurer::disable)
-                .addFilterBefore(
-                        new JsonAuthenticationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class))),
-                        UsernamePasswordAuthenticationFilter.class
+                .addFilterAt(
+                    new JsonAuthenticationFilter(
+                            authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)),
+                            objectMapper),
+                    UsernamePasswordAuthenticationFilter.class
                 )
                 .formLogin(Customizer.withDefaults())
                 .authorizeHttpRequests(request -> request
@@ -44,8 +53,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
     }
 
 

@@ -11,7 +11,7 @@ import lombok.NonNull;
  */
 
 @JsonSerialize
-public record LoginDto(
+public record LoginRequestDto(
         @JsonProperty("id") @NonNull String id,
         @JsonProperty("password") @NonNull String password
 ) {

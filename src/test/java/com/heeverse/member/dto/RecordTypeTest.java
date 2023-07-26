@@ -11,7 +11,7 @@ class RecordTypeTest {
     @DisplayName("record 타입 인자에 @NonNull 어노테이션 선언시 null 값 들어오면 NPE 발생한다")
     void nonNullTest() throws Exception {
 
-        assertThrows(NullPointerException.class, () -> new LoginDto(null, "234"));
+        assertThrows(NullPointerException.class, () -> new LoginRequestDto(null, "234"));
     }
 
 
