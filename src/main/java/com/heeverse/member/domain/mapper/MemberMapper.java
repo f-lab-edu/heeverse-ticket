@@ -11,7 +11,7 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface MemberMapper {
 
-    Member findByMemberId(@Param("memberId") String memberId);
+    String findById(@Param("id") String id);
 
     void insertMember(Member member);
 }

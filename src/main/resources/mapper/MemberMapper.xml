@@ -2,10 +2,10 @@
   <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.heeverse.member.domain.mapper.MemberMapper">
-  <select id="findByMemberId" parameterType="String" resultType="com.heeverse.member.domain.entity.Member">
-    SELECT *
+  <select id="findById" parameterType="String" resultType="com.heeverse.member.domain.entity.Member">
+    SELECT member_id, id, password, user_name, email, create_datetime
     FROM member
-    WHERE member_id = #{memberId}
+    WHERE id = #{id}
   </select>
 
   <insert id="insertMember" parameterType="com.heeverse.member.domain.entity.Member">

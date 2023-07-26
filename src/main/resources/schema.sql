@@ -9,3 +9,5 @@ CREATE TABLE member
     user_name       varchar(20)  NOT NULL,
     create_datetime datetime     NOT NULL
 );
+
+ALTER TABLE member ADD CONSTRAINT `PK_MEMBER` PRIMARY KEY (member_id);

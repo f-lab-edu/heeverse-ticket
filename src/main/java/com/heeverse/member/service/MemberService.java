@@ -36,6 +36,6 @@ public class MemberService {
     }
 
     private boolean isExistMember(MemberRequestDto memberRequestDto) {
-        return !Objects.isNull(memberMapper.findByMemberId(memberRequestDto.getId()));
+        return !Objects.isNull(memberMapper.findById(memberRequestDto.getId()));
     }
 }
