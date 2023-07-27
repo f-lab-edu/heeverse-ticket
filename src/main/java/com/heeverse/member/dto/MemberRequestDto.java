@@ -2,8 +2,10 @@ package com.heeverse.member.dto;
 
 import com.heeverse.common.util.RegexUtils;
 import jakarta.validation.constraints.Pattern;
+import lombok.Builder;
 import lombok.Getter;
 
+@Builder
 @Getter
 public class MemberRequestDto {
 

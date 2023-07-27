@@ -1,34 +1,72 @@
 package com.heeverse.member.service;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.heeverse.member.domain.entity.Member;
 import com.heeverse.member.domain.mapper.MemberMapper;
 import com.heeverse.member.dto.MemberRequestDto;
+import com.heeverse.member.exception.DuplicatedMemberException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author jeongheekim
  * @date 2023/07/25
  */
+@ActiveProfiles("local")
+@Transactional
+@SpringBootTest
 class MemberServiceTest {
 
-    @Test
-    void signup() {
-        //given
-        MemberMapper memberMapper = mock(MemberMapper.class);
-        PasswordEncoder passwordEncoder = mock(PasswordEncoder.class);
-        MemberService memberService = new MemberService(passwordEncoder, memberMapper);
-        MemberRequestDto requestDto = new MemberRequestDto();
+    @Autowired
+    private MemberService memberService;
 
-        //when
-        memberService.signup(requestDto);
+    @Autowired
+    private MemberMapper memberMapper;
 
-        //then
-        verify(memberMapper, times(1)).insertMember(any(Member.class));
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    private MemberRequestDto memberRequestDto;
+
+    @DisplayName("회원_requestDto_생성")
+    @BeforeEach
+    void memberEntitySetUp() {
+        memberService = new MemberService(passwordEncoder, memberMapper);
+        memberRequestDto = MemberRequestDto.builder()
+            .id("testerzzang")
+            .password("!Test1234")
+            .email("test@gmail.com")
+            .userName("홍길동")
+            .build();
     }
+
+    @DisplayName("회원가입_성공_테스트")
+    @Test
+    void signUpSuccessTest() {
+        memberService.signup(memberRequestDto);
+        assertNotNull(memberMapper.findById(memberRequestDto.getId()));
+    }
+
+    @DisplayName("중복회원_회원가입_실패_테스트")
+    @Test
+    void duplication_signup_exception_test() {
+        memberMapper.insertMember(Member
+            .builder()
+            .id(memberRequestDto.getId())
+            .password(memberRequestDto.getPassword())
+            .userName(memberRequestDto.getUserName())
+            .email(memberRequestDto.getEmail())
+            .build());
+        assertThrows(DuplicatedMemberException.class, () -> memberService.signup(memberRequestDto));
+
+    }
+
 }
