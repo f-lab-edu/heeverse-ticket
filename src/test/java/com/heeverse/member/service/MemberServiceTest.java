@@ -12,7 +12,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,15 +30,11 @@ class MemberServiceTest {
     @Autowired
     private MemberMapper memberMapper;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
     private MemberRequestDto memberRequestDto;
 
     @DisplayName("회원_requestDto_생성")
     @BeforeEach
     void memberEntitySetUp() {
-        memberService = new MemberService(passwordEncoder, memberMapper);
         memberRequestDto = MemberRequestDto.builder()
             .id("testerzzang")
             .password("!Test1234")
