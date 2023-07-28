@@ -32,7 +32,7 @@ class MemberServiceTest {
 
     private MemberRequestDto memberRequestDto;
 
-    @DisplayName("회원_requestDto_생성")
+    @DisplayName("회원 requestDto 생성")
     @BeforeEach
     void memberEntitySetUp() {
         memberRequestDto = MemberRequestDto.builder()
@@ -43,14 +43,14 @@ class MemberServiceTest {
             .build();
     }
 
-    @DisplayName("회원가입_성공_테스트")
+    @DisplayName("회원가입 성공 테스트")
     @Test
     void signUpSuccessTest() {
         memberService.signup(memberRequestDto);
         assertNotNull(memberMapper.findById(memberRequestDto.getId()));
     }
 
-    @DisplayName("중복회원_회원가입_실패_테스트")
+    @DisplayName("중복회원 회원가입 실패 테스트")
     @Test
     void duplication_signup_exception_test() {
         memberMapper.insertMember(Member
