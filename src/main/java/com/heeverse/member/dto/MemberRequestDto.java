@@ -5,7 +5,6 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Getter;
 
-@Builder
 @Getter
 public class MemberRequestDto {
 
@@ -21,4 +20,19 @@ public class MemberRequestDto {
     @Pattern(regexp = RegexUtils.EMAIL_REGEX, message = "이메일 형식에 맞지 않습니다.")
     private String email;
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }
