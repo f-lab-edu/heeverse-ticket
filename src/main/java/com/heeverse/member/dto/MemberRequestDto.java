@@ -2,7 +2,6 @@ package com.heeverse.member.dto;
 
 import com.heeverse.common.util.RegexUtils;
 import jakarta.validation.constraints.Pattern;
-import lombok.Builder;
 import lombok.Getter;
 
 @Getter
@@ -20,19 +19,11 @@ public class MemberRequestDto {
     @Pattern(regexp = RegexUtils.EMAIL_REGEX, message = "이메일 형식에 맞지 않습니다.")
     private String email;
 
-    public void setId(String id) {
+    public MemberRequestDto(String id, String password, String userName, String email) {
         this.id = id;
-    }
-
-    public void setPassword(String password) {
         this.password = password;
-    }
-
-    public void setUserName(String userName) {
         this.userName = userName;
-    }
-
-    public void setEmail(String email) {
         this.email = email;
     }
+
 }

@@ -35,11 +35,8 @@ class MemberServiceTest {
     @DisplayName("회원 requestDto 생성")
     @BeforeEach
     void memberEntitySetUp() {
-        memberRequestDto = new MemberRequestDto();
-        memberRequestDto.setId("testerzzang");
-        memberRequestDto.setPassword("!Test1234");
-        memberRequestDto.setUserName("홍길동");
-        memberRequestDto.setEmail("test@gmail.com");
+        memberRequestDto = new MemberRequestDto("testerzzang", "!Test1234", "홍길동",
+            "test@gmail.com");
     }
 
     @DisplayName("회원가입 성공 테스트")
