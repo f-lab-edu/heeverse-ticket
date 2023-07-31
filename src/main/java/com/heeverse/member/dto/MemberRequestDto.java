@@ -19,4 +19,11 @@ public class MemberRequestDto {
     @Pattern(regexp = RegexUtils.EMAIL_REGEX, message = "이메일 형식에 맞지 않습니다.")
     private String email;
 
+    public MemberRequestDto(String id, String password, String userName, String email) {
+        this.id = id;
+        this.password = password;
+        this.userName = userName;
+        this.email = email;
+    }
+
 }

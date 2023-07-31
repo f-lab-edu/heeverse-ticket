@@ -21,7 +21,7 @@ public class MemberController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     public void register(@RequestBody @Valid MemberRequestDto memberRequestDto) {
         memberService.signup(memberRequestDto);
     }
