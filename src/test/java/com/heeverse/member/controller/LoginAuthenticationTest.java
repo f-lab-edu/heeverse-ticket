@@ -1,7 +1,6 @@
 package com.heeverse.member.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.heeverse.config.LoginAuthenticationProvider;
 import com.heeverse.member.dto.LoginRequestDto;
 import com.heeverse.member.dto.MemberRequestDto;
 import com.heeverse.member.service.MemberService;
@@ -10,41 +9,38 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
-@SpringBootTest(properties = "spring.main.allow-bean-definition-overriding=true")
+@ActiveProfiles("local")
+@Transactional
+@SpringBootTest
 class LoginAuthenticationTest {
 
     @Autowired
     private WebApplicationContext context;
+    @Autowired
+    private MemberService memberService;
     private MockMvc mvc;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @TestConfiguration
-    static class TestConfig{
+    private MemberRequestDto memberRequestDto;
 
-        @Bean
-        MemberService memberService() {
-            return new StubMemberService();
-        }
-        @Bean
-        LoginAuthenticationProvider loginAuthenticationProvider(){
-            return new LoginAuthenticationProvider(memberService(), new BCryptPasswordEncoder());
-        }
-    }
 
     @BeforeEach
     public void setup() {
@@ -52,20 +48,55 @@ class LoginAuthenticationTest {
                 .webAppContextSetup(context)
                 .apply(springSecurity())
                 .build();
+
+        setUpMember();
+    }
+
+    MemberRequestDto setUpMember() {
+        memberRequestDto = new MemberRequestDto("heeverse12", "abcd1234!", "name", "email@naver.com");
+        return memberRequestDto;
+    }
+
+    @Test
+    @DisplayName("회원가입 성공한 Member 만이 로그인 가능함")
+    public void signUpTest() throws Exception {
+        mvc.perform(post("/member")
+                        .content(objectMapper.writeValueAsString(setUpMember()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isCreated());
+
     }
 
 
     @Test
     @WithAnonymousUser
-    @DisplayName("로그인에 성공하면 HttpStatus 는 OK 다")
+    @DisplayName("로그인에 성공하면 HttpStatus 는 redirection 다")
     void when_login_success_should_return_OK() throws Exception {
 
-        LoginRequestDto loginRequestDto = new LoginRequestDto("okUser", "123");
+        // given
+        memberService.signup(memberRequestDto);
 
+        // when
+        LoginRequestDto loginRequestDto = new LoginRequestDto(memberRequestDto.getId(), memberRequestDto.getPassword());
+
+        // then
         mvc.perform(post("/login")
                         .content(objectMapper.writeValueAsString(loginRequestDto)))
+                .andExpect(result -> {
+                    String attributeName = "org.springframework.security.web.context.RequestAttributeSecurityContextRepository.SPRING_SECURITY_CONTEXT";
+                    SecurityContext securityContext
+                            = (SecurityContext) result.getRequest().getAttribute(attributeName);
+                    Authentication authentication = securityContext.getAuthentication();
+
+                    assertInstanceOf(UsernamePasswordAuthenticationToken.class, authentication);
+                    assertEquals(memberRequestDto.getId(), authentication.getPrincipal());
+                })
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().is3xxRedirection());
+
+
     }
 
 
@@ -73,7 +104,7 @@ class LoginAuthenticationTest {
     @WithAnonymousUser
     @DisplayName("로그인에 실패하면 Http Status 는 401 이다")
     void when_login_fail_should_return_401() throws Exception {
-        LoginRequestDto loginRequestDto = new LoginRequestDto("heeverse", "1026");
+        LoginRequestDto loginRequestDto = new LoginRequestDto(memberRequestDto.getId(), memberRequestDto.getPassword());
 
         mvc.perform(post("/login")
                         .content(objectMapper.writeValueAsString(loginRequestDto)))
@@ -88,7 +119,7 @@ class LoginAuthenticationTest {
     void memeber_permitAll() throws Exception {
 
         mvc.perform(post("/member")
-                        .content(objectMapper.writeValueAsString(new MemberRequestDto()))
+                        .content(objectMapper.writeValueAsString(memberRequestDto))
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isCreated());
