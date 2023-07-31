@@ -24,9 +24,9 @@ public class MemberService {
 
     @Transactional
     public void signup(MemberRequestDto memberRequestDto) {
-        if (isExistMember(memberRequestDto)) {
+        findMember(memberRequestDto.getId()).ifPresent(m -> {
             throw new DuplicatedMemberException();
-        }
+            });
 
         memberMapper.insertMember(Member.builder()
             .id(memberRequestDto.getId())
@@ -39,8 +39,7 @@ public class MemberService {
 
 
     public Optional<Member> findMember(String id) {
-        // TODO : memberMapper.findById(id) 로 변경
-        return Optional.of(Member.builder().build());
+        return Optional.ofNullable(memberMapper.findById(id));
     }
 
 

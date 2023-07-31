@@ -88,7 +88,7 @@ class LoginAuthenticationTest {
     void memeber_permitAll() throws Exception {
 
         mvc.perform(post("/member")
-                        .content(objectMapper.writeValueAsString(new MemberRequestDto()))
+                        .content(objectMapper.writeValueAsString(new MemberRequestDto("a","bb","cc","dd@gmail.com")))
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isCreated());
