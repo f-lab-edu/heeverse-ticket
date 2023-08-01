@@ -2,17 +2,19 @@ package com.heeverse.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heeverse.member.dto.LoginRequestDto;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.stream.Collectors;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
-
-import java.io.IOException;
-import java.util.stream.Collectors;
+import security.JwtTokenProvider;
 
 /**
  * JSON 구조의 Login 데이터를 AuthenticationToken 으로 변환
@@ -23,36 +25,52 @@ import java.util.stream.Collectors;
 public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final ObjectMapper objectMapper;
+    private final JwtTokenProvider jwtTokenProvider;
 
     public JsonAuthenticationFilter(
-            AuthenticationManager authenticationManager,
-            ObjectMapper objectMapper
+        AuthenticationManager authenticationManager,
+        JwtTokenProvider jwtTokenProvider,
+        ObjectMapper objectMapper
     ) {
         super.setAuthenticationManager(authenticationManager);
+        this.jwtTokenProvider = jwtTokenProvider;
         this.objectMapper = objectMapper;
     }
 
 
     public Authentication attemptAuthentication(
-            HttpServletRequest request, HttpServletResponse response) {
+        HttpServletRequest request, HttpServletResponse response) {
 
-            request = new ContentCachingRequestWrapper(request);
-            LoginRequestDto loginRequestDto = toLoginDto(request);
+        request = new ContentCachingRequestWrapper(request);
+        LoginRequestDto loginRequestDto = toLoginDto(request);
 
-            return super.getAuthenticationManager()
-                    .authenticate(new UsernamePasswordAuthenticationToken(loginRequestDto.id(), loginRequestDto.password()));
+        return super.getAuthenticationManager()
+            .authenticate(new UsernamePasswordAuthenticationToken(loginRequestDto.id(),
+                loginRequestDto.password()));
     }
 
 
-    private LoginRequestDto toLoginDto(HttpServletRequest request){
+    private LoginRequestDto toLoginDto(HttpServletRequest request) {
         String body;
         try {
             body = request.getReader()
-                    .lines()
-                    .collect(Collectors.joining());
+                .lines()
+                .collect(Collectors.joining());
             return objectMapper.readValue(body, LoginRequestDto.class);
-        } catch (IOException e){
+        } catch (IOException e) {
             throw new AuthenticationServiceException("로그인을 처리할 수 없습니다");
         }
+    }
+
+    @Override
+    protected void successfulAuthentication(HttpServletRequest request,
+        HttpServletResponse response, FilterChain chain, Authentication authResult)
+        throws IOException, ServletException {
+        super.successfulAuthentication(request, response, chain, authResult);
+        String principal = (String) authResult.getPrincipal();
+        String token = jwtTokenProvider.generateToken(principal);
+        response.getWriter().write(token);
+        response.getWriter().flush();
+
     }
 }
