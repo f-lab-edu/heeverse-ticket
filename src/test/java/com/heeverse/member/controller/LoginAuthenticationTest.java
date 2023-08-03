@@ -1,6 +1,7 @@
 package com.heeverse.member.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.heeverse.member.domain.mapper.MemberMapper;
 import com.heeverse.member.dto.LoginRequestDto;
 import com.heeverse.member.dto.MemberRequestDto;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,7 +23,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -34,11 +35,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 class LoginAuthenticationTest {
 
+    private final String LOGIN_URI = "/login";
+    private final String SIGN_UP_URI = "/member";
+
     @Autowired
     private WebApplicationContext context;
+    @Autowired
+    private MemberMapper memberMapper;
     private MockMvc mvc;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private MemberRequestDto validMemberReqDto;
+
 
 
     @BeforeEach
@@ -56,60 +63,66 @@ class LoginAuthenticationTest {
     @DisplayName("회원가입 성공 테스트")
     public void signUpTest() throws Exception {
 
-        mvc.perform(post("/member")
-                    .content(objectMapper.writeValueAsString(validMemberReqDto))
-                    .contentType(MediaType.APPLICATION_JSON)
-                )
+        getMemberSignUpAction(SIGN_UP_URI, validMemberReqDto)
                 .andDo(print())
                 .andExpect(status().isCreated());
     }
 
 
     @Test
-    @DisplayName("로그인에 성공하면 HttpStatus 는 redirection 다")
+    @DisplayName("[로그인 성공] HttpStatus 는 redirection 다")
     void when_login_success_should_return_OK() throws Exception {
 
         // given
         signUpTest();
-        LoginRequestDto loginRequestDto = new LoginRequestDto(validMemberReqDto.getId(), validMemberReqDto.getPassword());
+        LoginRequestDto loginRequestDto = toLoginRequestDto(validMemberReqDto);
 
-        mvc.perform(post("/login")
-                        .content(objectMapper.writeValueAsString(loginRequestDto)))
+        getLoginAction(LOGIN_URI, loginRequestDto)
                 .andExpect(status().is3xxRedirection());
     }
 
 
     @Test
-    @DisplayName("로그인에 성공하는 경우 Authentication 의 타입은 UsernamePasswordAuthenticationToken 이다")
+    @DisplayName("[로그인 성공] Authentication 의 타입은 UsernamePasswordAuthenticationToken 이다")
     void when_success_login_authentication_should_return_usernamePwdAuthToken() throws Exception {
 
         // given
         signUpTest();
-        LoginRequestDto loginRequestDto = new LoginRequestDto(validMemberReqDto.getId(), validMemberReqDto.getPassword());
+        LoginRequestDto loginRequestDto = toLoginRequestDto(validMemberReqDto);
 
         // when
-        ResultActions actions = mvc.perform(post("/login")
-                .content(objectMapper.writeValueAsString(loginRequestDto)));
-
-        // then
-        actions.andExpect(authenticated().withAuthentication(auth -> {
-            assertInstanceOf(UsernamePasswordAuthenticationToken.class, auth);
-        }));
+        getLoginAction(LOGIN_URI, loginRequestDto)
+            .andExpect(authenticated().withAuthentication(auth ->
+                assertInstanceOf(UsernamePasswordAuthenticationToken.class, auth))
+            );
     }
 
 
     @Test
     @WithAnonymousUser
-    @DisplayName("로그인에 실패하면 Http Status 는 401 이다")
+    @DisplayName("[로그인 실패] 미등록 회원일 경우 Http Status 는 401 이다")
     void when_login_fail_should_return_401() throws Exception {
-        LoginRequestDto loginRequestDto = new LoginRequestDto(validMemberReqDto.getId(), validMemberReqDto.getPassword());
 
-        mvc.perform(post("/login")
-                    .content(objectMapper.writeValueAsString(loginRequestDto))
-                )
+        LoginRequestDto loginRequestDto = toLoginRequestDto(validMemberReqDto);
+        assertNull(memberMapper.findById(loginRequestDto.id()));
+
+        getLoginAction(LOGIN_URI, loginRequestDto)
                 .andDo(print())
                 .andExpect(status().isUnauthorized());
     }
+
+    @Test
+    @DisplayName("[로그인 실패] 비밀번호 불일치 경우 Http Status 는 401 이다")
+    void when_login_fail_by_password_should_return_401() throws Exception {
+
+        signUpTest();
+        LoginRequestDto loginRequestDto = new LoginRequestDto(validMemberReqDto.getId(), "wrong_password");
+
+        getLoginAction(LOGIN_URI, loginRequestDto)
+                .andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
 
 
     @Test
@@ -117,13 +130,34 @@ class LoginAuthenticationTest {
     @WithAnonymousUser
     void memeber_permitAll() throws Exception {
 
-        mvc.perform(post("/member")
-                    .content(objectMapper.writeValueAsString(validMemberReqDto))
-                    .contentType(MediaType.APPLICATION_JSON)
-                )
+        getMemberSignUpAction(SIGN_UP_URI, validMemberReqDto)
                 .andExpect(status().isCreated());
     }
 
 
+    LoginRequestDto toLoginRequestDto(MemberRequestDto memberRequestDto) {
+        return new LoginRequestDto(memberRequestDto.getId(), memberRequestDto.getPassword());
+    }
+
+
+    ResultActions getLoginAction(String uri, LoginRequestDto loginRequestDto) {
+        try {
+            return mvc.perform(
+                        post(uri).content(objectMapper.writeValueAsString(loginRequestDto)));
+        } catch (Exception e) {
+            throw new IllegalArgumentException(loginRequestDto.toString());
+        }
+    }
+
+
+    ResultActions getMemberSignUpAction(String uri, MemberRequestDto memberRequestDto) {
+        try {
+            return mvc.perform(post(uri)
+                    .content(objectMapper.writeValueAsString(memberRequestDto))
+                    .contentType(MediaType.APPLICATION_JSON));
+        } catch (Exception e) {
+            throw new IllegalArgumentException(memberRequestDto.toString());
+        }
+    }
 }
 
