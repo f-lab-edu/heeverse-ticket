@@ -22,3 +22,9 @@ logging:
     org:
       springframework:
         security: DEBUG
+
+vault:
+  scheme: http
+  uri: localhost
+  token: 00000000-0000-0000-0000-000000000000
+  port: 8200
