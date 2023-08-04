@@ -38,9 +38,9 @@ public class MemberService {
     }
 
 
+    @Transactional(readOnly = true)
     public Optional<Member> findMember(String id) {
-        // TODO : memberMapper.findById(id) 로 변경
-        return Optional.of(Member.builder().build());
+        return Optional.ofNullable(memberMapper.findById(id));
     }
 
 

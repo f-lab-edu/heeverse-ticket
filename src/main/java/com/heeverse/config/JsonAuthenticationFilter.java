@@ -36,15 +36,13 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
     public Authentication attemptAuthentication(
             HttpServletRequest request, HttpServletResponse response) {
 
-            request = new ContentCachingRequestWrapper(request);
-            LoginRequestDto loginRequestDto = toLoginDto(request);
-
+            LoginRequestDto loginRequestDto = toLoginRequestDto(new ContentCachingRequestWrapper(request));
             return super.getAuthenticationManager()
                     .authenticate(new UsernamePasswordAuthenticationToken(loginRequestDto.id(), loginRequestDto.password()));
     }
 
 
-    private LoginRequestDto toLoginDto(HttpServletRequest request){
+    private LoginRequestDto toLoginRequestDto(HttpServletRequest request){
         String body;
         try {
             body = request.getReader()
