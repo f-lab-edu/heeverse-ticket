@@ -1,7 +1,8 @@
-package com.heeverse.config;
+package com.heeverse.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heeverse.member.dto.LoginRequestDto;
+import com.heeverse.security.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,7 +15,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
-import security.JwtTokenProvider;
 
 /**
  * JSON 구조의 Login 데이터를 AuthenticationToken 으로 변환
@@ -41,8 +41,7 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
     public Authentication attemptAuthentication(
         HttpServletRequest request, HttpServletResponse response) {
 
-        request = new ContentCachingRequestWrapper(request);
-        LoginRequestDto loginRequestDto = toLoginDto(request);
+        LoginRequestDto loginRequestDto = toLoginDto(new ContentCachingRequestWrapper(request));
 
         return super.getAuthenticationManager()
             .authenticate(new UsernamePasswordAuthenticationToken(loginRequestDto.id(),

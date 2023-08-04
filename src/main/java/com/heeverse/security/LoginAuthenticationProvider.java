@@ -1,4 +1,4 @@
-package com.heeverse.config;
+package com.heeverse.security;
 
 import com.heeverse.member.domain.entity.Member;
 import com.heeverse.member.service.MemberService;
