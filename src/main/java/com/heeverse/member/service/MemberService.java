@@ -24,9 +24,9 @@ public class MemberService {
 
     @Transactional
     public void signup(MemberRequestDto memberRequestDto) {
-        if (isExistMember(memberRequestDto)) {
+        findMember(memberRequestDto.getId()).ifPresent(m -> {
             throw new DuplicatedMemberException();
-        }
+            });
 
         memberMapper.insertMember(Member.builder()
             .id(memberRequestDto.getId())

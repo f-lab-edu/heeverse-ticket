@@ -44,7 +44,7 @@ class MemberServiceTest {
     @Test
     void signUpSuccessTest() {
         memberService.signup(memberRequestDto);
-        assertNotNull(memberMapper.findById(memberRequestDto.getId()));
+        assertNotNull(memberMapper.findById(memberRequestDto.getId()).getMemberId());
     }
 
     @DisplayName("중복회원 회원가입 실패 테스트")
