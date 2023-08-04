@@ -38,6 +38,7 @@ public class MemberService {
     }
 
 
+    @Transactional(readOnly = true)
     public Optional<Member> findMember(String id) {
         return Optional.ofNullable(memberMapper.findById(id));
     }

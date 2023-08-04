@@ -2,9 +2,12 @@ package com.heeverse.member.dto;
 
 import com.heeverse.common.util.RegexUtils;
 import jakarta.validation.constraints.Pattern;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MemberRequestDto {
 
     @Pattern(regexp = RegexUtils.MEMBER_ID_REGEX, message = "id형식에 맞지 않습니다.")
