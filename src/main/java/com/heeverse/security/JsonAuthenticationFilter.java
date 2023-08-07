@@ -2,7 +2,6 @@ package com.heeverse.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heeverse.member.dto.LoginRequestDto;
-import com.heeverse.security.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,15 +36,16 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
         this.objectMapper = objectMapper;
     }
 
-
+    @Override
     public Authentication attemptAuthentication(
         HttpServletRequest request, HttpServletResponse response) {
 
         LoginRequestDto loginRequestDto = toLoginDto(new ContentCachingRequestWrapper(request));
-
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
+            loginRequestDto.id(), loginRequestDto.password());
+        setDetails(request, token);
         return super.getAuthenticationManager()
-            .authenticate(new UsernamePasswordAuthenticationToken(loginRequestDto.id(),
-                loginRequestDto.password()));
+            .authenticate(token);
     }
 
 
@@ -65,11 +65,13 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
     protected void successfulAuthentication(HttpServletRequest request,
         HttpServletResponse response, FilterChain chain, Authentication authResult)
         throws IOException, ServletException {
-        super.successfulAuthentication(request, response, chain, authResult);
-        String principal = (String) authResult.getPrincipal();
-        String token = jwtTokenProvider.generateToken(principal);
-        response.getWriter().write(token);
-        response.getWriter().flush();
 
+        String principal = (String) authResult.getPrincipal();
+        String token = jwtTokenProvider.generateToken(principal, authResult);
+
+        response.setHeader("Authorization", "Bearer " + token);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
     }
+
 }

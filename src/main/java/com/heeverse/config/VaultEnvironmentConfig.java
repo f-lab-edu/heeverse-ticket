@@ -31,13 +31,11 @@ public class VaultEnvironmentConfig extends AbstractVaultConfiguration {
     @Override
     public VaultEndpoint vaultEndpoint() {
         String authority = url + ":" + port;
-        URI uri = null;
         try {
-            uri = new URI(scheme, authority, null, null, null);
+            return VaultEndpoint.from(new URI(scheme, authority, null, null, null));
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
-        return VaultEndpoint.from(uri);
     }
 
     @Override

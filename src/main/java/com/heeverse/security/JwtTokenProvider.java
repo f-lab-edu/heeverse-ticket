@@ -1,8 +1,14 @@
 package com.heeverse.security;
 
+import static com.heeverse.common.Constants.TOKEN_NAME;
+import static com.heeverse.common.Constants.VAULT_PATH;
+import static com.heeverse.common.Constants.VAULT_SECRETS;
+
+import com.heeverse.common.DateAdapter;
 import com.heeverse.member.domain.entity.Member;
 import com.heeverse.member.service.MemberService;
 import com.heeverse.security.exception.JwtParsingException;
+import com.heeverse.security.exception.VaultTokenNotExistException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -10,11 +16,15 @@ import io.jsonwebtoken.security.Keys;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.Optional;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.vault.core.VaultKeyValueOperations;
 import org.springframework.vault.core.VaultKeyValueOperationsSupport;
@@ -28,10 +38,8 @@ import org.springframework.vault.support.VaultResponse;
 @Component
 public class JwtTokenProvider {
 
-    private final Duration TOKEN_DURATION_TIME = Duration.ofMillis(3600000);
-    private final String VAULT_PATH = "heeverse";
-    private final String VAULT_SECRETS = "Authentication";
-    private final String TOKEN_NAME = "JWT_KEY";
+    private final Duration TOKEN_DURATION_TIME = Duration.ofHours(1);
+
     private final MemberService memberService;
     private final VaultOperations vaultOperations;
 
@@ -41,19 +49,10 @@ public class JwtTokenProvider {
         this.vaultOperations = vaultOperations;
     }
 
-    private String getJwtKey() {
-        VaultKeyValueOperations keyValueOperations = vaultOperations.opsForKeyValue(VAULT_PATH,
-            VaultKeyValueOperationsSupport.KeyValueBackend.KV_1);
-
-        VaultResponse read = keyValueOperations.get(VAULT_SECRETS);
-        assert read != null;
-        return (String) read.getRequiredData().get(TOKEN_NAME);
-    }
-
-    public String generateToken(String id) {
+    public String generateToken(String id, Authentication authentication) {
         return Jwts.builder().claim("id", id)
             .setIssuedAt(new Date())
-            .setExpiration(new Date(System.currentTimeMillis() + TOKEN_DURATION_TIME.toMillis()))
+            .setExpiration(new DateAdapter(LocalDateTime.now().plus(TOKEN_DURATION_TIME)).toDate())
             .signWith(getSecretKey())
             .compact();
     }
@@ -62,7 +61,16 @@ public class JwtTokenProvider {
         return Keys.hmacShaKeyFor(getJwtKey().getBytes(StandardCharsets.UTF_8));
     }
 
+    public Authentication getAuthentication(String jwtToken) {
+        Member member = memberService.findMember(parsing(jwtToken))
+            .orElseThrow(() -> new AuthenticationServiceException("존재하지 않는 멤버입니다."));
+        return new UsernamePasswordAuthenticationToken(member.getId(), null);
+    }
+
     public boolean validateToken(String jwtToken) {
+        if (ObjectUtils.isEmpty(jwtToken)) {
+            throw new IllegalArgumentException();
+        }
         Jws<Claims> claims = Jwts.parserBuilder()
             .setSigningKey(getSecretKey())
             .build()
@@ -70,26 +78,28 @@ public class JwtTokenProvider {
         return !claims.getBody().getExpiration().before(new Date());
     }
 
-    public Authentication getAuthentication(String jwtToken) {
-        Member member = memberService.findMember(parsing(jwtToken))
-            .orElseThrow(() -> new AuthenticationServiceException("존재하지 않는 멤버입니다."));
-        return new UsernamePasswordAuthenticationToken(member.getId(), null);
-    }
-
     public String parsing(String headerAuth) {
-        String id = null;
-        if (!StringUtils.hasText(headerAuth)) {
+        if (ObjectUtils.isEmpty(headerAuth)) {
             throw new IllegalArgumentException();
         }
         try {
-            id = Jwts.parserBuilder()
+            return Jwts.parserBuilder()
                 .requireAudience(getJwtKey())
                 .build()
                 .parse(headerAuth)
                 .toString();
-        } catch (JwtParsingException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            throw new JwtParsingException();
         }
-        return id;
+    }
+
+    private String getJwtKey() {
+        VaultKeyValueOperations keyValueOperations = vaultOperations.opsForKeyValue(VAULT_PATH,
+            VaultKeyValueOperationsSupport.KeyValueBackend.KV_1);
+
+        VaultResponse read = keyValueOperations.get(VAULT_SECRETS);
+        Assert.notNull(read, "vault read value must be null!");
+        return Optional.ofNullable((String) read.getRequiredData().get(TOKEN_NAME))
+            .orElseThrow(VaultTokenNotExistException::new);
     }
 }
