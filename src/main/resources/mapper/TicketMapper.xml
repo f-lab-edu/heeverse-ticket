@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.heeverse.ticket.domain.mapper.TicketMapper">
+
+    <insert id="insertTicketGrade" parameterType="java.util.List">
+        INSERT INTO ticket_grade(
+            grade,
+            grade_name,
+            seat_count,
+            concert_id,
+            create_datetime
+        )
+        VALUES
+            <foreach item="grade" collection="list" separator=",">
+                (
+                    #{grade.grade},
+                    #{grade.gradeName},
+                    #{grade.seatCount},
+                    #{grade.concertId},
+                    #{grade.createDateTime}
+                )
+            </foreach>
+    </insert>
+    
+    <select id="findTicketGrades" parameterType="java.lang.Long" resultType="hashmap">
+        SELECT
+            grade_id,
+            grade,
+            grade_name,
+            seat_count,
+            concert_id,
+            create_datetime
+        FROM
+            ticket_grade
+        WHERE
+            concert_id = #{concertId}
+    </select>
+
+
+    <insert id="insertTicket" parameterType="com.heeverse.ticket.domain.entity.Ticket">
+        INSERT INTO ticket(
+            ticket_serial_number,
+            concert_id,
+            grade_id,
+            create_datetime
+        )
+        VALUES
+            <foreach item="ticket" collection="list">
+                (
+                    #{ticket.ticketSerialNumber},
+                    #{ticket.concertId},
+                    #{ticket.gradeId},
+                    #{ticket.createDateTime}
+                );
+            </foreach>
+    </insert>
+
+
+
+    <select id="findTickets" parameterType="java.lang.Long" resultType="hashmap">
+        SELECT
+            ticket_id,
+            ticket_serial_number,
+            concert_id,
+            grade_id,
+            create_datetime
+        FROM
+            ticket
+        WHERE
+            concert_id = #{concertId}
+    </select>
+
+</mapper>
