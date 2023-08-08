@@ -1,4 +1,4 @@
-package com.heeverse.config;
+package com.heeverse.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heeverse.member.dto.LoginRequestDto;
@@ -14,7 +14,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
-import security.JwtTokenProvider;
 
 /**
  * JSON 구조의 Login 데이터를 AuthenticationToken 으로 변환
@@ -37,19 +36,20 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
         this.objectMapper = objectMapper;
     }
 
-
+    @Override
     public Authentication attemptAuthentication(
         HttpServletRequest request, HttpServletResponse response) {
 
-
-            LoginRequestDto loginRequestDto = toLoginRequestDto(new ContentCachingRequestWrapper(request));
-            return super.getAuthenticationManager()
-                    .authenticate(new UsernamePasswordAuthenticationToken(loginRequestDto.id(), loginRequestDto.password()));
+        LoginRequestDto loginRequestDto = toLoginDto(new ContentCachingRequestWrapper(request));
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
+            loginRequestDto.id(), loginRequestDto.password());
+        setDetails(request, token);
+        return super.getAuthenticationManager()
+            .authenticate(token);
     }
 
 
-    private LoginRequestDto toLoginRequestDto(HttpServletRequest request){
-      
+    private LoginRequestDto toLoginDto(HttpServletRequest request) {
         String body;
         try {
             body = request.getReader()
@@ -65,10 +65,13 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
     protected void successfulAuthentication(HttpServletRequest request,
         HttpServletResponse response, FilterChain chain, Authentication authResult)
         throws IOException, ServletException {
-        String principal = (String) authResult.getPrincipal();
-        String token = jwtTokenProvider.generateToken(principal);
-        response.getWriter().write(token);
-        response.getWriter().flush();
 
+        String principal = (String) authResult.getPrincipal();
+        String token = jwtTokenProvider.generateToken(principal, authResult);
+
+        response.setHeader("Authorization", "Bearer " + token);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
     }
+
 }

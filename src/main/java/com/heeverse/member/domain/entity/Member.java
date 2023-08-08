@@ -4,6 +4,7 @@ import com.heeverse.common.BaseEntity;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
+import org.apache.ibatis.annotations.Param;
 
 @Getter
 public class Member extends BaseEntity {
@@ -15,7 +16,11 @@ public class Member extends BaseEntity {
     private String email;
 
     @Builder
-    public Member(@NotNull String id, @NotNull String password, String userName, String email) {
+    public Member(
+            @Param ("id") @NotNull String id,
+            @Param("password")@NotNull String password,
+            @Param("userName") String userName,
+            @Param("email") String email) {
         this.id = id;
         this.password = password;
         this.userName = userName;
