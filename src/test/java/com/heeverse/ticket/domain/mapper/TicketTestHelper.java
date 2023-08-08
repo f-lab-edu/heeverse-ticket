@@ -5,6 +5,7 @@ import com.heeverse.ticket.domain.entity.TicketGrade;
 import com.heeverse.ticket.dto.TicketGradeDto;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 /**
  * @author gutenlee
@@ -23,7 +24,7 @@ public class TicketTestHelper {
 
     public static List<TicketGrade> toTicketGrade(List<TicketGradeDto> ticketGradeDtos, long concertId) {
         return ticketGradeDtos.stream()
-                .map(dto -> TicketGrade.toEntity(dto, concertId))
+                .map(dto -> new TicketGrade(dto, concertId))
                 .toList();
     }
 
@@ -31,7 +32,10 @@ public class TicketTestHelper {
     public static List<Ticket> publishTicket(List<TicketGrade> ticketGrades) {
 
         return ticketGrades.stream()
-                .map(Ticket::publish)
+                .flatMap(grade -> {
+                    return IntStream.rangeClosed(0, grade.getSeatCount())
+                            .mapToObj(i -> Ticket.publish(grade));
+                })
                 .toList();
     }
 }

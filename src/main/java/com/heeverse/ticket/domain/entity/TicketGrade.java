@@ -4,31 +4,31 @@ import com.heeverse.common.BaseEntity;
 import com.heeverse.ticket.dto.TicketGradeDto;
 import lombok.Getter;
 import org.apache.ibatis.annotations.AutomapConstructor;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.type.Alias;
 
 /**
  * @author gutenlee
  * @since 2023/08/04
  */
 @Getter
+@Alias("ticketGrade")
 public class TicketGrade extends BaseEntity {
 
-    private Long gradeId;
+    private Long ticketGradeId;
     private final Integer grade;
     private final String gradeName;
     private final Integer seatCount;
     private final Long concertId;
 
-    private TicketGrade(Integer grade, String gradeName, Integer seatCount, long concertId) {
-        this.grade = grade;
-        this.gradeName = gradeName;
-        this.seatCount = seatCount;
-        this.concertId = concertId;
-    }
-
-
     @AutomapConstructor
-    public TicketGrade(Long gradeId, Integer grade, String gradeName, Integer seatCount, Long concertId) {
-        this.gradeId = gradeId;
+    private TicketGrade(
+            @Param("ticketGradeId") Long ticketGradeId,
+            @Param("grade") Integer grade,
+            @Param("gradeName") String gradeName,
+            @Param("seatCount") Integer seatCount,
+            @Param("concertId") Long concertId) {
+        this.ticketGradeId = ticketGradeId;
         this.grade = grade;
         this.gradeName = gradeName;
         this.seatCount = seatCount;
@@ -36,9 +36,8 @@ public class TicketGrade extends BaseEntity {
     }
 
 
-
-    public static TicketGrade toEntity(TicketGradeDto ticketGradeDto, long concertId) {
-        return new TicketGrade(
+    public TicketGrade(TicketGradeDto ticketGradeDto, long concertId) {
+        this(null,
                 ticketGradeDto.ticketGrade(),
                 ticketGradeDto.gradeName(),
                 ticketGradeDto.seatCount(),

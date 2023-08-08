@@ -24,9 +24,10 @@
             </foreach>
     </insert>
     
-    <select id="findTicketGrades" parameterType="java.lang.Long" resultType="hashmap">
+    <select id="findTicketGrades" parameterType="java.lang.Long"
+            resultType="com.heeverse.ticket.domain.entity.TicketGrade">
         SELECT
-            grade_id,
+            ticket_grade_id,
             grade,
             grade_name,
             seat_count,
@@ -39,32 +40,33 @@
     </select>
 
 
-    <insert id="insertTicket" parameterType="com.heeverse.ticket.domain.entity.Ticket">
+    <insert id="insertTicket" parameterType="java.util.List">
         INSERT INTO ticket(
             ticket_serial_number,
             concert_id,
-            grade_id,
+            ticket_grade_id,
             create_datetime
         )
         VALUES
-            <foreach item="ticket" collection="list">
+            <foreach item="ticket" collection="list" separator=",">
                 (
                     #{ticket.ticketSerialNumber},
                     #{ticket.concertId},
-                    #{ticket.gradeId},
+                    #{ticket.ticketGradeId},
                     #{ticket.createDateTime}
-                );
+                )
             </foreach>
     </insert>
 
 
 
-    <select id="findTickets" parameterType="java.lang.Long" resultType="hashmap">
+    <select id="findTickets" parameterType="java.lang.Long"
+            resultType="com.heeverse.ticket.domain.entity.Ticket">
         SELECT
             ticket_id,
             ticket_serial_number,
             concert_id,
-            grade_id,
+            ticket_grade_id,
             create_datetime
         FROM
             ticket

@@ -10,11 +10,15 @@ import org.springframework.transaction.annotation.Transactional;
  * @since 2023/08/04
  */
 @Service
-@Transactional
 public class TicketService {
 
-    private TicketMapper ticketMapper;
+    private final TicketMapper ticketMapper;
 
+    public TicketService(TicketMapper ticketMapper) {
+        this.ticketMapper = ticketMapper;
+    }
+
+    @Transactional
     public void registerTicket(TicketRequestDto ticketRequestDto) {
 
     }

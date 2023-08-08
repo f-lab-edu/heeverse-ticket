@@ -16,7 +16,7 @@ DROP TABLE IF EXISTS ticket;
 CREATE TABLE ticket (
     ticket_id	bigint	auto_increment NOT NULL	PRIMARY KEY COMMENT '티켓아이디',
     ticket_serial_number    varchar(255) NOT NULL ,
-    grade_id	bigint	NOT NULL,
+    ticket_grade_id	bigint	NOT NULL,
     concert_id	bigint	NOT NULL	COMMENT '공연 id',
     order_id	bigint	,
     delete_yn	boolean	COMMENT '취소여부',
@@ -28,7 +28,7 @@ CREATE TABLE ticket (
 DROP TABLE IF EXISTS ticket_grade;
 
 CREATE TABLE ticket_grade (
-    grade_id	bigint  auto_increment  NOT NULL PRIMARY KEY,
+    ticket_grade_id	bigint  auto_increment  NOT NULL PRIMARY KEY,
     grade	int	NOT NULL,
     grade_name	varchar(20)	NOT NULL,
     seat_count	int	NOT NULL,

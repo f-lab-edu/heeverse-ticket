@@ -13,6 +13,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.instanceOf;
 
 @ActiveProfiles("local")
 @MybatisTest
@@ -41,16 +42,31 @@ class TicketMapperTest {
 
 
     @Test
-    @DisplayName("[티켓 생성] 티켓 등급별로 할당된 좌석수만큼 티켓을 생성한다")
-    void insertTicketTest() throws Exception {
+    @DisplayName("[티켓 생성] 생성한 티켓 객체와 저장된 티켓 개수 일치")
+    void 티켓_생성() throws Exception {
 
         final var ticketGrades = 티켓_등급_생성();
 
         List<Ticket> tickets = TicketTestHelper.publishTicket(ticketGrades);
         ticketMapper.insertTicket(tickets);
 
+
         assertThat(ticketMapper.findTickets(CONCERT_ID), hasSize(tickets.size()));
     }
+
+
+    @Test
+    @DisplayName("[티켓 조회] 티켓 조회 결과의 리스트 타입 파라미는 Ticket.class")
+    void readTicketTest() throws Exception {
+
+        티켓_생성();
+
+        List<Ticket> tickets = ticketMapper.findTickets(CONCERT_ID);
+
+        assertThat(tickets.get(0), instanceOf(Ticket.class));
+    }
+
+
 
 
 }

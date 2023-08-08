@@ -7,8 +7,15 @@ import java.time.LocalDateTime;
  * @since 2023/08/04
  */
 public class OrderInfo {
-    private LocalDateTime purchaseDateTime;
-    private Boolean cancelled;
-    private Long orderId;
+
+    private final LocalDateTime purchaseDateTime;
+    private final boolean cancelled = false;
+    private final Long orderId;
+
+    public OrderInfo(LocalDateTime purchaseDateTime, Long orderId) {
+        this.purchaseDateTime = purchaseDateTime;
+        this.orderId = orderId;
+    }
+
 
 }
