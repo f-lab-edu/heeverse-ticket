@@ -1,5 +1,6 @@
 package com.heeverse.concert.domain.mapper;
 
+import com.heeverse.concert.domain.entity.Concert;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -9,4 +10,5 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface ConcertMapper {
 
+    Concert insertConcert(Concert concert);
 }
