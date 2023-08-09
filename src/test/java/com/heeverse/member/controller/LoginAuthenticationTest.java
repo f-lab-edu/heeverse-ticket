@@ -1,6 +1,7 @@
 package com.heeverse.member.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.heeverse.security.LoginAuthenticationProvider;
 import com.heeverse.member.domain.mapper.MemberMapper;
 import com.heeverse.member.dto.LoginRequestDto;
 import com.heeverse.member.dto.MemberRequestDto;
