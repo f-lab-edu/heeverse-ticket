@@ -33,8 +33,8 @@ public class TicketTestHelper {
 
         return ticketGrades.stream()
                 .flatMap(grade -> {
-                    return IntStream.rangeClosed(0, grade.getSeatCount())
-                            .mapToObj(i -> Ticket.publish(grade));
+                    return IntStream.rangeClosed(0, grade.getTicketCount())
+                            .mapToObj(i -> new Ticket(grade));
                 })
                 .toList();
     }

@@ -15,30 +15,26 @@ import org.apache.ibatis.type.Alias;
 @Alias("ticketGrade")
 public class TicketGrade extends BaseEntity {
 
-    private Long ticketGradeId;
-    private final Integer grade;
+    private Long seq;
     private final String gradeName;
-    private final Integer seatCount;
+    private final Integer ticketCount;
     private final Long concertId;
 
     @AutomapConstructor
     private TicketGrade(
-            @Param("ticketGradeId") Long ticketGradeId,
-            @Param("grade") Integer grade,
+            @Param("seq") Long seq,
             @Param("gradeName") String gradeName,
-            @Param("seatCount") Integer seatCount,
-            @Param("concertId") Long concertId) {
-        this.ticketGradeId = ticketGradeId;
-        this.grade = grade;
+            @Param("ticketCount") Integer ticketCount,
+            @Param("concertSeq") Long concertSeq) {
+        this.seq = seq;
         this.gradeName = gradeName;
-        this.seatCount = seatCount;
-        this.concertId = concertId;
+        this.ticketCount = ticketCount;
+        this.concertId = concertSeq;
     }
 
 
     public TicketGrade(TicketGradeDto ticketGradeDto, long concertId) {
         this(null,
-                ticketGradeDto.ticketGrade(),
                 ticketGradeDto.gradeName(),
                 ticketGradeDto.seatCount(),
                 concertId);

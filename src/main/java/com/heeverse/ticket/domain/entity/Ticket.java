@@ -14,33 +14,29 @@ import java.util.UUID;
 @Getter
 public class Ticket extends BaseEntity {
 
-    private Long ticketId;
+    private Long seq;
     private final String ticketSerialNumber;
-    private final Long concertId;
-    private final Long ticketGradeId;
+    private final Long concertSeq;
     private OrderInfo orderInfo;
 
     @AutomapConstructor
     public Ticket(
-            @Param("ticketId") Long ticketId,
+            @Param("seq") Long seq,
             @Param("ticketSerialNumber") String ticketSerialNumber,
-            @Param("concertId") Long concertId,
-            @Param("ticketGradeId") Long ticketGradeId) {
-        this.ticketId = ticketId;
+            @Param("concertSeq") Long concertSeq) {
+        this.seq = seq;
         this.ticketSerialNumber = ticketSerialNumber;
-        this.concertId = concertId;
-        this.ticketGradeId = ticketGradeId;
+        this.concertSeq = concertSeq;
     }
 
-    public Ticket(long concertId, long ticketGradeId) {
-        this.concertId = concertId;
+    public Ticket(long concertSeq) {
+        this.concertSeq = concertSeq;
         this.ticketSerialNumber = UUID.randomUUID().toString();
-        this.ticketGradeId = ticketGradeId;
     }
 
 
-    public static Ticket publish(TicketGrade ticketGrade){
-        return new Ticket(ticketGrade.getConcertId(), ticketGrade.getTicketGradeId());
+    public Ticket (TicketGrade ticketGrade){
+        this(ticketGrade.getConcertId());
     }
 
 
@@ -52,10 +48,9 @@ public class Ticket extends BaseEntity {
     @Override
     public String toString() {
         return "Ticket{" +
-                "ticketId=" + ticketId +
+                "seq=" + seq +
                 ", ticketSerialNumber='" + ticketSerialNumber + '\'' +
-                ", concertId=" + concertId +
-                ", ticketGradeId=" + ticketGradeId +
+                ", concertId=" + concertSeq +
                 ", orderInfo=" + orderInfo +
                 '}';
     }

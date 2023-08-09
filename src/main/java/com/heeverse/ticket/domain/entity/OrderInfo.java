@@ -9,12 +9,12 @@ import java.time.LocalDateTime;
 public class OrderInfo {
 
     private final LocalDateTime purchaseDateTime;
-    private final boolean cancelled = false;
-    private final Long orderId;
+    private final boolean isCancelled = false;
+    private final Long orderSeq;
 
-    public OrderInfo(LocalDateTime purchaseDateTime, Long orderId) {
+    public OrderInfo(LocalDateTime purchaseDateTime, Long orderSeq) {
         this.purchaseDateTime = purchaseDateTime;
-        this.orderId = orderId;
+        this.orderSeq = orderSeq;
     }
 
 

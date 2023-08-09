@@ -14,24 +14,22 @@ CREATE TABLE member
 DROP TABLE IF EXISTS ticket;
 
 CREATE TABLE ticket (
-    ticket_id	bigint	auto_increment NOT NULL	PRIMARY KEY COMMENT '티켓아이디',
+    seq	bigint	auto_increment NOT NULL	PRIMARY KEY COMMENT '티켓아이디',
     ticket_serial_number    varchar(255) NOT NULL ,
-    ticket_grade_id	bigint	NOT NULL,
-    concert_id	bigint	NOT NULL	COMMENT '공연 id',
-    order_id	bigint	,
-    delete_yn	boolean	COMMENT '취소여부',
+    concert_seq	bigint	NOT NULL	COMMENT '공연 id',
+    order_seq	bigint	,
+    cancelled	boolean	COMMENT '취소여부',
     purchase_date timestamp COMMENT '구매 일시',
     create_datetime	timestamp	NOT NULL
 );
 
 
-DROP TABLE IF EXISTS ticket_grade;
+DROP TABLE IF EXISTS grade_ticket;
 
-CREATE TABLE ticket_grade (
-    ticket_grade_id	bigint  auto_increment  NOT NULL PRIMARY KEY,
-    grade	int	NOT NULL,
+CREATE TABLE grade_ticket (
+    seq	bigint  auto_increment  NOT NULL PRIMARY KEY,
     grade_name	varchar(20)	NOT NULL,
-    seat_count	int	NOT NULL,
-    concert_id bigint NOT NULL,
+    ticket_count	int	NOT NULL,
+    concert_seq bigint NOT NULL,
     create_datetime	timestamp	NOT NULL
 );
