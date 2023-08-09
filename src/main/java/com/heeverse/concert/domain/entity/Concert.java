@@ -35,4 +35,7 @@ public class Concert extends BaseEntity {
         this.ticketEndTime = ticketEndTime;
     }
 
+    public Long getConcertId() {
+        return concertId;
+    }
 }

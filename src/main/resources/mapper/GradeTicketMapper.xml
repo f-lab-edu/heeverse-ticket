@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heeverse.ticket.domain.mapper.GradeTicketMapper">
+
+  <insert id="insertGradeTicket" parameterType="com.heeverse.ticket.domain.entity.GradeTicket">
+    INSERT INTO grade_ticket (GRADE_NAME, TICKET_COUNT, CONCERT_ID, create_datetime)
+    VALUES (#{gradeName}, #{ticketCount}, #{concertId}, #{createDateTime});
+  </insert>
+</mapper>

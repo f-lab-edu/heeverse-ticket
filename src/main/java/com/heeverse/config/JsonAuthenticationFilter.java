@@ -65,7 +65,6 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
     protected void successfulAuthentication(HttpServletRequest request,
         HttpServletResponse response, FilterChain chain, Authentication authResult)
         throws IOException, ServletException {
-        super.successfulAuthentication(request, response, chain, authResult);
         String principal = (String) authResult.getPrincipal();
         String token = jwtTokenProvider.generateToken(principal);
         response.getWriter().write(token);
