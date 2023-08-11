@@ -2,12 +2,12 @@ DROP TABLE IF EXISTS member;
 
 CREATE TABLE member
 (
-    seq             bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
-    id              varchar(50)           NOT NULL,
-    password        varchar(60)           NOT NULL,
-    email           varchar(100)          NOT NULL,
-    user_name       varchar(20)           NOT NULL,
-    create_datetime datetime              NOT NULL
+    seq             bigint AUTO_INCREMENT NOT NULL PRIMARY KEY COMMENT 'seq',
+    id              varchar(50)           NOT NULL COMMENT '회원 아이디',
+    password        varchar(60)           NOT NULL COMMENT '비밀번호',
+    email           varchar(100)          NOT NULL COMMENT '이메일',
+    user_name       varchar(20)           NOT NULL COMMENT '회원 이름',
+    create_datetime datetime              NOT NULL COMMENT '데이터 생성일'
 );
 
 DROP TABLE IF EXISTS ticket;
@@ -29,22 +29,11 @@ DROP TABLE IF EXISTS ticket_order;
 CREATE TABLE ticket_order
 (
     seq             bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
-    member_id       bigint                NOT NULL,
     booking_date    datetime              NOT NULL,
     status          varchar(20)           NOT NULL COMMENT '완료, 취소',
     delete_yn       boolean               NOT NULL COMMENT '삭제여부',
-    create_datetime datetime              NOT NULL
-);
-
-DROP TABLE IF EXISTS grade_ticket;
-
-CREATE TABLE grade_ticket
-(
-    seq             bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
-    grade_name      varchar(20)           NOT NULL,
-    ticket_count    int                   NOT NULL,
-    create_datetime bigint                NOT NULL,
-    concert_id      bigint                NOT NULL COMMENT '공연 id'
+    create_datetime datetime              NOT NULL,
+    FOREIGN KEY (seq) REFERENCES member (seq)
 );
 
 DROP TABLE IF EXISTS concert;
@@ -60,26 +49,40 @@ CREATE TABLE concert
     create_datetime  datetime              NOT NULL COMMENT 'created_datetime'
 );
 
+DROP TABLE IF EXISTS grade_ticket;
+
+CREATE TABLE grade_ticket
+(
+    seq             bigint AUTO_INCREMENT NOT NULL PRIMARY KEY COMMENT 'seq',
+    grade_name      varchar(20)           NOT NULL COMMENT '티켓 등급 명칭',
+    ticket_count    int                   NOT NULL COMMENT '등급 할당 티켓수',
+    create_datetime bigint                NOT NULL COMMENT 'seq',
+    FOREIGN KEY (seq) REFERENCES concert (seq)
+);
+
+
+
 DROP TABLE IF EXISTS artist;
 
 CREATE TABLE artist
 (
-    seq              bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
-    concert_id       bigint                NOT NULL COMMENT '공연 id',
-    artiest_name_kor varchar(50)           NOT NULL,
-    artist_name_eng  varchar(50)           NOT NULL,
-    create_datetime  datetime              NOT NULL
+    seq              bigint AUTO_INCREMENT NOT NULL PRIMARY KEY COMMENT '아티스트 seq',
+    artiest_name_kor varchar(50)           NOT NULL COMMENT '아티스트 국문명',
+    artist_name_eng  varchar(50)           NOT NULL COMMENT '아티스트 영문명',
+    create_datetime  datetime              NOT NULL COMMENT '데이터 생성일',
+    concert_seq      bigint                NOT NULL COMMENT '공연 seq'
 );
+
 
 DROP TABLE IF EXISTS venue;
 
 CREATE TABLE venue
 (
-    seq             bigint AUTO_INCREMENT NOT NULL PRIMARY KEY COMMENT '공연장 id',
-    concert_id      bigint                NOT NULL COMMENT '공연 id',
+    seq             bigint AUTO_INCREMENT NOT NULL PRIMARY KEY COMMENT '공연장 seq',
     venue_name      varchar(50)           NOT NULL COMMENT '공연장 이름',
     address         varchar(255)          NOT NULL COMMENT '주소',
     seat_cnt        bigint                NOT NULL COMMENT '공연장 좌석수',
-    create_datetime datetime              NOT NULL COMMENT '데이터 생성일'
+    create_datetime datetime              NOT NULL COMMENT '데이터 생성일',
+    concert_seq     bigint                NOT NULL COMMENT '공연 seq'
 );
 

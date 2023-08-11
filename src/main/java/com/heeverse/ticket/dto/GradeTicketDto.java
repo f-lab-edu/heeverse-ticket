@@ -8,6 +8,7 @@ import lombok.Getter;
  */
 @Getter
 public class GradeTicketDto {
+
     private String gradeName;
     private Integer ticketCount;
 
