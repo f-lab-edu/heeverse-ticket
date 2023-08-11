@@ -16,6 +16,7 @@ DROP TABLE IF EXISTS ticket;
 CREATE TABLE ticket (
     seq	bigint	auto_increment NOT NULL	PRIMARY KEY COMMENT '티켓아이디',
     ticket_serial_number    varchar(255) NOT NULL ,
+    grade_name    varchar(20) NOT NULL COMMENT '티켓 등급',
     concert_seq	bigint	NOT NULL	COMMENT '공연 id',
     order_seq	bigint	,
     cancelled	boolean	COMMENT '취소여부',

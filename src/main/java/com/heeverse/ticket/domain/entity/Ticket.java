@@ -5,8 +5,6 @@ import lombok.Getter;
 import org.apache.ibatis.annotations.AutomapConstructor;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.UUID;
-
 /**
  * @author gutenlee
  * @since 2023/08/04
@@ -17,32 +15,34 @@ public class Ticket extends BaseEntity {
     private Long seq;
     private final String ticketSerialNumber;
     private final Long concertSeq;
+    private final String gradeName;
     private OrderInfo orderInfo;
 
     @AutomapConstructor
-    public Ticket(
+    private Ticket(
             @Param("seq") Long seq,
             @Param("ticketSerialNumber") String ticketSerialNumber,
-            @Param("concertSeq") Long concertSeq) {
+            @Param("concertSeq") Long concertSeq,
+            @Param("gradeName") String gradeName
+    ) {
         this.seq = seq;
         this.ticketSerialNumber = ticketSerialNumber;
         this.concertSeq = concertSeq;
-    }
-
-    public Ticket(long concertSeq) {
-        this.concertSeq = concertSeq;
-        this.ticketSerialNumber = UUID.randomUUID().toString();
+        this.gradeName = gradeName;
     }
 
 
-    public Ticket (TicketGrade ticketGrade){
-        this(ticketGrade.getConcertId());
+    public Ticket (String ticketSerialNumber, GradeTicket gradeTicket){
+        this(null,
+                ticketSerialNumber, gradeTicket.getConcertId(), gradeTicket.getGradeName());
     }
 
 
     public void toOrderedTicket(OrderInfo orderInfo) {
         this.orderInfo = orderInfo;
     }
+
+
 
 
     @Override

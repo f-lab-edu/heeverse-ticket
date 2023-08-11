@@ -1,11 +1,8 @@
 package com.heeverse.ticket.domain.mapper;
 
-import com.heeverse.ticket.domain.entity.Ticket;
-import com.heeverse.ticket.domain.entity.TicketGrade;
 import com.heeverse.ticket.dto.TicketGradeDto;
 
 import java.util.List;
-import java.util.stream.IntStream;
 
 /**
  * @author gutenlee
@@ -21,21 +18,4 @@ public class TicketTestHelper {
         );
     }
 
-
-    public static List<TicketGrade> toTicketGrade(List<TicketGradeDto> ticketGradeDtos, long concertId) {
-        return ticketGradeDtos.stream()
-                .map(dto -> new TicketGrade(dto, concertId))
-                .toList();
-    }
-
-
-    public static List<Ticket> publishTicket(List<TicketGrade> ticketGrades) {
-
-        return ticketGrades.stream()
-                .flatMap(grade -> {
-                    return IntStream.rangeClosed(0, grade.getTicketCount())
-                            .mapToObj(i -> new Ticket(grade));
-                })
-                .toList();
-    }
 }

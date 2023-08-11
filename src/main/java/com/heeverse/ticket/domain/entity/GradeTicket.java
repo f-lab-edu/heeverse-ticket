@@ -5,15 +5,13 @@ import com.heeverse.ticket.dto.TicketGradeDto;
 import lombok.Getter;
 import org.apache.ibatis.annotations.AutomapConstructor;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.type.Alias;
 
 /**
  * @author gutenlee
  * @since 2023/08/04
  */
 @Getter
-@Alias("ticketGrade")
-public class TicketGrade extends BaseEntity {
+public class GradeTicket extends BaseEntity {
 
     private Long seq;
     private final String gradeName;
@@ -21,7 +19,7 @@ public class TicketGrade extends BaseEntity {
     private final Long concertId;
 
     @AutomapConstructor
-    private TicketGrade(
+    private GradeTicket(
             @Param("seq") Long seq,
             @Param("gradeName") String gradeName,
             @Param("ticketCount") Integer ticketCount,
@@ -33,7 +31,7 @@ public class TicketGrade extends BaseEntity {
     }
 
 
-    public TicketGrade(TicketGradeDto ticketGradeDto, long concertId) {
+    public GradeTicket(TicketGradeDto ticketGradeDto, long concertId) {
         this(null,
                 ticketGradeDto.gradeName(),
                 ticketGradeDto.seatCount(),
