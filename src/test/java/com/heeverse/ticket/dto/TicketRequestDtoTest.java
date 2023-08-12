@@ -1,19 +1,17 @@
 package com.heeverse.ticket.dto;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 class TicketRequestDtoTest {
 
@@ -41,7 +39,7 @@ class TicketRequestDtoTest {
 
 
         List<TicketGradeDto> ticketGradeDtoList = new ArrayList<>();
-        ticketGradeDtoList.add(new TicketGradeDto(1, "VIP석", 0));
+        ticketGradeDtoList.add(new TicketGradeDto( "VIP석", 0));
         TicketRequestDto ticketRequestDto = new TicketRequestDto(1L, ticketGradeDtoList);
 
 
@@ -58,10 +56,10 @@ class TicketRequestDtoTest {
     @DisplayName("ticketGradeDto 필드 유효성 위반 개수 검사")
     void ticketGradeDto_validation_test() throws Exception {
 
-        assertViolationCount(new TicketGradeDto(0, "VIP", 10000), 1);
-        assertViolationCount(new TicketGradeDto(0, "VIP", 0), 2);
-        assertViolationCount(new TicketGradeDto(0, "", 0), 3);
-        assertViolationCount(new TicketGradeDto(0, null, 0), 3);
+        assertViolationCount(new TicketGradeDto( "VIP", 10000), 1);
+        assertViolationCount(new TicketGradeDto( "VIP", 0), 2);
+        assertViolationCount(new TicketGradeDto( "", 0), 3);
+        assertViolationCount(new TicketGradeDto( null, 0), 3);
 
     }
 
