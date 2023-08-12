@@ -61,8 +61,8 @@ public class SecurityConfig {
                 securityContext.securityContextRepository(
                     new HttpSessionSecurityContextRepository());
             })
-            .addFilterAt(new JwtAuthenticationFilter(jwtTokenProvider),
-                BasicAuthenticationFilter.class)
+            //.addFilterAt(new JwtAuthenticationFilter(jwtTokenProvider),
+            //    BasicAuthenticationFilter.class)
             .addFilterAt(new JsonAuthenticationFilter(
                 authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)),
                 jwtTokenProvider, objectMapper), UsernamePasswordAuthenticationFilter.class)

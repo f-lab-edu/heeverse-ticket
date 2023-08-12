@@ -3,11 +3,13 @@ package com.heeverse.concert.domain.entity;
 import com.heeverse.common.BaseEntity;
 import com.heeverse.concert.dto.ConcertRequestDto;
 import java.time.LocalDateTime;
+import lombok.Getter;
 
 /**
  * @author jeongheekim
  * @date 2023/08/04
  */
+@Getter
 public class Concert extends BaseEntity {
 
     private Long concertId;
@@ -21,18 +23,13 @@ public class Concert extends BaseEntity {
 
 
     public Concert(ConcertRequestDto dto) {
-        this(dto.getArtistId(), dto.getVenueId(), dto.getConcertName(),
-            dto.getConcertDate(), dto.getTicketOpenTime(), dto.getTicketEndTime());
-    }
-
-    public Concert(Long artistId, Long venueId, String concertName,
-        LocalDateTime concertDate, LocalDateTime ticketOpenTime, LocalDateTime ticketEndTime) {
-        this.artistId = artistId;
-        this.venueId = venueId;
-        this.concertName = concertName;
-        this.concertDate = concertDate;
-        this.ticketOpenTime = ticketOpenTime;
-        this.ticketEndTime = ticketEndTime;
+        super();
+        this.artistId = dto.getArtistId();
+        this.venueId = dto.getVenueId();
+        this.concertName = dto.getConcertName();
+        this.concertDate = dto.getConcertDate();
+        this.ticketOpenTime = dto.getTicketOpenTime();
+        this.ticketEndTime = dto.getTicketEndTime();
     }
 
     public Long getConcertId() {

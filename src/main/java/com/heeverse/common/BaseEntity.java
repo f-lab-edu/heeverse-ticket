@@ -1,6 +1,7 @@
 package com.heeverse.common;
 
 import java.time.LocalDateTime;
+import lombok.Getter;
 
 /**
  * @author gutenlee
