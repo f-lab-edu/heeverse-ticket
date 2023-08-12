@@ -41,7 +41,7 @@ class TicketRequestDtoTest {
 
 
         List<TicketGradeDto> ticketGradeDtoList = new ArrayList<>();
-        ticketGradeDtoList.add(new TicketGradeDto( "VIP석", 0));
+        ticketGradeDtoList.add(new TicketGradeDto(1, "VIP석", 0));
         TicketRequestDto ticketRequestDto = new TicketRequestDto(1L, ticketGradeDtoList);
 
 
@@ -58,10 +58,10 @@ class TicketRequestDtoTest {
     @DisplayName("ticketGradeDto 필드 유효성 위반 개수 검사")
     void ticketGradeDto_validation_test() throws Exception {
 
-        assertViolationCount(new TicketGradeDto( "VIP", 10000), 1);
-        assertViolationCount(new TicketGradeDto( "VIP", 0), 2);
-        assertViolationCount(new TicketGradeDto( "", 0), 3);
-        assertViolationCount(new TicketGradeDto( null, 0), 3);
+        assertViolationCount(new TicketGradeDto(0, "VIP", 10000), 1);
+        assertViolationCount(new TicketGradeDto(0, "VIP", 0), 2);
+        assertViolationCount(new TicketGradeDto(0, "", 0), 3);
+        assertViolationCount(new TicketGradeDto(0, null, 0), 3);
 
     }
 

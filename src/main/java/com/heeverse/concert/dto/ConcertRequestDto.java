@@ -1,7 +1,6 @@
 package com.heeverse.concert.dto;
 
 import com.heeverse.ticket.dto.GradeTicketDto;
-import com.heeverse.ticket.dto.TicketGradeDto;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -38,7 +37,7 @@ public class ConcertRequestDto {
     @NotNull
     private Long venueId;
 
-    private List<TicketGradeDto> ticketGradeDtoList;
+    private List<GradeTicketDto> gradeTicketDtoList;
 
 
 }

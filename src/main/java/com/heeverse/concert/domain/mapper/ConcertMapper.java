@@ -10,5 +10,5 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface ConcertMapper {
 
-    Long insertConcert(Concert concert);
+    Concert insertConcert(Concert concert);
 }
