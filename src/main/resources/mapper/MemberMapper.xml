@@ -12,6 +12,6 @@
 
   <insert id="insertMember" parameterType="com.heeverse.member.domain.entity.Member">
     INSERT INTO member (id, password, user_name, email, create_datetime)
-    VALUES (#{id}, #{password}, #{userName}, #{email}, #{createDateTime});
+    VALUES (#{id}, #{password}, #{userName}, #{email}, #{createDateTime})
   </insert>
 </mapper>

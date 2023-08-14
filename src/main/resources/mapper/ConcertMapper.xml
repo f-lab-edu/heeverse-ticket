@@ -4,7 +4,7 @@
 <mapper namespace="com.heeverse.concert.domain.mapper.ConcertMapper">
 
   <insert id="insertConcert" useGeneratedKeys="true" parameterType="com.heeverse.concert.domain.entity.Concert">
-    INSERT INTO concert (concert_name, concert_date, ticket_open_time, ticket_end_time, create_datetime)
-    VALUES (#{concertName}, #{concertDate}, #{ticketOpenTime}, #{ticketEndTime}, #{createDateTime});
+    INSERT INTO concert (concert_name, concert_date, ticket_open_time, ticket_end_time, create_datetime, venue_seq, artist_seq)
+    VALUES (#{concertName}, #{concertDate}, #{ticketOpenTime}, #{ticketEndTime}, #{createDateTime},#{venueSeq}, #{artistSeq})
   </insert>
 </mapper>
