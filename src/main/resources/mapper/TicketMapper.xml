@@ -16,7 +16,7 @@
                 (
                     #{grade.gradeName},
                     #{grade.ticketCount},
-                    #{grade.concertId},
+                    #{grade.concertSeq},
                     #{grade.createDateTime}
                 )
             </foreach>

@@ -16,7 +16,7 @@ public class GradeTicket extends BaseEntity {
     private Long seq;
     private final String gradeName;
     private final Integer ticketCount;
-    private final Long concertId;
+    private final Long concertSeq;
 
     @AutomapConstructor
     private GradeTicket(
@@ -27,15 +27,15 @@ public class GradeTicket extends BaseEntity {
         this.seq = seq;
         this.gradeName = gradeName;
         this.ticketCount = ticketCount;
-        this.concertId = concertSeq;
+        this.concertSeq = concertSeq;
     }
 
 
-    public GradeTicket(TicketGradeDto ticketGradeDto, long concertId) {
+    public GradeTicket(TicketGradeDto ticketGradeDto, long concertSeq) {
         this(null,
                 ticketGradeDto.gradeName(),
                 ticketGradeDto.seatCount(),
-                concertId);
+                concertSeq);
     }
 
 }

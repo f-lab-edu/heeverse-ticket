@@ -8,12 +8,12 @@ import java.time.LocalDateTime;
  */
 public class OrderInfo {
 
-    private final LocalDateTime purchaseDateTime;
-    private final boolean isCancelled = false;
+    private final LocalDateTime purchaseDate;
+    private final boolean cancelledFlag = false;
     private final Long orderSeq;
 
-    public OrderInfo(LocalDateTime purchaseDateTime, Long orderSeq) {
-        this.purchaseDateTime = purchaseDateTime;
+    public OrderInfo(LocalDateTime purchaseDate, Long orderSeq) {
+        this.purchaseDate = purchaseDate;
         this.orderSeq = orderSeq;
     }
 

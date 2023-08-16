@@ -1,6 +1,8 @@
 package com.heeverse.ticket.domain.entity;
 
-import com.heeverse.common.BaseEntity;
+import com.heeverse.common.*;
+import com.heeverse.ticket.domain.TicketSerialNumber;
+import com.heeverse.ticket.domain.TicketSerialTokenDto;
 import lombok.Getter;
 import org.apache.ibatis.annotations.AutomapConstructor;
 import org.apache.ibatis.annotations.Param;
@@ -32,9 +34,12 @@ public class Ticket extends BaseEntity {
     }
 
 
-    public Ticket (String ticketSerialNumber, GradeTicket gradeTicket){
-        this(null,
-                ticketSerialNumber, gradeTicket.getConcertId(), gradeTicket.getGradeName());
+    public Ticket(TicketSerialNumber ticketSerialNumber,
+                  TicketSerialTokenDto serialTokenDto,
+                  GradeTicket gradeTicket) {
+        this.ticketSerialNumber = ticketSerialNumber.generate(serialTokenDto);
+        this.concertSeq = gradeTicket.getConcertSeq();
+        this.gradeName = gradeTicket.getGradeName();
     }
 
 
@@ -50,7 +55,7 @@ public class Ticket extends BaseEntity {
         return "Ticket{" +
                 "seq=" + seq +
                 ", ticketSerialNumber='" + ticketSerialNumber + '\'' +
-                ", concertId=" + concertSeq +
+                ", concertSeq=" + concertSeq +
                 ", orderInfo=" + orderInfo +
                 '}';
     }

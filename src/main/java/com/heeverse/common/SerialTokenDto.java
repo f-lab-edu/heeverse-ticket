@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class SerialTokenDto {
 
     @Getter
-    Delimiter delimiter;
+    protected Delimiter delimiter;
 
     protected SerialTokenDto(Delimiter delimiter) {
         this.delimiter = delimiter;

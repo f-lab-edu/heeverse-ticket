@@ -1,19 +1,21 @@
 package com.heeverse.ticket.dto;
 
+import com.heeverse.ticket.domain.mapper.TicketTestHelper;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TicketRequestDtoTest {
 
@@ -27,13 +29,14 @@ class TicketRequestDtoTest {
 
 
 
+
     @Test
     @DisplayName("TicketRequestDto 유효성 검사시 필드 TicketGradeDto 검사도 함께 수행한다")
     void ticketRequestDto_ticketGradeDtoList_field_should_not_null() throws Exception {
 
         List<TicketGradeDto> ticketGradeDtoList = new ArrayList<>();
         ticketGradeDtoList.add(new TicketGradeDto(1, "VIP석", 0));
-        TicketRequestDto ticketRequestDto = new TicketRequestDto(1L, ticketGradeDtoList);
+        TicketRequestDto ticketRequestDto = TicketTestHelper.createTicketRequestDto(1L, LocalDate.now(), ticketGradeDtoList);
 
         Set<ConstraintViolation<TicketRequestDto>> violations = validator.validate(ticketRequestDto);
 
@@ -48,8 +51,8 @@ class TicketRequestDtoTest {
     void ticketRequestDto_not_null() throws Exception {
 
         assertAll(
-                () -> assertViolationCount(new TicketRequestDto(null, null), 2),
-                () -> assertViolationCount(new TicketRequestDto(1L, null), 1)
+                () -> assertViolationCount(new TicketRequestDto(null, null,null), 2),
+                () -> assertViolationCount(new TicketRequestDto(1L, null,null), 1)
         );
 
     }

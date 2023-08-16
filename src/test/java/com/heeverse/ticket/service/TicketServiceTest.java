@@ -1,6 +1,7 @@
 package com.heeverse.ticket.service;
 
 
+import com.heeverse.ticket.domain.entity.Ticket;
 import com.heeverse.ticket.domain.mapper.TicketTestHelper;
 import com.heeverse.ticket.dto.TicketGradeDto;
 import com.heeverse.ticket.dto.TicketRequestDto;
@@ -10,7 +11,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.time.LocalDate;
+import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
@@ -26,7 +31,7 @@ class TicketServiceTest {
     @DisplayName("[성공] 티켓 등록한다")
     void register_ticket_success() throws Exception {
 
-        TicketRequestDto ticketRequestDto = new TicketRequestDto(1L, TicketTestHelper.createTicketCategoryDtos());
+        TicketRequestDto ticketRequestDto = TicketTestHelper.createTicketRequestDto(1L, LocalDate.now());
 
         ticketService.registerTicket(ticketRequestDto);
 
@@ -43,7 +48,7 @@ class TicketServiceTest {
     void register_ticket_fail() throws Exception {
 
         // given
-        TicketRequestDto ticketRequestDto = new TicketRequestDto(1L, TicketTestHelper.createTicketCategoryDtos());
+        TicketRequestDto ticketRequestDto = TicketTestHelper.createTicketRequestDto(1L, LocalDate.now());
 
         // when
         register_ticket_success();

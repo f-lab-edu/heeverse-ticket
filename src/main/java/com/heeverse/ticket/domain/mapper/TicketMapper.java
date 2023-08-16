@@ -12,12 +12,12 @@ public interface TicketMapper {
 
     void insertTicketGrade(List<GradeTicket> gradeTickets);
 
-    List<GradeTicket> findTicketGrades(long concertId);
+    List<GradeTicket> findTicketGrades(long concertSeq);
 
     void insertTicket(List<Ticket> tickets);
 
-    List<Ticket> findTickets(long concertId);
+    List<Ticket> findTickets(long concertSeq);
 
-    int countTicket(long concertId);
+    int countTicket(long concertSeq);
 
 }

@@ -1,7 +1,9 @@
 package com.heeverse.ticket.domain.mapper;
 
 import com.heeverse.ticket.dto.TicketGradeDto;
+import com.heeverse.ticket.dto.TicketRequestDto;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -16,6 +18,16 @@ public class TicketTestHelper {
                 new TicketGradeDto(2, "S석", 2000),
                 new TicketGradeDto(3, "R석", 4000)
         );
+    }
+
+
+    public static TicketRequestDto createTicketRequestDto(long concertId, LocalDate concertDate) {
+        return new TicketRequestDto(concertId, concertDate, createTicketCategoryDtos());
+    }
+
+
+    public static TicketRequestDto createTicketRequestDto(long concertId, LocalDate concertDate, List<TicketGradeDto> list) {
+        return new TicketRequestDto(concertId, concertDate, list);
     }
 
 }
