@@ -37,14 +37,12 @@ class TicketRequestDtoTest {
     @DisplayName("TicketRequestDto 유효성 검사시 필드 TicketGradeDto 검사도 함께 수행한다")
     void ticketRequestDto_ticketGradeDtoList_field_should_not_null() throws Exception {
 
-
         List<TicketGradeDto> ticketGradeDtoList = new ArrayList<>();
-        ticketGradeDtoList.add(new TicketGradeDto( "VIP석", 0));
+        ticketGradeDtoList.add(new TicketGradeDto("VIP석", 0));
         TicketRequestDto ticketRequestDto = new TicketRequestDto(1L, ticketGradeDtoList);
 
-
-        Set<ConstraintViolation<TicketRequestDto>> violations = validator.validate(ticketRequestDto);
-
+        Set<ConstraintViolation<TicketRequestDto>> violations = validator.validate(
+            ticketRequestDto);
 
         ConstraintViolation<TicketRequestDto> violation = violations.iterator().next();
         assertEquals("ticketGradeDtoList[0].seatCount", violation.getPropertyPath().toString());
@@ -56,10 +54,10 @@ class TicketRequestDtoTest {
     @DisplayName("ticketGradeDto 필드 유효성 위반 개수 검사")
     void ticketGradeDto_validation_test() throws Exception {
 
-        assertViolationCount(new TicketGradeDto( "VIP", 10000), 1);
-        assertViolationCount(new TicketGradeDto( "VIP", 0), 2);
-        assertViolationCount(new TicketGradeDto( "", 0), 3);
-        assertViolationCount(new TicketGradeDto( null, 0), 3);
+        assertViolationCount(new TicketGradeDto("VIP", 10000), 1);
+        assertViolationCount(new TicketGradeDto("VIP", 0), 2);
+        assertViolationCount(new TicketGradeDto("", 0), 3);
+        assertViolationCount(new TicketGradeDto(null, 0), 3);
 
     }
 

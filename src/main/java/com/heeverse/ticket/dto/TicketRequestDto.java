@@ -7,9 +7,9 @@ import java.util.List;
 
 
 public record TicketRequestDto (
-        @JsonProperty("concertId")
+        @JsonProperty("concertSeq")
         @NotNull
-        Long concertId,
+        Long concertSeq,
         @JsonProperty("ticketCategoryDtoList")
         @NotNull
         List<@Valid TicketGradeDto> ticketGradeDtoList
