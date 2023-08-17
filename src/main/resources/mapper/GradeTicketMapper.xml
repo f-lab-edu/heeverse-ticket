@@ -4,7 +4,7 @@
 <mapper namespace="com.heeverse.ticket.domain.mapper.GradeTicketMapper">
 
   <insert id="insertGradeTicket" parameterType="com.heeverse.ticket.domain.entity.GradeTicket">
-    INSERT INTO grade_ticket (GRADE_NAME, TICKET_COUNT, CONCERT_ID, create_datetime)
-    VALUES (#{gradeName}, #{ticketCount}, #{concertId}, #{createDateTime});
+    INSERT INTO grade_ticket (GRADE_NAME, TICKET_COUNT, CONCERT_SEQ, create_datetime)
+    VALUES (#{gradeName}, #{ticketCount}, #{concertId}, #{createDateTime})
   </insert>
 </mapper>
