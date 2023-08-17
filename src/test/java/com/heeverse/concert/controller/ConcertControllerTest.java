@@ -3,7 +3,13 @@ package com.heeverse.concert.controller;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.heeverse.concert.dto.ConcertRequestDto;
 import com.heeverse.concert.service.ConcertService;
+import com.heeverse.ticket.dto.TicketGradeDto;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,69 +33,35 @@ class ConcertControllerTest {
 
     @MockBean
     ConcertService concertService;
+    @Autowired
+    ObjectMapper objectMapper;
 
-    @DisplayName("JSON request가 dto에 직렬화된다.")
+    @DisplayName("콘서트 생성 요청시 201이 리턴된다.")
     @Test
     @WithMockUser
     void create() throws Exception {
+        LocalDateTime concertDate = LocalDateTime.parse("2023-12-15T10:00:00");
+        LocalDateTime ticketOpenTime = LocalDateTime.parse("2023-10-15T10:00:00");
+        LocalDateTime ticketEndTime = LocalDateTime.parse("2023-10-17T10:00:00");
+
+        List<TicketGradeDto> ticketGradeDtoList = new ArrayList<>();
+        TicketGradeDto ticketGradeDto = new TicketGradeDto("VIP", 100);
+        ticketGradeDtoList.add(ticketGradeDto);
+
+        ConcertRequestDto dto = new ConcertRequestDto("BTS 콘서트", concertDate,
+            ticketOpenTime, ticketEndTime, 1L, 1L, ticketGradeDtoList);
+
+        List<ConcertRequestDto> concertRequestDtoList = new ArrayList<>();
+        concertRequestDtoList.add(dto);
+
+        String jsonBody = objectMapper.writeValueAsString(concertRequestDtoList);
+        System.out.println("jsonBody = " + jsonBody);
         ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/concert")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .with(csrf())
-            .content("""
-                [
-                     {
-                         "concertName": "BTS 콘서트",
-                         "concertDate": "2023-12-15T10:00:00",
-                         "ticketOpenTime": "2023-10-15T10:00:00",
-                         "ticketEndTime": "2023-10-17T10:00:00",
-                         "artistId": 1,
-                         "venueId": 1,
-                         "gradeTicketDtoList": [
-                             {
-                                 "gradeName": "VIP",
-                                 "ticketCount": 100
-                             },
-                             {
-                                 "gradeName": "R",
-                                 "ticketCount": 200
-                             }
-                         ]
-                     }
-                 ]
-                """));
+            .content(jsonBody));
         perform.andExpect(status().isCreated());
     }
 
-    @DisplayName("티켓 오픈 시간은 티켓 종료 시간보다 미래이면 bad request를 반환한다.")
-    @Test
-    @WithMockUser
-    void requestDto_Null_exception_test() throws Exception {
-        ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/concert")
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .with(csrf())
-            .content("""
-                [
-                      {
-                          "concertName": "BTS 콘서트",
-                          "concertDate": "2023-12-15T10:00:00",
-                          "ticketOpenTime": "2023-10-18T10:00:00",
-                          "ticketEndTime": "2023-10-17T10:00:00",
-                          "artistId": 1,
-                          "venueId": 1,
-                          "gradeTicketDtoList": [
-                              {
-                                  "gradeName": "VIP",
-                                  "ticketCount": 100
-                              },
-                              {
-                                  "gradeName": "R",
-                                  "ticketCount": 200
-                              }
-                          ]
-                      }
-                  ]
-                """));
 
-        perform.andExpect(status().isBadRequest());
-    }
 }

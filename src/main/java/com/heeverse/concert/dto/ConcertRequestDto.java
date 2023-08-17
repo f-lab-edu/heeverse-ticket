@@ -20,24 +20,34 @@ public class ConcertRequestDto {
     private String concertName;
 
     @Future(message = "현재 시간보다 이후여야합니다.")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:Ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:Ss")
     private LocalDateTime concertDate;
 
     @Future(message = "현재 시간보다 이후여야합니다.")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:Ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:Ss")
     private LocalDateTime ticketOpenTime;
 
     @Future(message = "현재 시간보다 이후여야합니다.")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:Ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:Ss")
     private LocalDateTime ticketEndTime;
 
     @NotNull
-    private Long artistId;
+    private Long artistSeq;
 
     @NotNull
-    private Long venueId;
+    private Long venueSeq;
 
     private List<TicketGradeDto> ticketGradeDtoList;
 
-
+    public ConcertRequestDto(String concertName, LocalDateTime concertDate,
+        LocalDateTime ticketOpenTime, LocalDateTime ticketEndTime, @NotNull Long artistSeq,
+        @NotNull Long venueSeq, List<TicketGradeDto> ticketGradeDtoList) {
+        this.concertName = concertName;
+        this.concertDate = concertDate;
+        this.ticketOpenTime = ticketOpenTime;
+        this.ticketEndTime = ticketEndTime;
+        this.artistSeq = artistSeq;
+        this.venueSeq = venueSeq;
+        this.ticketGradeDtoList = ticketGradeDtoList;
+    }
 }

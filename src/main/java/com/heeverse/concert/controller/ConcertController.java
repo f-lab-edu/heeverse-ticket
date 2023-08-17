@@ -39,16 +39,16 @@ public class ConcertController {
 
     private void validationConcertDto(List<ConcertRequestDto> dtoList) {
         for (ConcertRequestDto dto : dtoList) {
-            validateTimeOrder(dto.getTicketEndTime(), dto.getTicketOpenTime(),"티켓 종료 시간은 티켓 오픈 시간보다 이후여야 합니다.");
-            validateTimeOrder(dto.getConcertDate(), dto.getTicketEndTime(),"콘서트 날짜와시간은 티켓 종료 시간보다 이후여야 합니다.");
+            validateTimeOrder(dto.getTicketOpenTime(), dto.getTicketEndTime(),
+                "티켓 종료 시간은 티켓 오픈 시간보다 이후여야 합니다.");
+            validateTimeOrder(dto.getTicketEndTime(), dto.getConcertDate(),
+                "콘서트 날짜와시간은 티켓 종료 시간보다 이후여야 합니다.");
         }
     }
 
-    private static void validateTimeOrder(LocalDateTime beforeTime, LocalDateTime afterTime, String msg) {
-        if (beforeTime.isBefore(afterTime)) {
+    private void validateTimeOrder(LocalDateTime beforeTime, LocalDateTime afterTime, String msg) {
+        if (afterTime.isBefore(beforeTime)) {
             throw new ConcertTimeValidationException(msg);
         }
-
     }
-
 }

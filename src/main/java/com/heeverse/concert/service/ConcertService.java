@@ -23,12 +23,12 @@ public class ConcertService {
     private final ConcertMapper concertMapper;
     private final TicketService ticketService;
 
-    @Transactional(propagation = MANDATORY)
+    @Transactional
     public void registerConcert(List<ConcertRequestDto> listDto) {
         for (ConcertRequestDto dto : listDto) {
-            Long concertId = concertMapper.insertConcert(new Concert(dto));
+            Long concertSeq = concertMapper.insertConcert(new Concert(dto));
 
-            TicketRequestDto ticketRequestDto = new TicketRequestDto(concertId,
+            TicketRequestDto ticketRequestDto = new TicketRequestDto(concertSeq,
                 dto.getTicketGradeDtoList());
             ticketService.registerTicket(ticketRequestDto);
         }
