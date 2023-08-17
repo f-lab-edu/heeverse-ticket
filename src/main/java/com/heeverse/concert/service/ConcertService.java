@@ -1,7 +1,5 @@
 package com.heeverse.concert.service;
 
-import static org.springframework.transaction.annotation.Propagation.MANDATORY;
-
 import com.heeverse.concert.domain.entity.Concert;
 import com.heeverse.concert.domain.mapper.ConcertMapper;
 import com.heeverse.concert.dto.ConcertRequestDto;
