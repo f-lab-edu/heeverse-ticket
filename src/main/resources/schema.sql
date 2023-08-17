@@ -1,4 +1,11 @@
+DROP TABLE IF EXISTS ticket_order cascade;
 DROP TABLE IF EXISTS member cascade;
+DROP TABLE IF EXISTS ticket cascade;
+DROP TABLE IF EXISTS grade_ticket cascade;
+DROP TABLE IF EXISTS concert cascade;
+DROP TABLE IF EXISTS venue cascade;
+DROP TABLE IF EXISTS artist cascade;
+
 
 CREATE TABLE member
 (
@@ -10,7 +17,7 @@ CREATE TABLE member
     create_datetime datetime              NOT NULL COMMENT '데이터 생성일'
 );
 
-DROP TABLE IF EXISTS ticket_order cascade;
+
 
 CREATE TABLE ticket_order
 (
@@ -20,10 +27,10 @@ CREATE TABLE ticket_order
     booking_status  varchar(20)           NOT NULL COMMENT '완료, 취소 상태',
     delete_flag     boolean               NOT NULL COMMENT '삭제여부',
     create_datetime datetime              NOT NULL COMMENT '데이터 생성일',
-    CONSTRAINT member_seq FOREIGN KEY (seq) REFERENCES member (seq)
+    CONSTRAINT member_seq FOREIGN KEY (member_seq) REFERENCES member (seq)
 );
 
-DROP TABLE IF EXISTS concert cascade;
+
 
 CREATE TABLE concert
 (
@@ -38,7 +45,7 @@ CREATE TABLE concert
     artist_seq       bigint                NOT NULL COMMENT '아티스트 seq'
 );
 
-DROP TABLE IF EXISTS ticket cascade;
+
 
 CREATE TABLE ticket
 (
@@ -50,22 +57,19 @@ CREATE TABLE ticket
     cancelled_flag       boolean               NOT NULL COMMENT '취소여부',
     create_datetime      datetime              NOT NULL COMMENT '데이터 생성일',
     order_seq            bigint                NOT NULL COMMENT '예매 seq',
-    CONSTRAINT ticket_concert_seq FOREIGN KEY (seq) REFERENCES concert (seq)
+    CONSTRAINT ticket_concert_seq FOREIGN KEY (concert_seq) REFERENCES concert (seq)
 );
 
-
-DROP TABLE IF EXISTS grade_ticket cascade;
 
 CREATE TABLE grade_ticket
 (
-    seq             bigint      NOT NULL PRIMARY KEY COMMENT '공연 seq',
+    seq             bigint      NOT NULL PRIMARY KEY COMMENT '티켓 등급 seq',
     grade_name      varchar(20) NOT NULL COMMENT '티켓등급명칭',
     ticket_count    int         NOT NULL COMMENT '등급 할당 티켓수',
-    create_datetime bigint      NOT NULL COMMENT '데이터 생성일',
+    create_datetime datetime    NOT NULL COMMENT '데이터 생성일',
+    concert_seq     bigint      NOT NULL COMMENT '공연 seq',
     CONSTRAINT grade_ticket_concert_seq FOREIGN KEY (seq) REFERENCES concert (seq)
 );
-
-DROP TABLE IF EXISTS artist cascade;
 
 CREATE TABLE artist
 (
@@ -76,8 +80,6 @@ CREATE TABLE artist
 );
 
 
-DROP TABLE IF EXISTS venue cascade;
-
 CREATE TABLE venue
 (
     seq             bigint AUTO_INCREMENT NOT NULL PRIMARY KEY COMMENT '공연장 seq',
@@ -86,4 +88,3 @@ CREATE TABLE venue
     seat_cnt        bigint                NOT NULL COMMENT '공연장 좌석수',
     create_datetime datetime              NOT NULL COMMENT '데이터 생성일'
 );
-

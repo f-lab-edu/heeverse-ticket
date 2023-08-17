@@ -10,9 +10,9 @@ import java.time.LocalDateTime;
  */
 public class Concert extends BaseEntity {
 
-    private Long concertId;
-    private Long artistId;
-    private Long venueId;
+    private Long concertSeq;
+    private Long artistSeq;
+    private Long venueSeq;
     private String concertName;
     private LocalDateTime concertDate;
     private LocalDateTime ticketOpenTime;
@@ -21,21 +21,21 @@ public class Concert extends BaseEntity {
 
 
     public Concert(ConcertRequestDto dto) {
-        this(dto.getArtistId(), dto.getVenueId(), dto.getConcertName(),
+        this(dto.getArtistSeq(), dto.getVenueSeq(), dto.getConcertName(),
             dto.getConcertDate(), dto.getTicketOpenTime(), dto.getTicketEndTime());
     }
 
-    public Concert(Long artistId, Long venueId, String concertName,
+    public Concert(Long artistSeq, Long venueSeq, String concertName,
         LocalDateTime concertDate, LocalDateTime ticketOpenTime, LocalDateTime ticketEndTime) {
-        this.artistId = artistId;
-        this.venueId = venueId;
+        this.artistSeq = artistSeq;
+        this.venueSeq = venueSeq;
         this.concertName = concertName;
         this.concertDate = concertDate;
         this.ticketOpenTime = ticketOpenTime;
         this.ticketEndTime = ticketEndTime;
     }
 
-    public Long getConcertId() {
-        return concertId;
+    public Long getConcertSeq() {
+        return concertSeq;
     }
 }
