@@ -13,14 +13,10 @@ public class FutureDateValidator implements ConstraintValidator<FutureDate, Loca
 
     @Override
     public boolean isValid(LocalDateTime value, ConstraintValidatorContext context) {
-        System.out.println("value = " + value);
         if(value == null) {
             return false;
         }
-        System.out.println("value111111 = " + value);
         value.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-        LocalDateTime now = LocalDateTime.now();
-        System.out.println("now = " + now);
         return value.isAfter(LocalDateTime.now());
 
     }
