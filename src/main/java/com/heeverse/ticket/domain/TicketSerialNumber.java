@@ -1,7 +1,7 @@
 package com.heeverse.ticket.domain;
 
 import com.heeverse.common.SerialNumber;
-import com.heeverse.common.exception.SerialNumberException;
+import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -13,16 +13,23 @@ import static com.heeverse.common.util.StringUtils.leftPad;
  * @author gutenlee
  * @since 2023/08/10
  */
-public class TicketSerialNumber implements SerialNumber<String, TicketSerialTokenDto> {
+public class TicketSerialNumber implements SerialNumber<String> {
 
     private final static char ZERO = '0';
     private final DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyyMMdd");
 
+    private final String serialNumber;
 
+    public TicketSerialNumber(TicketSerialTokenDto tokenDto) {
+        this.serialNumber = generate(tokenDto);
+    }
 
-    public String generate(TicketSerialTokenDto tokenDto) {
+    public String getSerial() {
+        return serialNumber;
+    }
 
-        try {
+    private String generate(TicketSerialTokenDto tokenDto) {
+
             StringJoiner sj = new StringJoiner(tokenDto.getDelimiter().getValue());
             sj.add(dateToString(tokenDto.getConcertDate()));
             sj.add(tokenDto.getConcertSeqAsLong());
@@ -30,10 +37,6 @@ public class TicketSerialNumber implements SerialNumber<String, TicketSerialToke
             sj.add(addPad(tokenDto.getIndexAsString(), tokenDto.getTicketCountStrLength()));
 
             return sj.toString();
-        } catch (NullPointerException e) {
-            throw new SerialNumberException(e);
-        }
-
     }
 
 

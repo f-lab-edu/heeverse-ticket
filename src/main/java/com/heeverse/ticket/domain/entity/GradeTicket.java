@@ -32,10 +32,9 @@ public class GradeTicket extends BaseEntity {
 
 
     public GradeTicket(TicketGradeDto ticketGradeDto, long concertSeq) {
-        this(null,
-                ticketGradeDto.gradeName(),
-                ticketGradeDto.seatCount(),
-                concertSeq);
+        this.gradeName = ticketGradeDto.gradeName();
+        this.ticketCount = ticketGradeDto.seatCount();
+        this.concertSeq = concertSeq;
     }
 
 }

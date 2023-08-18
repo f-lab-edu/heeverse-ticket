@@ -23,7 +23,6 @@ import java.util.stream.IntStream;
 public class TicketService {
 
     private final TicketMapper ticketMapper;
-    private final TicketSerialNumber serial = new TicketSerialNumber();
 
 
     @Transactional
@@ -63,21 +62,14 @@ public class TicketService {
         List<Ticket> tickets = gradeTickets.stream()
                 .flatMap(grade ->
                     IntStream.range(0, grade.getTicketCount())
-                            .mapToObj(idx -> new Ticket(serial,
-                                    new TicketSerialTokenDto(ticketRequestDto.concertDate(), ticketRequestDto.concertSeq(), grade, idx),
-                                    grade)
+                            .mapToObj(idx -> new Ticket(new TicketSerialNumber(
+                                        new TicketSerialTokenDto(ticketRequestDto.concertDate(), ticketRequestDto.concertSeq(), grade, idx)
+                                    ), grade)
                             )
                 )
                 .toList();
 
         ticketMapper.insertTicket(tickets);
     }
-
-
-
-    public List<Ticket> getTickets() {
-        return ticketMapper.findTickets(1L);
-    }
-
 
 }

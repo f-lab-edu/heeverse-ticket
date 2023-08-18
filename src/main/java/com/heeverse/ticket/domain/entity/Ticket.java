@@ -1,8 +1,7 @@
 package com.heeverse.ticket.domain.entity;
 
-import com.heeverse.common.*;
-import com.heeverse.ticket.domain.TicketSerialNumber;
-import com.heeverse.ticket.domain.TicketSerialTokenDto;
+import com.heeverse.common.BaseEntity;
+import com.heeverse.common.SerialNumber;
 import lombok.Getter;
 import org.apache.ibatis.annotations.AutomapConstructor;
 import org.apache.ibatis.annotations.Param;
@@ -34,10 +33,8 @@ public class Ticket extends BaseEntity {
     }
 
 
-    public Ticket(TicketSerialNumber ticketSerialNumber,
-                  TicketSerialTokenDto serialTokenDto,
-                  GradeTicket gradeTicket) {
-        this.ticketSerialNumber = ticketSerialNumber.generate(serialTokenDto);
+    public Ticket(SerialNumber<String> ticketSerialNumber, GradeTicket gradeTicket) {
+        this.ticketSerialNumber = ticketSerialNumber.getSerial();
         this.concertSeq = gradeTicket.getConcertSeq();
         this.gradeName = gradeTicket.getGradeName();
     }

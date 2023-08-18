@@ -20,11 +20,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class TicketRequestDtoTest {
 
     private static Validator validator;
+    private static Long concertSeq;
 
     @BeforeAll
     public static void setUpValidator() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
+
+        concertSeq = TicketTestHelper.콘서트_생성하고_시퀀스_반환();
     }
 
 
@@ -36,7 +39,7 @@ class TicketRequestDtoTest {
 
         List<TicketGradeDto> ticketGradeDtoList = new ArrayList<>();
         ticketGradeDtoList.add(new TicketGradeDto(1, "VIP석", 0));
-        TicketRequestDto ticketRequestDto = TicketTestHelper.createTicketRequestDto(1L, LocalDate.now(), ticketGradeDtoList);
+        TicketRequestDto ticketRequestDto = TicketTestHelper.createTicketRequestDto(concertSeq, LocalDate.now(), ticketGradeDtoList);
 
         Set<ConstraintViolation<TicketRequestDto>> violations = validator.validate(ticketRequestDto);
 
@@ -52,7 +55,7 @@ class TicketRequestDtoTest {
 
         assertAll(
                 () -> assertViolationCount(new TicketRequestDto(null, null,null), 2),
-                () -> assertViolationCount(new TicketRequestDto(1L, null,null), 1)
+                () -> assertViolationCount(new TicketRequestDto(concertSeq, null,null), 1)
         );
 
     }

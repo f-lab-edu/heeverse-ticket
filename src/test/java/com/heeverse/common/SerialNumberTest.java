@@ -1,7 +1,6 @@
 package com.heeverse.common;
 
 
-import com.heeverse.common.exception.SerialNumberException;
 import com.heeverse.common.util.StringUtils;
 import com.heeverse.ticket.domain.TicketSerialNumber;
 import com.heeverse.ticket.domain.TicketSerialTokenDto;
@@ -10,18 +9,33 @@ import com.heeverse.ticket.dto.TicketGradeDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.time.LocalDate;
 
+import static com.heeverse.common.AssertUtils.assertThrowNPE;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 class SerialNumberTest {
 
-
-    private GradeTicket getGradeTicket(String gradeName, int seatCount) {
+    private static GradeTicket getGradeTicket(String gradeName, int seatCount) {
         TicketGradeDto ticketGradeDto = new TicketGradeDto(1, gradeName, seatCount);
         return new GradeTicket(ticketGradeDto, 0);
     }
+
+    private static TicketSerialTokenDto getTicketSerialTokenDto(LocalDate concertDate, long concertSeq, GradeTicket grade, int idx){
+        return new TicketSerialTokenDto(concertDate, concertSeq, grade, idx);
+    }
+
+    @Test
+    @DisplayName("ticketSerialTokenDto 생성자 nonNull 테스트")
+    void ticketSerialTokenDto_nonNull_test() throws Exception {
+        assertAll(
+            () -> assertThrowNPE(() -> getTicketSerialTokenDto(null, 1L, Mockito.mock(GradeTicket.class), 1)),
+            () -> assertThrowNPE(() -> getTicketSerialTokenDto(Mockito.mock(LocalDate.class), 1L, null, 1))
+        );
+    }
+
 
     @Test
     @DisplayName("티켓 생성 인덱스에 패드 추가 텍스트")
@@ -37,8 +51,8 @@ class SerialNumberTest {
 
     private void assertIndexWithPad(int idx, String expected){
 
-        TicketSerialTokenDto serialTokenDto = new TicketSerialTokenDto(
-                LocalDate.of(2022, 1, 2),
+        TicketSerialTokenDto serialTokenDto = getTicketSerialTokenDto(
+                Mockito.mock(LocalDate.class),
                 1L,
                 getGradeTicket("VIP", 1000),
                 idx
@@ -52,43 +66,14 @@ class SerialNumberTest {
     @DisplayName("티켓 시리얼 넘버는 [공연일]-[공연시퀀스]-[티켓등급명]-[티켓 등급에 할당된 장수, 시리얼번호]")
     void ticket_serial_number_success() throws Exception {
 
-        TicketGradeDto ticketGradeDto = new TicketGradeDto(1, "VIP", 1000);
-        GradeTicket gradeTicket = new GradeTicket(ticketGradeDto, 1L);
-
-        TicketSerialTokenDto serialTokenDto = new TicketSerialTokenDto(
+        TicketSerialTokenDto serialTokenDto = getTicketSerialTokenDto(
                 LocalDate.of(2022, 1, 2),
                 1L,
-                gradeTicket,
+                getGradeTicket("VIP", 1000),
                 1
         );
 
-        TicketSerialNumber ticketSerialNumber = new TicketSerialNumber();
-        String serialize = ticketSerialNumber.generate(serialTokenDto);
-
-        Assertions.assertEquals("20220102-1-VIP-0001", serialize);
+        Assertions.assertEquals("20220102-1-VIP-0001", new TicketSerialNumber(serialTokenDto).getSerial());
     }
-
-    @Test
-    @DisplayName("티켓 시리얼 넘버 생성 실패")
-    void ticket_serial_number_failed() throws Exception {
-
-        TicketGradeDto ticketGradeDto = new TicketGradeDto(1, "VIP", 1000);
-        GradeTicket gradeTicket = new GradeTicket(ticketGradeDto, 1L);
-
-        TicketSerialTokenDto serialTokenDto = new TicketSerialTokenDto(
-                null,
-                1L,
-                gradeTicket,
-                1
-        );
-
-
-        Assertions.assertThrowsExactly(
-                SerialNumberException.class,
-                () -> new TicketSerialNumber().generate(serialTokenDto)
-        );
-    }
-
-
 
 }

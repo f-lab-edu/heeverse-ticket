@@ -3,7 +3,7 @@ package com.heeverse.ticket.domain;
 import com.heeverse.common.Delimiter;
 import com.heeverse.common.SerialTokenDto;
 import com.heeverse.ticket.domain.entity.GradeTicket;
-import lombok.Getter;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -23,7 +23,7 @@ public class TicketSerialTokenDto extends SerialTokenDto {
     private final int ticketCount;
 
 
-    public TicketSerialTokenDto(LocalDate concertDate, long concertSeq, GradeTicket grade, int idx) {
+    public TicketSerialTokenDto(@NonNull LocalDate concertDate, long concertSeq, @NonNull GradeTicket grade, int idx) {
         super(defaultDelimiter);
         this.concertDate = concertDate;
         this.concertSeq = concertSeq;
