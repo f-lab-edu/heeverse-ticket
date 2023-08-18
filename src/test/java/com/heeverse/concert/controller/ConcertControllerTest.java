@@ -55,7 +55,7 @@ class ConcertControllerTest {
         concertRequestDtoList.add(dto);
 
         String jsonBody = objectMapper.writeValueAsString(concertRequestDtoList);
-        System.out.println("jsonBody = " + jsonBody);
+
         ResultActions perform = mockMvc.perform(MockMvcRequestBuilders.post("/concert")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .with(csrf())
