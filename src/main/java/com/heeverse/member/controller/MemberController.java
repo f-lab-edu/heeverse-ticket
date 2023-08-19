@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/member")
+@RequestMapping("/member")
 public class MemberController {
 
     private final MemberService memberService;

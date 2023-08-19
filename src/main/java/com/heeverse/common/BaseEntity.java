@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
  * @since 2023/07/19
  */
 public abstract class BaseEntity {
+
     private final LocalDateTime createDateTime;
 
     protected BaseEntity() {
