@@ -1,10 +1,11 @@
 package com.heeverse.ticket.domain.entity;
 
 import com.heeverse.common.BaseEntity;
-import java.util.UUID;
 import lombok.Getter;
 import org.apache.ibatis.annotations.AutomapConstructor;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.UUID;
 
 /**
  * @author gutenlee

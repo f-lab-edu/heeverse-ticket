@@ -3,6 +3,7 @@ package com.heeverse.ticket.domain.mapper;
 import com.heeverse.ticket.domain.entity.Ticket;
 import com.heeverse.ticket.domain.entity.TicketGrade;
 import com.heeverse.ticket.dto.TicketGradeDto;
+
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -14,9 +15,9 @@ public class TicketTestHelper {
 
     public static List<TicketGradeDto> createTicketCategoryDtos() {
         return List.of(
-                new TicketGradeDto( "VIP", 1500),
-                new TicketGradeDto( "S석", 2000),
-                new TicketGradeDto( "R석", 4000)
+                new TicketGradeDto(1, "VIP", 1500),
+                new TicketGradeDto(2, "S석", 2000),
+                new TicketGradeDto(3, "R석", 4000)
         );
     }
 
