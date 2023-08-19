@@ -7,6 +7,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.ObjectUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,9 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
  * @author jeongheekim
  * @date 2023/08/07
  */
+@Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(value = "/concert")
+@RequestMapping("/concert")
 public class ConcertController {
 
     private final ConcertService concertService;
