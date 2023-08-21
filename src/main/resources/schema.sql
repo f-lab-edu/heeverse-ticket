@@ -63,12 +63,12 @@ CREATE TABLE ticket
 
 CREATE TABLE grade_ticket
 (
-    seq             bigint      NOT NULL PRIMARY KEY COMMENT '티켓 등급 seq',
+    seq             bigint      AUTO_INCREMENT NOT NULL PRIMARY KEY COMMENT '티켓 등급 seq',
     grade_name      varchar(20) NOT NULL COMMENT '티켓등급명칭',
     ticket_count    int         NOT NULL COMMENT '등급 할당 티켓수',
     create_datetime datetime    NOT NULL COMMENT '데이터 생성일',
     concert_seq     bigint      NOT NULL COMMENT '공연 seq',
-    CONSTRAINT grade_ticket_concert_seq FOREIGN KEY (seq) REFERENCES concert (seq)
+    CONSTRAINT grade_ticket_concert_seq FOREIGN KEY (concert_seq) REFERENCES concert (seq)
 );
 
 CREATE TABLE artist

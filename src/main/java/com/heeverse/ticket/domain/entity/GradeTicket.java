@@ -1,21 +1,40 @@
 package com.heeverse.ticket.domain.entity;
 
 import com.heeverse.common.BaseEntity;
-import com.heeverse.ticket.dto.GradeTicketDto;
+import com.heeverse.ticket.dto.TicketGradeDto;
+import lombok.Getter;
+import org.apache.ibatis.annotations.AutomapConstructor;
+import org.apache.ibatis.annotations.Param;
 
 /**
- * @author jeongheekim
- * @date 2023/08/09
+ * @author gutenlee
+ * @since 2023/08/04
  */
+@Getter
 public class GradeTicket extends BaseEntity {
-    private Long seq;
-    private String gradeName;
-    private Integer ticketCount;
-    private Long concertId;
 
-    public GradeTicket(GradeTicketDto dto, Long concertId) {
-        this.gradeName = dto.getGradeName();
-        this.ticketCount = dto.getTicketCount();
-        this.concertId = concertId;
+    private Long seq;
+    private final String gradeName;
+    private final Integer ticketCount;
+    private final Long concertSeq;
+
+    @AutomapConstructor
+    private GradeTicket(
+            @Param("seq") Long seq,
+            @Param("gradeName") String gradeName,
+            @Param("ticketCount") Integer ticketCount,
+            @Param("concertSeq") Long concertSeq) {
+        this.seq = seq;
+        this.gradeName = gradeName;
+        this.ticketCount = ticketCount;
+        this.concertSeq = concertSeq;
     }
+
+
+    public GradeTicket(TicketGradeDto ticketGradeDto, long concertSeq) {
+        this.gradeName = ticketGradeDto.gradeName();
+        this.ticketCount = ticketGradeDto.seatCount();
+        this.concertSeq = concertSeq;
+    }
+
 }
