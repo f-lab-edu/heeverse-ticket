@@ -27,6 +27,7 @@ public class ConcertService {
             Long concertSeq = concertMapper.insertConcert(new Concert(dto));
 
             TicketRequestDto ticketRequestDto = new TicketRequestDto(concertSeq,
+                // TODO - concertDate 추가
                 dto.getTicketGradeDtoList());
             ticketService.registerTicket(ticketRequestDto);
         }

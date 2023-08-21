@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 class SerialNumberTest {
 
     private static GradeTicket getGradeTicket(String gradeName, int seatCount) {
-        TicketGradeDto ticketGradeDto = new TicketGradeDto(1, gradeName, seatCount);
+        TicketGradeDto ticketGradeDto = new TicketGradeDto( gradeName, seatCount);
         return new GradeTicket(ticketGradeDto, 0);
     }
 
