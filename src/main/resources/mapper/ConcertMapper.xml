@@ -3,8 +3,24 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.heeverse.concert.domain.mapper.ConcertMapper">
 
-  <insert id="insertConcert" useGeneratedKeys="true" parameterType="com.heeverse.concert.domain.entity.Concert">
-    INSERT INTO concert (concert_name, concert_date, ticket_open_time, ticket_end_time, create_datetime, venue_seq, artist_seq)
-    VALUES (#{concertName}, #{concertDate}, #{ticketOpenTime}, #{ticketEndTime}, #{createDateTime},#{venueSeq}, #{artistSeq})
+  <insert id="insertConcert" useGeneratedKeys="true"
+    parameterType="com.heeverse.concert.domain.entity.Concert">
+    INSERT INTO CONCERT (concert_name, concert_date, ticket_open_time, ticket_end_time,
+                         create_datetime, venue_seq, artist_seq)
+    VALUES (#{concertName}, #{concertDate}, #{ticketOpenTime}, #{ticketEndTime}, #{createDateTime},
+            #{venueSeq}, #{artistSeq})
   </insert>
+
+  <select id="selectConcertList" resultType="com.heeverse.concert.dto.persistence.SearchConcertDto"
+    parameterType="com.heeverse.concert.dto.presentation.SearchConcertRequestDto">
+    SELECT CONCERT_NAME, CONCERT_DATE , ARTIST_NAME_KOR, ARTIST_NAME_ENG, VENUE_NAME
+    FROM CONCERT C
+    LEFT JOIN ARTIST A on C.ARTIST_SEQ = A.SEQ
+    LEFT JOIN VENUE V on C.VENUE_SEQ = V.SEQ
+    <if test="concertName != ''">
+      WHERE CONCERT_NAME like CONCAT('%',#{concertName},'%')
+    </if>
+    LIMIT ${cnt}
+    OFFSET ${page}
+  </select>
 </mapper>
