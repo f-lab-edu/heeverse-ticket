@@ -4,7 +4,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.heeverse.concert.dto.ConcertRequestDto;
+import com.heeverse.concert.dto.presentation.ConcertRequestDto;
 import com.heeverse.concert.service.ConcertService;
 import com.heeverse.ticket.dto.TicketGradeDto;
 import java.time.LocalDateTime;

@@ -2,6 +2,7 @@ package com.heeverse.concert.dto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.heeverse.concert.dto.presentation.ConcertRequestDto;
 import com.heeverse.ticket.dto.TicketGradeDto;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
