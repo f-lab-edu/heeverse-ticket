@@ -8,6 +8,7 @@ import java.util.List;
 
 
 public record TicketRequestDto (
+
     @JsonProperty("concertId")
     @NotNull
     Long concertSeq,
@@ -17,5 +18,6 @@ public record TicketRequestDto (
     @JsonProperty("ticketCategoryDtoList")
     @NotNull
     List<@Valid TicketGradeDto> ticketGradeDtoList
+
 ) {
 }

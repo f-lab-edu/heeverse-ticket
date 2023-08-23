@@ -1,10 +1,12 @@
 package com.heeverse.ticket.domain.entity;
 
 import com.heeverse.common.BaseEntity;
-import java.util.UUID;
+import com.heeverse.common.SerialNumber;
 import lombok.Getter;
 import org.apache.ibatis.annotations.AutomapConstructor;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.UUID;
 
 /**
  * @author gutenlee
@@ -13,33 +15,30 @@ import org.apache.ibatis.annotations.Param;
 @Getter
 public class Ticket extends BaseEntity {
 
-    private Long ticketId;
+    private Long seq;
     private final String ticketSerialNumber;
-    private final Long concertId;
-    private final Long ticketGradeId;
+    private final Long concertSeq;
+    private final String gradeName;
     private OrderInfo orderInfo;
 
     @AutomapConstructor
-    public Ticket(
-            @Param("ticketId") Long ticketId,
+    private Ticket(
+            @Param("seq") Long seq,
             @Param("ticketSerialNumber") String ticketSerialNumber,
-            @Param("concertId") Long concertId,
-            @Param("ticketGradeId") Long ticketGradeId) {
-        this.ticketId = ticketId;
+            @Param("concertSeq") Long concertSeq,
+            @Param("gradeName") String gradeName
+    ) {
+        this.seq = seq;
         this.ticketSerialNumber = ticketSerialNumber;
-        this.concertId = concertId;
-        this.ticketGradeId = ticketGradeId;
-    }
-
-    public Ticket(long concertId, long ticketGradeId) {
-        this.concertId = concertId;
-        this.ticketSerialNumber = UUID.randomUUID().toString();
-        this.ticketGradeId = ticketGradeId;
+        this.concertSeq = concertSeq;
+        this.gradeName = gradeName;
     }
 
 
-    public static Ticket publish(TicketGrade ticketGrade){
-        return new Ticket(ticketGrade.getConcertId(), ticketGrade.getTicketGradeId());
+    public Ticket(SerialNumber<String> ticketSerialNumber, GradeTicket gradeTicket) {
+        this.ticketSerialNumber = ticketSerialNumber.getSerial();
+        this.concertSeq = gradeTicket.getConcertSeq();
+        this.gradeName = gradeTicket.getGradeName();
     }
 
 
@@ -48,13 +47,14 @@ public class Ticket extends BaseEntity {
     }
 
 
+
+
     @Override
     public String toString() {
         return "Ticket{" +
-                "ticketId=" + ticketId +
+                "seq=" + seq +
                 ", ticketSerialNumber='" + ticketSerialNumber + '\'' +
-                ", concertId=" + concertId +
-                ", ticketGradeId=" + ticketGradeId +
+                ", concertSeq=" + concertSeq +
                 ", orderInfo=" + orderInfo +
                 '}';
     }

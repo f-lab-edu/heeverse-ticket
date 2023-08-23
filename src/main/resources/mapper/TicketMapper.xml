@@ -5,54 +5,51 @@
 <mapper namespace="com.heeverse.ticket.domain.mapper.TicketMapper">
 
     <insert id="insertTicketGrade" parameterType="java.util.List">
-        INSERT INTO ticket_grade(
-            grade,
+        INSERT INTO grade_ticket(
             grade_name,
-            seat_count,
-            concert_id,
+            ticket_count,
+            concert_seq,
             create_datetime
         )
         VALUES
             <foreach item="grade" collection="list" separator=",">
                 (
-                    #{grade.grade},
                     #{grade.gradeName},
-                    #{grade.seatCount},
-                    #{grade.concertId},
+                    #{grade.ticketCount},
+                    #{grade.concertSeq},
                     #{grade.createDateTime}
                 )
             </foreach>
     </insert>
     
     <select id="findTicketGrades" parameterType="java.lang.Long"
-            resultType="com.heeverse.ticket.domain.entity.TicketGrade">
+            resultType="com.heeverse.ticket.domain.entity.GradeTicket">
         SELECT
-            ticket_grade_id,
-            grade,
+            seq,
             grade_name,
-            seat_count,
-            concert_id,
+            ticket_count,
+            concert_seq,
             create_datetime
         FROM
-            ticket_grade
+            grade_ticket
         WHERE
-            concert_id = #{concertId}
+            concert_seq = #{concertSeq}
     </select>
 
 
     <insert id="insertTicket" parameterType="java.util.List">
         INSERT INTO ticket(
             ticket_serial_number,
-            concert_id,
-            ticket_grade_id,
+            grade_name,
+            concert_seq,
             create_datetime
         )
         VALUES
             <foreach item="ticket" collection="list" separator=",">
                 (
                     #{ticket.ticketSerialNumber},
-                    #{ticket.concertId},
-                    #{ticket.ticketGradeId},
+                    #{ticket.gradeName},
+                    #{ticket.concertSeq},
                     #{ticket.createDateTime}
                 )
             </foreach>
@@ -63,15 +60,26 @@
     <select id="findTickets" parameterType="java.lang.Long"
             resultType="com.heeverse.ticket.domain.entity.Ticket">
         SELECT
-            ticket_id,
+            seq,
             ticket_serial_number,
-            concert_id,
-            ticket_grade_id,
+            grade_name,
+            concert_seq,
             create_datetime
         FROM
             ticket
         WHERE
-            concert_id = #{concertId}
+            concert_seq = #{concertSeq}
+    </select>
+
+
+    <select id="countTicket" parameterType="java.lang.Long"
+            resultType="int">
+        SELECT
+            count(seq)
+        FROM
+            ticket
+        WHERE
+            concert_seq = #{concertSeq}
     </select>
 
 </mapper>

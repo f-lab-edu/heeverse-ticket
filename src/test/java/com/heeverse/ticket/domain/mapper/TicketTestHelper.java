@@ -1,10 +1,10 @@
 package com.heeverse.ticket.domain.mapper;
 
-import com.heeverse.ticket.domain.entity.Ticket;
-import com.heeverse.ticket.domain.entity.TicketGrade;
 import com.heeverse.ticket.dto.TicketGradeDto;
+import com.heeverse.ticket.dto.TicketRequestDto;
+
+import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.IntStream;
 
 /**
  * @author gutenlee
@@ -21,20 +21,18 @@ public class TicketTestHelper {
     }
 
 
-    public static List<TicketGrade> toTicketGrade(List<TicketGradeDto> ticketGradeDtos, long concertId) {
-        return ticketGradeDtos.stream()
-                .map(dto -> new TicketGrade(dto, concertId))
-                .toList();
+    public static TicketRequestDto createTicketRequestDto(long concertId, LocalDate concertDate) {
+        return new TicketRequestDto(concertId, concertDate, createTicketCategoryDtos());
     }
 
 
-    public static List<Ticket> publishTicket(List<TicketGrade> ticketGrades) {
-
-        return ticketGrades.stream()
-                .flatMap(grade -> {
-                    return IntStream.rangeClosed(0, grade.getSeatCount())
-                            .mapToObj(i -> Ticket.publish(grade));
-                })
-                .toList();
+    public static TicketRequestDto createTicketRequestDto(long concertId, LocalDate concertDate, List<TicketGradeDto> list) {
+        return new TicketRequestDto(concertId, concertDate, list);
     }
+
+
+    public static Long 콘서트_생성하고_시퀀스_반환() {
+         return 1L;
+    }
+
 }

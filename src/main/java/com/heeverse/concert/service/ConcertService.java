@@ -35,6 +35,7 @@ public class ConcertService {
 
             TicketRequestDto ticketRequestDto = new TicketRequestDto(concertSeq,
                 dto.getConcertDate(), dto.getTicketGradeDtoList());
+
             ticketService.registerTicket(ticketRequestDto);
         }
     }

@@ -1,36 +1,36 @@
 package com.heeverse.ticket.dto;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
+import com.heeverse.ticket.domain.mapper.TicketTestHelper;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 class TicketRequestDtoTest {
 
     private static Validator validator;
+    private static Long concertSeq;
 
     @BeforeAll
     public static void setUpValidator() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
+
+        concertSeq = TicketTestHelper.콘서트_생성하고_시퀀스_반환();
     }
 
 
-    @Test
-    @DisplayName("TicketRequestDto 의 필드 유효성 위반 개수 검사")
-    void ticketRequestDto_not_null() throws Exception {
-
-        assertViolationCount(new TicketRequestDto(null, null), 2);
-        assertViolationCount(new TicketRequestDto(1L, null), 1);
-    }
 
 
     @Test
@@ -39,7 +39,7 @@ class TicketRequestDtoTest {
 
         List<TicketGradeDto> ticketGradeDtoList = new ArrayList<>();
         ticketGradeDtoList.add(new TicketGradeDto("VIP석", 0));
-        TicketRequestDto ticketRequestDto = new TicketRequestDto(1L, ticketGradeDtoList);
+        TicketRequestDto ticketRequestDto = TicketTestHelper.createTicketRequestDto(concertSeq, LocalDate.now(), ticketGradeDtoList);
 
         Set<ConstraintViolation<TicketRequestDto>> violations = validator.validate(
             ticketRequestDto);
@@ -51,15 +51,36 @@ class TicketRequestDtoTest {
 
 
     @Test
-    @DisplayName("ticketGradeDto 필드 유효성 위반 개수 검사")
-    void ticketGradeDto_validation_test() throws Exception {
+    @DisplayName("@NotNull 위반 개수 검사")
+    void ticketRequestDto_not_null() throws Exception {
 
-        assertViolationCount(new TicketGradeDto("VIP", 10000), 1);
-        assertViolationCount(new TicketGradeDto("VIP", 0), 2);
-        assertViolationCount(new TicketGradeDto("", 0), 3);
-        assertViolationCount(new TicketGradeDto(null, 0), 3);
+        assertAll(
+                () -> assertViolationCount(new TicketRequestDto(null, null,null), 2),
+                () -> assertViolationCount(new TicketRequestDto(concertSeq, null,null), 1)
+        );
 
     }
+
+
+    @Test
+    @DisplayName("@Min=1 유효성 위반 개수 테스트")
+    void min_violation_count() throws Exception {
+         assertAll(
+             () -> assertViolationCount(new TicketGradeDto("VIP", 0), 2),
+             () -> assertViolationCount(new TicketGradeDto("VIP", 1), 0),
+             () -> assertViolationCount(new TicketGradeDto("VIP", 2), 0)
+         );
+    }
+
+
+    @Test
+    @DisplayName("@NotBlank 유효성 위반 개수 테스트")
+    void notBlank_violation_test() throws Exception {
+        assertViolationCount(new TicketGradeDto( "VIP", 1), 0);
+        assertViolationCount(new TicketGradeDto( "", 1), 1);
+        assertViolationCount(new TicketGradeDto( null, 1), 1);
+    }
+
 
 
     static <T> void assertViolationCount(T obj, int expectedViolationSize) {
