@@ -1,0 +1,68 @@
+name: CI-CD
+
+on:
+  push:
+    branches:
+      - dev
+
+env:
+  S3_BUCKET_NAME: heeversebucket
+  RESOURCE_PATH: ./src/main/resources/application-dev.yaml
+  CODE_DEPLOY_APPLICATION_NAME: heeverse-api
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: heeverse-server
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3.12.0
+        with:
+          java-version: 17
+        
+        # [1]
+      - name: Set yaml file 
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ${{ env.RESOURCE_PATH }} 
+        env:
+          override.value: ${{ secrets.DI_FROM_SECRET }} 
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+        shell: bash
+
+        # [2]
+      - name: Build with Gradle
+        run: ./gradlew build
+        shell: bash
+
+        # [3]
+      - name: Make zip file
+        run: zip -r ./$GITHUB_SHA.zip .
+        shell: bash
+
+        # [4]
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }} 
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
+          aws-region: ${{ secrets.AWS_REGION }} 
+
+        # [5]
+      - name: Upload to S3
+        run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip
+
+        # [6]
+      - name: Code Deploy
+        run: | 
+          aws deploy create-deployment \
+          --deployment-config-name CodeDeployDefault.AllAtOnce \
+          --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
+          --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
+          --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$GITHUB_SHA.zip
