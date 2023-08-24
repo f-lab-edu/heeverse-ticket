@@ -1,5 +1,7 @@
 package com.heeverse.concert.controller;
 
+import com.heeverse.common.Paging;
+import com.heeverse.common.PagingRequest;
 import com.heeverse.concert.dto.presentation.ConcertRequestDto;
 import com.heeverse.concert.dto.presentation.SearchConcertRequestDto;
 import com.heeverse.concert.dto.presentation.SearchConcertResponseDto;
@@ -46,10 +48,11 @@ public class ConcertController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<SearchConcertResponseDto>> getConcertList(
-        @RequestParam String concertName, @RequestParam int page, @RequestParam int cnt) {
-        log.info("조회 concertName : {}", concertName);
+        @RequestParam String concertName, @RequestParam int page, @RequestParam int size) {
+        log.info("조회 concertName : {}, page: {}, size:{} ", concertName, page, size);
         return ResponseEntity.ok(
-            concertService.getConcertList(new SearchConcertRequestDto(concertName, page, cnt)));
+            concertService.getConcertList(
+                new SearchConcertRequestDto(concertName, PagingRequest.of(page, size))));
     }
 
 }

@@ -11,16 +11,17 @@
             #{venueSeq}, #{artistSeq})
   </insert>
 
-  <select id="selectConcertList" resultType="com.heeverse.concert.dto.persistence.SearchConcertDto"
-    parameterType="com.heeverse.concert.dto.presentation.SearchConcertRequestDto">
+  <select id="selectConcertList" resultType="com.heeverse.concert.dto.persistence.ConcertResponseMapperDto"
+    parameterType="com.heeverse.concert.dto.persistence.ConcertRequestMapperDto">
     SELECT CONCERT_NAME, CONCERT_DATE , ARTIST_NAME_KOR, ARTIST_NAME_ENG, VENUE_NAME
     FROM CONCERT C
     LEFT JOIN ARTIST A on C.ARTIST_SEQ = A.SEQ
     LEFT JOIN VENUE V on C.VENUE_SEQ = V.SEQ
+    WHERE 1=1
     <if test="concertName != ''">
-      WHERE CONCERT_NAME like CONCAT('%',#{concertName},'%')
+      CONCERT_NAME like CONCAT('%',#{concertName},'%')
     </if>
-    LIMIT ${cnt}
-    OFFSET ${page}
+    LIMIT ${size}
+    OFFSET ${offset}
   </select>
 </mapper>

@@ -8,7 +8,7 @@ import lombok.Getter;
  * @date 2023/08/22
  */
 @Getter
-public class SearchConcertDto {
+public class ConcertResponseMapperDto {
     private String concertName;
     private LocalDateTime concertDate;
     private String artistNameKor;

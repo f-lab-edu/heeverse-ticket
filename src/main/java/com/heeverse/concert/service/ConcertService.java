@@ -2,11 +2,11 @@ package com.heeverse.concert.service;
 
 import com.heeverse.concert.domain.entity.Concert;
 import com.heeverse.concert.domain.mapper.ConcertMapper;
-import com.heeverse.concert.dto.persistence.SearchConcertDto;
+import com.heeverse.concert.dto.persistence.ConcertRequestMapperDto;
+import com.heeverse.concert.dto.persistence.ConcertResponseMapperDto;
 import com.heeverse.concert.dto.presentation.ConcertRequestDto;
 import com.heeverse.concert.dto.presentation.SearchConcertRequestDto;
 import com.heeverse.concert.dto.presentation.SearchConcertResponseDto;
-import com.heeverse.concert.exception.ConcertTimeValidationException;
 import com.heeverse.ticket.dto.TicketRequestDto;
 import com.heeverse.ticket.service.TicketService;
 import java.util.List;
@@ -43,9 +43,8 @@ public class ConcertService {
     @Transactional(readOnly = true)
     public List<SearchConcertResponseDto> getConcertList(SearchConcertRequestDto dto) {
 
-        List<SearchConcertDto> concertList = concertMapper.selectConcertList(dto);
-        return concertList.stream().map(d -> new SearchConcertResponseDto(d.getConcertName(),
-                d.getConcertDate(), d.getArtistNameKor(), d.getArtistNameEng(), d.getVenueName()))
+        List<ConcertResponseMapperDto> concertList = concertMapper.selectConcertList(new ConcertRequestMapperDto(dto));
+        return concertList.stream().map(SearchConcertResponseDto::new)
             .collect(Collectors.toList());
     }
 }
