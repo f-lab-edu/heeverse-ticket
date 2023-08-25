@@ -5,6 +5,8 @@ import com.heeverse.concert.domain.mapper.ConcertMapper;
 import com.heeverse.concert.dto.ConcertRequestDto;
 import com.heeverse.ticket.dto.TicketRequestDto;
 import com.heeverse.ticket.service.TicketService;
+
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,7 +29,7 @@ public class ConcertService {
             Long concertSeq = concertMapper.insertConcert(new Concert(dto));
 
             TicketRequestDto ticketRequestDto = new TicketRequestDto(concertSeq,
-                // TODO - concertDate 추가
+                LocalDate.now(),
                 dto.getTicketGradeDtoList());
             ticketService.registerTicket(ticketRequestDto);
         }
