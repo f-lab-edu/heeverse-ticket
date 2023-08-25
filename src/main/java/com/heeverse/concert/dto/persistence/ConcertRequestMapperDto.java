@@ -9,10 +9,10 @@ import com.heeverse.concert.dto.presentation.SearchConcertRequestDto;
  */
 public class ConcertRequestMapperDto {
 
-    private String concertName;
-    private int page;
-    private int size;
-    private long offset;
+    private final String concertName;
+    private final int page;
+    private final int size;
+    private final long offset;
 
     public ConcertRequestMapperDto(SearchConcertRequestDto dto) {
         Paging paging = dto.paging();

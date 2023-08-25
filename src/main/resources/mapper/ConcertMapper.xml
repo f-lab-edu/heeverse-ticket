@@ -19,7 +19,7 @@
     LEFT JOIN VENUE V on C.VENUE_SEQ = V.SEQ
     WHERE 1=1
     <if test="concertName != ''">
-      CONCERT_NAME like CONCAT('%',#{concertName},'%')
+      and CONCERT_NAME like CONCAT('%',#{concertName},'%')
     </if>
     LIMIT ${size}
     OFFSET ${offset}

@@ -18,11 +18,11 @@ public class SearchConcertResponseDto {
     private final String venueName;
 
     public SearchConcertResponseDto(ConcertResponseMapperDto dto) {
-        this.concertName = dto.getConcertName();
-        this.concertDate = dto.getConcertDate();
-        this.artistNameKor = dto.getArtistNameKor();
-        this.artistNameEng = dto.getArtistNameEng();
-        this.venueName = dto.getVenueName();
+        this.concertName = dto.concertName();
+        this.concertDate = dto.concertDate();
+        this.artistNameKor = dto.artistNameKor();
+        this.artistNameEng = dto.artistNameEng();
+        this.venueName = dto.venueName();
     }
 
 }
