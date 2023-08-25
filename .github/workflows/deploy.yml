@@ -7,7 +7,7 @@ on:
 
 env:
   S3_BUCKET_NAME: heeversebucket
-  RESOURCE_PATH: ./src/main/resources/application-dev.yaml
+  RESOURCE_PATH: ./src/main/resources/application-dev.yml
   CODE_DEPLOY_APPLICATION_NAME: heeverse-api
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: heeverse-server
 
@@ -17,7 +17,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3.12.0
