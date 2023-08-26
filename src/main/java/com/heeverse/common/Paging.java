@@ -9,7 +9,7 @@ public interface Paging {
     int getPageSize();
     long getOffset();
 
-    Sorting getSorting();
+    SORTING getSorting();
 
     static Paging ofSize(int size) {return PagingRequest.of(0, size);}
 }
