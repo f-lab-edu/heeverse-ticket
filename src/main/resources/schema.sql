@@ -37,7 +37,7 @@ CREATE TABLE concert
     seq              bigint AUTO_INCREMENT NOT NULL PRIMARY KEY COMMENT '공연 seq',
     concert_name     varchar(255)          NOT NULL COMMENT '공연 이름',
     concert_date     datetime              NOT NULL COMMENT '공연 날짜',
-    cancelled_flag   boolean               NOT NULL DEFAULT false COMMENT '공연 취소 여부',
+    cancelled_flag   boolean DEFAULT FALSE COMMENT '공연 취소 여부',
     ticket_open_time datetime              NOT NULL COMMENT '티켓예매오픈시간',
     ticket_end_time  datetime              NOT NULL COMMENT '티켓예매 종료시간',
     create_datetime  datetime              NOT NULL COMMENT 'created_datetime',
@@ -54,9 +54,9 @@ CREATE TABLE ticket
     purchase_date        datetime              NULL COMMENT '구매 일시',
     ticket_serial_number varchar(255)          NULL COMMENT '티켓 시리얼 넘버',
     grade_name           varchar(255)          NOT NULL COMMENT '티켓등급',
-    cancelled_flag       boolean               NOT NULL COMMENT '취소여부',
+    cancelled_flag       boolean DEFAULT FALSE COMMENT '취소여부',
     create_datetime      datetime              NOT NULL COMMENT '데이터 생성일',
-    order_seq            bigint                NOT NULL COMMENT '예매 seq',
+    order_seq            bigint                NULL COMMENT '예매 seq',
     CONSTRAINT ticket_concert_seq FOREIGN KEY (concert_seq) REFERENCES concert (seq)
 );
 
@@ -73,10 +73,10 @@ CREATE TABLE grade_ticket
 
 CREATE TABLE artist
 (
-    seq              bigint AUTO_INCREMENT NOT NULL PRIMARY KEY COMMENT '아티스트 seq',
+    seq             bigint AUTO_INCREMENT NOT NULL PRIMARY KEY COMMENT '아티스트 seq',
     artist_name_kor varchar(50)           NOT NULL COMMENT '아티스트 국문명',
-    artist_name_eng  varchar(50)           NOT NULL COMMENT '아티스트 영문명',
-    create_datetime  datetime              NOT NULL COMMENT '데이터 생성일'
+    artist_name_eng varchar(50)           NOT NULL COMMENT '아티스트 영문명',
+    create_datetime datetime              NOT NULL COMMENT '데이터 생성일'
 );
 
 

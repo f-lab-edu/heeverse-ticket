@@ -1,22 +1,20 @@
 package com.heeverse.ticket.dto;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.heeverse.ticket.domain.mapper.TicketTestHelper;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import java.time.LocalDateTime;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 class TicketRequestDtoTest {
 
@@ -30,8 +28,6 @@ class TicketRequestDtoTest {
 
         concertSeq = TicketTestHelper.콘서트_생성하고_시퀀스_반환();
     }
-
-
 
 
     @Test
@@ -53,11 +49,11 @@ class TicketRequestDtoTest {
 
     @Test
     @DisplayName("@NotNull 위반 개수 검사")
-    void ticketRequestDto_not_null() throws Exception {
+    void ticketRequestDto_not_null() {
 
         assertAll(
-                () -> assertViolationCount(new TicketRequestDto(null, null,null), 2),
-                () -> assertViolationCount(new TicketRequestDto(concertSeq, null,null), 1)
+            () -> assertViolationCount(new TicketRequestDto(null, null, null), 2),
+            () -> assertViolationCount(new TicketRequestDto(concertSeq, null, null), 1)
         );
 
     }
@@ -65,9 +61,9 @@ class TicketRequestDtoTest {
 
     @Test
     @DisplayName("@Min=1 유효성 위반 개수 테스트")
-    void min_violation_count() throws Exception {
+    void min_violation_count() {
          assertAll(
-             () -> assertViolationCount(new TicketGradeDto("VIP", 0), 2),
+             () -> assertViolationCount(new TicketGradeDto("VIP", 0), 1),
              () -> assertViolationCount(new TicketGradeDto("VIP", 1), 0),
              () -> assertViolationCount(new TicketGradeDto("VIP", 2), 0)
          );
@@ -76,7 +72,7 @@ class TicketRequestDtoTest {
 
     @Test
     @DisplayName("@NotBlank 유효성 위반 개수 테스트")
-    void notBlank_violation_test() throws Exception {
+    void notBlank_violation_test() {
         assertViolationCount(new TicketGradeDto( "VIP", 1), 0);
         assertViolationCount(new TicketGradeDto( "", 1), 1);
         assertViolationCount(new TicketGradeDto( null, 1), 1);
