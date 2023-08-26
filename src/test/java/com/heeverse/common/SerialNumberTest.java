@@ -6,6 +6,7 @@ import com.heeverse.ticket.domain.TicketSerialNumber;
 import com.heeverse.ticket.domain.TicketSerialTokenDto;
 import com.heeverse.ticket.domain.entity.GradeTicket;
 import com.heeverse.ticket.dto.TicketGradeDto;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,8 @@ class SerialNumberTest {
         return new GradeTicket(ticketGradeDto, 0);
     }
 
-    private static TicketSerialTokenDto getTicketSerialTokenDto(LocalDate concertDate, long concertSeq, GradeTicket grade, int idx){
+    private static TicketSerialTokenDto getTicketSerialTokenDto(LocalDateTime concertDate,
+        long concertSeq, GradeTicket grade, int idx) {
         return new TicketSerialTokenDto(concertDate, concertSeq, grade, idx);
     }
 
@@ -32,7 +34,8 @@ class SerialNumberTest {
     void ticketSerialTokenDto_nonNull_test() throws Exception {
         assertAll(
             () -> assertThrowNPE(() -> getTicketSerialTokenDto(null, 1L, Mockito.mock(GradeTicket.class), 1)),
-            () -> assertThrowNPE(() -> getTicketSerialTokenDto(Mockito.mock(LocalDate.class), 1L, null, 1))
+            () -> assertThrowNPE(
+                () -> getTicketSerialTokenDto(Mockito.mock(LocalDateTime.class), 1L, null, 1))
         );
     }
 
@@ -52,10 +55,10 @@ class SerialNumberTest {
     private void assertIndexWithPad(int idx, String expected){
 
         TicketSerialTokenDto serialTokenDto = getTicketSerialTokenDto(
-                Mockito.mock(LocalDate.class),
-                1L,
-                getGradeTicket("VIP", 1000),
-                idx
+            Mockito.mock(LocalDateTime.class),
+            1L,
+            getGradeTicket("VIP", 1000),
+            idx
         );
 
         Assertions.assertEquals(expected, StringUtils.leftPad(serialTokenDto.getIndexAsString(), serialTokenDto.getTicketCountStrLength(), '0'));
@@ -67,10 +70,10 @@ class SerialNumberTest {
     void ticket_serial_number_success() throws Exception {
 
         TicketSerialTokenDto serialTokenDto = getTicketSerialTokenDto(
-                LocalDate.of(2022, 1, 2),
-                1L,
-                getGradeTicket("VIP", 1000),
-                1
+            LocalDateTime.of(2022, 1, 2, 9, 10, 30),
+            1L,
+            getGradeTicket("VIP", 1000),
+            1
         );
 
         Assertions.assertEquals("20220102-1-VIP-0001", new TicketSerialNumber(serialTokenDto).getSerial());
