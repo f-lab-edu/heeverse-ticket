@@ -9,6 +9,8 @@ import com.heeverse.concert.dto.presentation.SearchConcertRequestDto;
 import com.heeverse.concert.dto.presentation.SearchConcertResponseDto;
 import com.heeverse.ticket.dto.TicketRequestDto;
 import com.heeverse.ticket.service.TicketService;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +37,6 @@ public class ConcertService {
 
             TicketRequestDto ticketRequestDto = new TicketRequestDto(concertSeq,
                 dto.getConcertDate(), dto.getTicketGradeDtoList());
-
             ticketService.registerTicket(ticketRequestDto);
         }
     }
