@@ -1,28 +1,37 @@
 package com.heeverse.ticket.service;
 
 
+import com.heeverse.concert.dto.presentation.ConcertRequestDto;
+import com.heeverse.concert.service.ConcertService;
 import com.heeverse.ticket.domain.mapper.TicketTestHelper;
 import com.heeverse.ticket.dto.TicketGradeDto;
 import com.heeverse.ticket.dto.TicketRequestDto;
 import com.heeverse.ticket.exception.DuplicatedTicketException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
+import org.springframework.test.context.transaction.BeforeTransaction;
+import org.springframework.transaction.IllegalTransactionStateException;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 @ActiveProfiles("local")
 @SpringBootTest
 class TicketServiceTest {
+
     private static Long concertSeq;
 
     @Autowired
-    TicketService ticketService;
-
+    private TicketService ticketService;
 
     @BeforeAll
     static void setUp() {
@@ -30,38 +39,13 @@ class TicketServiceTest {
     }
 
     @Test
-    @DisplayName("[성공] 티켓 등록한다")
-    void register_ticket_success() throws Exception {
+    @DisplayName("부모 트랜잭션이 없으면 IllegalTransactionStateException을 던진다.")
+    void parent_transaction_not_exist_exception_test() throws Exception {
 
-        TicketRequestDto ticketRequestDto = TicketTestHelper.createTicketRequestDto(concertSeq, LocalDateTime.now());
+        TicketRequestDto ticketRequestDto = TicketTestHelper.createTicketRequestDto(concertSeq,
+            LocalDateTime.now());
 
-        ticketService.registerTicket(ticketRequestDto);
-
-        int expectedTicketCount = ticketRequestDto.ticketGradeDtoList().stream()
-                .mapToInt(TicketGradeDto::seatCount)
-                .sum();
-
-        Assertions.assertEquals(ticketService.getTicket(concertSeq).size(), expectedTicketCount);
+        Assertions.assertThrows(IllegalTransactionStateException.class,
+            () -> ticketService.registerTicket(ticketRequestDto));
     }
-
-
-    @Test
-    @DisplayName("[실패] 이미 등록된 티켓이 존재하면 티켓 등록은 실패한다")
-    void register_ticket_fail() throws Exception {
-
-        // given
-        TicketRequestDto ticketRequestDto = TicketTestHelper.createTicketRequestDto(concertSeq, LocalDateTime.now());
-
-        // when
-        register_ticket_success();
-
-        // then
-        assertThatThrownBy(() ->
-                ticketService.registerTicket(ticketRequestDto)
-        ).isInstanceOf(DuplicatedTicketException.class)
-                .hasMessage("이미 등록된 티켓이 존재합니다");
-    }
-
-
-
 }

@@ -9,6 +9,7 @@ import com.heeverse.ticket.dto.TicketRequestDto;
 import com.heeverse.ticket.exception.DuplicatedTicketException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class TicketService {
     private final TicketMapper ticketMapper;
 
 
-    @Transactional
+    @Transactional(propagation = Propagation.MANDATORY)
     public void registerTicket(TicketRequestDto ticketRequestDto) {
 
         if (existTicket(ticketRequestDto)){
@@ -35,7 +36,6 @@ public class TicketService {
         saveTicket(saveGradeTicket(ticketRequestDto), ticketRequestDto);
     }
 
-    @Transactional(readOnly = true)
     public List<Ticket> getTicket(long concertSeq){
         return ticketMapper.findTickets(concertSeq);
     }
@@ -46,7 +46,7 @@ public class TicketService {
     }
 
 
-    private List<GradeTicket> saveGradeTicket(TicketRequestDto ticketRequestDto) {
+    public List<GradeTicket> saveGradeTicket(TicketRequestDto ticketRequestDto) {
 
         List<GradeTicket> gradeTickets = ticketRequestDto.ticketGradeDtoList().stream()
                 .map(dto -> new GradeTicket(dto, ticketRequestDto.concertSeq()))
@@ -57,7 +57,7 @@ public class TicketService {
         return gradeTickets;
     }
 
-    private void saveTicket(List<GradeTicket> gradeTickets, TicketRequestDto ticketRequestDto) {
+    public void saveTicket(List<GradeTicket> gradeTickets, TicketRequestDto ticketRequestDto) {
 
         List<Ticket> tickets = gradeTickets.stream()
                 .flatMap(grade ->
