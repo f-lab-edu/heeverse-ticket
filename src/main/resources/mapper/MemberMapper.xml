@@ -5,7 +5,7 @@
 
   <select id="findById" parameterType="String"
     resultType="com.heeverse.member.domain.entity.Member">
-    SELECT member_id, id, password, user_name, email, create_datetime
+    SELECT seq, id, password, user_name, email, create_datetime
     FROM member
     WHERE id = #{id}
   </select>
