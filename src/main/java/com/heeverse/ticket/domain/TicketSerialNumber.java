@@ -1,6 +1,7 @@
 package com.heeverse.ticket.domain;
 
 import com.heeverse.common.SerialNumber;
+import java.time.LocalDateTime;
 import lombok.Getter;
 
 import java.time.LocalDate;
@@ -40,7 +41,7 @@ public class TicketSerialNumber implements SerialNumber<String> {
     }
 
 
-    private String dateToString(LocalDate date) {
+    private String dateToString(LocalDateTime date) {
         return df.format(date);
     }
 

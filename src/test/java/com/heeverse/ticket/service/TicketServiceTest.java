@@ -5,6 +5,7 @@ import com.heeverse.ticket.domain.mapper.TicketTestHelper;
 import com.heeverse.ticket.dto.TicketGradeDto;
 import com.heeverse.ticket.dto.TicketRequestDto;
 import com.heeverse.ticket.exception.DuplicatedTicketException;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,7 +33,7 @@ class TicketServiceTest {
     @DisplayName("[성공] 티켓 등록한다")
     void register_ticket_success() throws Exception {
 
-        TicketRequestDto ticketRequestDto = TicketTestHelper.createTicketRequestDto(concertSeq, LocalDate.now());
+        TicketRequestDto ticketRequestDto = TicketTestHelper.createTicketRequestDto(concertSeq, LocalDateTime.now());
 
         ticketService.registerTicket(ticketRequestDto);
 
@@ -49,7 +50,7 @@ class TicketServiceTest {
     void register_ticket_fail() throws Exception {
 
         // given
-        TicketRequestDto ticketRequestDto = TicketTestHelper.createTicketRequestDto(concertSeq, LocalDate.now());
+        TicketRequestDto ticketRequestDto = TicketTestHelper.createTicketRequestDto(concertSeq, LocalDateTime.now());
 
         // when
         register_ticket_success();

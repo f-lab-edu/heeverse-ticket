@@ -1,4 +1,4 @@
-package com.heeverse.concert.dto;
+package com.heeverse.concert.dto.presentation;
 
 import com.heeverse.concert.domain.FutureDate;
 import com.heeverse.ticket.dto.TicketGradeDto;
