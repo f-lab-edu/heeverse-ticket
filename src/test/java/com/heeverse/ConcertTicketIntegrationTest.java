@@ -55,7 +55,7 @@ public class ConcertTicketIntegrationTest {
 
     @Test
     @DisplayName("[성공] 콘서트 등록 후 티켓 등록한다")
-    void register_concert_and_then_ticket_success() throws Exception {
+    void registerConcertAndThenTicketSuccess() {
 
         concertService.registerConcert(concertRequestDtoList);
 
@@ -69,7 +69,7 @@ public class ConcertTicketIntegrationTest {
 
     @Test
     @DisplayName("[실패] 이미 등록된 티켓이 존재하면 티켓 등록은 실패한다")
-    void register_ticket_fail() throws Exception {
+    void registerTicketFail() {
 
         // when
         concertService.registerConcert(concertRequestDtoList);
