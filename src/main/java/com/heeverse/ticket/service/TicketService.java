@@ -7,13 +7,13 @@ import com.heeverse.ticket.domain.entity.Ticket;
 import com.heeverse.ticket.domain.mapper.TicketMapper;
 import com.heeverse.ticket.dto.TicketRequestDto;
 import com.heeverse.ticket.exception.DuplicatedTicketException;
+import java.util.List;
+import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.IntStream;
 
 /**
  * @author gutenlee
@@ -25,17 +25,16 @@ public class TicketService {
 
     private final TicketMapper ticketMapper;
 
-
     @Transactional(propagation = Propagation.MANDATORY)
     public void registerTicket(TicketRequestDto ticketRequestDto) {
 
         if (existTicket(ticketRequestDto)){
             throw new DuplicatedTicketException();
         }
-
         saveTicket(saveGradeTicket(ticketRequestDto), ticketRequestDto);
     }
 
+    @Transactional(readOnly = true)
     public List<Ticket> getTicket(long concertSeq){
         return ticketMapper.findTickets(concertSeq);
     }
@@ -46,28 +45,29 @@ public class TicketService {
     }
 
 
-    public List<GradeTicket> saveGradeTicket(TicketRequestDto ticketRequestDto) {
+    private List<GradeTicket> saveGradeTicket(TicketRequestDto ticketRequestDto) {
 
         List<GradeTicket> gradeTickets = ticketRequestDto.ticketGradeDtoList().stream()
-                .map(dto -> new GradeTicket(dto, ticketRequestDto.concertSeq()))
-                .toList();
+            .map(dto -> new GradeTicket(dto, ticketRequestDto.concertSeq()))
+            .toList();
 
         ticketMapper.insertTicketGrade(gradeTickets);
 
         return gradeTickets;
     }
 
-    public void saveTicket(List<GradeTicket> gradeTickets, TicketRequestDto ticketRequestDto) {
+    private void saveTicket(List<GradeTicket> gradeTickets, TicketRequestDto ticketRequestDto) {
 
         List<Ticket> tickets = gradeTickets.stream()
-                .flatMap(grade ->
-                    IntStream.range(0, grade.getTicketCount())
-                            .mapToObj(idx -> new Ticket(new TicketSerialNumber(
-                                        new TicketSerialTokenDto(ticketRequestDto.concertDate(), ticketRequestDto.concertSeq(), grade, idx)
-                                    ), grade)
-                            )
-                )
-                .toList();
+            .flatMap(grade ->
+                IntStream.range(0, grade.getTicketCount())
+                    .mapToObj(idx -> new Ticket(new TicketSerialNumber(
+                            new TicketSerialTokenDto(ticketRequestDto.concertDate(),
+                                ticketRequestDto.concertSeq(), grade, idx)
+                        ), grade)
+                    )
+            )
+            .toList();
 
         ticketMapper.insertTicket(tickets);
     }
