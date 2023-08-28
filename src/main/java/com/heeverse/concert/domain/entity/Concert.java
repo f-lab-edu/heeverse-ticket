@@ -44,7 +44,7 @@ public class Concert extends BaseEntity {
 
     private void validateTimeOrder(LocalDateTime beforeTime, LocalDateTime afterTime, String msg) {
         if (afterTime.isBefore(beforeTime)) {
-            log.error("{}이 {} 보다 미래여야하는 조건 위배", afterTime, beforeTime);
+            log.error("afterTime : {}이 befoerTime : {} 보다 미래여야하는 조건 위배", afterTime, beforeTime);
             throw new ConcertTimeValidationException(msg);
         }
     }
