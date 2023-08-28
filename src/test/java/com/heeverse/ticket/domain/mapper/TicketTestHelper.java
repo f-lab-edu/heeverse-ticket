@@ -4,6 +4,7 @@ import com.heeverse.ticket.dto.TicketGradeDto;
 import com.heeverse.ticket.dto.TicketRequestDto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -21,12 +22,12 @@ public class TicketTestHelper {
     }
 
 
-    public static TicketRequestDto createTicketRequestDto(long concertId, LocalDate concertDate) {
+    public static TicketRequestDto createTicketRequestDto(long concertId, LocalDateTime concertDate) {
         return new TicketRequestDto(concertId, concertDate, createTicketCategoryDtos());
     }
 
 
-    public static TicketRequestDto createTicketRequestDto(long concertId, LocalDate concertDate, List<TicketGradeDto> list) {
+    public static TicketRequestDto createTicketRequestDto(long concertId, LocalDateTime concertDate, List<TicketGradeDto> list) {
         return new TicketRequestDto(concertId, concertDate, list);
     }
 

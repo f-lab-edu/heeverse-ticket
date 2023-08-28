@@ -5,6 +5,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,7 +40,7 @@ class TicketRequestDtoTest {
 
         List<TicketGradeDto> ticketGradeDtoList = new ArrayList<>();
         ticketGradeDtoList.add(new TicketGradeDto("VIP석", 0));
-        TicketRequestDto ticketRequestDto = TicketTestHelper.createTicketRequestDto(concertSeq, LocalDate.now(), ticketGradeDtoList);
+        TicketRequestDto ticketRequestDto = TicketTestHelper.createTicketRequestDto(concertSeq, LocalDateTime.now(), ticketGradeDtoList);
 
         Set<ConstraintViolation<TicketRequestDto>> violations = validator.validate(
             ticketRequestDto);

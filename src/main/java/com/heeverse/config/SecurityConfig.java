@@ -2,7 +2,6 @@ package com.heeverse.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heeverse.security.JsonAuthenticationFilter;
-import com.heeverse.security.JwtAuthenticationFilter;
 import com.heeverse.security.JwtTokenProvider;
 import jakarta.servlet.DispatcherType;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +21,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 
 /**
@@ -73,6 +71,7 @@ public class SecurityConfig {
                 .requestMatchers("/login").permitAll()
                 .requestMatchers(HttpMethod.POST, "/member").permitAll()
                 .requestMatchers(HttpMethod.POST, "/concert").permitAll()
+                .requestMatchers(HttpMethod.GET, "/concert").permitAll()
                 .anyRequest().authenticated());
 
         return http.build();
