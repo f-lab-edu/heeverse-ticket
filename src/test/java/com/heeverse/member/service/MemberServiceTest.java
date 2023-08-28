@@ -1,9 +1,5 @@
 package com.heeverse.member.service;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import com.heeverse.member.domain.entity.Member;
 import com.heeverse.member.domain.mapper.MemberMapper;
 import com.heeverse.member.dto.MemberRequestDto;
 import com.heeverse.member.exception.DuplicatedMemberException;
@@ -14,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author jeongheekim
@@ -41,21 +40,17 @@ class MemberServiceTest {
 
     @DisplayName("회원가입 성공 테스트")
     @Test
-    void signUpSuccessTest() {
+    void 회원가입_성공() {
         memberService.signup(memberRequestDto);
-        assertNotNull(memberMapper.findById(memberRequestDto.getId()).getMemberId());
+        assertNotNull(memberMapper.findById(memberRequestDto.getId()).getSeq());
     }
 
     @DisplayName("중복회원 회원가입 실패 테스트")
     @Test
     void duplication_signup_exception_test() {
-        memberMapper.insertMember(Member
-            .builder()
-            .id(memberRequestDto.getId())
-            .password(memberRequestDto.getPassword())
-            .userName(memberRequestDto.getUserName())
-            .email(memberRequestDto.getEmail())
-            .build());
+
+        회원가입_성공();
+
         assertThrows(DuplicatedMemberException.class, () -> memberService.signup(memberRequestDto));
 
     }

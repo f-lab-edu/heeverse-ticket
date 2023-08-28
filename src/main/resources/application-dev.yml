@@ -1,7 +1,4 @@
 spring:
-  h2:
-    console:
-      enabled: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
 
@@ -20,6 +17,6 @@ logging:
 
 vault:
   scheme: http
-  uri: localhost
-  token: 00000000-0000-0000-0000-000000000000
+  uri: 3.22.218.43
+  token: hvs.frFvDB3V7L4UYrBlQ6fFvBtD
   port: 8200

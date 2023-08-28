@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Param;
 @Getter
 public class Member extends BaseEntity {
 
-    private Long memberId;
+    private Long seq;
     private String id;
     private String password;
     private String userName;
