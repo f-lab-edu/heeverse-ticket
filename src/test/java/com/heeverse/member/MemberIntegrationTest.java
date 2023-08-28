@@ -33,21 +33,19 @@ public class MemberIntegrationTest {
     private final String SIGN_UP_URI = "/member";
 
     @Autowired
-    WebApplicationContext context;
+    private WebApplicationContext context;
 
-    MockMvc mockMvc;
+    private MockMvc mockMvc;
 
     @Autowired
-    ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
 
-    MemberRequestDto successMemberRequestDto;
-    MemberRequestDto failMemberRequestDto;
+    private MemberRequestDto successMemberRequestDto = new MemberRequestDto("heeverse12", "abcd1234!", "name", "email@naver.com");
+    private MemberRequestDto failMemberRequestDto = new MemberRequestDto("heeverse12", "12", "name", "email@naver.com");
 
     @BeforeEach
     void setUp() {
         mockMvc = ControllerTestHelper.getSecurityMockMvc(context);
-        successMemberRequestDto =  new MemberRequestDto("heeverse12", "abcd1234!", "name", "email@naver.com");
-        failMemberRequestDto = new MemberRequestDto("heeverse12", "12", "name", "email@naver.com");
     }
 
     @Test
@@ -75,7 +73,7 @@ public class MemberIntegrationTest {
 
 
     @Test
-    @DisplayName("이미 가압된 회원은 회원가입 요청 실패한다 - 409")
+    @DisplayName("이미 가입된 회원은 회원가입 요청 실패한다 - 409")
     void member_signUp_failed_exist_member() throws Exception {
 
         회원가입_성공();
