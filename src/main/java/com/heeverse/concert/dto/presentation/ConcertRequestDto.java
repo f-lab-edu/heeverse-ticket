@@ -4,15 +4,19 @@ import com.heeverse.concert.domain.FutureDate;
 import com.heeverse.ticket.dto.TicketGradeDto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 import java.util.List;
-import lombok.Getter;
 
 /**
  * @author jeongheekim
  * @date 2023/08/07
  */
 @Getter
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ConcertRequestDto {
 
     @NotBlank(message = "공연명은 빈 문자열일 수 없습니다.")
