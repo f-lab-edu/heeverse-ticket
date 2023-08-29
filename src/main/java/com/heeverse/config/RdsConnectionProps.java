@@ -20,9 +20,12 @@ import static com.heeverse.common.Constants.VAULT_PATH;
 @Profile(value = {"dev"})
 public class RdsConnectionProps extends DataSourceProperties {
 
-    @Autowired
-    private VaultOperationService vaultOperationService;
+    private final VaultOperationService vaultOperationService;
 
+    @Autowired
+    public RdsConnectionProps(VaultOperationService vaultOperationService) {
+        this.vaultOperationService = vaultOperationService;
+    }
 
     @Override
     public void afterPropertiesSet() throws Exception {
