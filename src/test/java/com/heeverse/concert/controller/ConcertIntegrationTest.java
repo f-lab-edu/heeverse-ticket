@@ -39,7 +39,7 @@ public class ConcertIntegrationTest {
     ConcertMapper concertMapper;
 
     @BeforeEach
-    void set_up() {
+    void setUp() {
         LocalDateTime concertDate = LocalDateTime.parse("2023-12-15T10:00:00");
         LocalDateTime ticketOpenTime = LocalDateTime.parse("2023-10-15T10:00:00");
         LocalDateTime ticketEndTime = LocalDateTime.parse("2023-10-17T10:00:00");
@@ -55,7 +55,7 @@ public class ConcertIntegrationTest {
 
     @Test
     @DisplayName("size 개수만큼 콘서트 목록을 조회한다.")
-    void get_all_concert_list_test() throws Exception {
+    void getAllConcertListTest() throws Exception {
         String concertName = "BTS";
         int page = 0;
         int size = 3;

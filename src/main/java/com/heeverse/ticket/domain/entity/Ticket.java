@@ -6,8 +6,6 @@ import lombok.Getter;
 import org.apache.ibatis.annotations.AutomapConstructor;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.UUID;
-
 /**
  * @author gutenlee
  * @since 2023/08/04

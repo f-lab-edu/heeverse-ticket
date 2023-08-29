@@ -4,6 +4,8 @@ import com.heeverse.common.BaseEntity;
 import com.heeverse.concert.dto.presentation.ConcertRequestDto;
 import com.heeverse.concert.exception.ConcertTimeValidationException;
 import java.time.LocalDateTime;
+
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -11,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2023/08/04
  */
 @Slf4j
+@Getter
 public class Concert extends BaseEntity {
 
     private Long concertSeq;
@@ -44,7 +47,7 @@ public class Concert extends BaseEntity {
 
     private void validateTimeOrder(LocalDateTime beforeTime, LocalDateTime afterTime, String msg) {
         if (afterTime.isBefore(beforeTime)) {
-            log.error("{}이 {} 보다 미래여야하는 조건 위배", afterTime, beforeTime);
+            log.error("afterTime : {}이 befoerTime : {} 보다 미래여야하는 조건 위배", afterTime, beforeTime);
             throw new ConcertTimeValidationException(msg);
         }
     }

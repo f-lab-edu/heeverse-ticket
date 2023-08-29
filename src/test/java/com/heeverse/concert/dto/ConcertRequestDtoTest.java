@@ -33,7 +33,7 @@ class ConcertRequestDtoTest {
 
     @DisplayName("concertDate, ticketOpenTime,ticketEndTime은 요창하는 시간보다 미래여야한다.")
     @Test
-    void requestDto_validation_success_test() {
+    void requestDtoValidationSuccessTest() {
 
         LocalDateTime concertDate = LocalDateTime.parse("2023-12-15T10:00:00");
         LocalDateTime ticketOpenTime = LocalDateTime.parse("2023-10-15T10:00:00");

@@ -41,6 +41,7 @@ class LoginAuthenticationTest {
     @BeforeEach
     public void setup() {
         mvc = ControllerTestHelper.getSecurityMockMvc(context);
+
     }
 
 
@@ -54,9 +55,6 @@ class LoginAuthenticationTest {
                         assertInstanceOf(UsernamePasswordAuthenticationToken.class, auth))
                 );
     }
-
-
-
 
 }
 
