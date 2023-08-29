@@ -6,13 +6,12 @@ import com.heeverse.ticket.domain.TicketSerialNumber;
 import com.heeverse.ticket.domain.TicketSerialTokenDto;
 import com.heeverse.ticket.domain.entity.GradeTicket;
 import com.heeverse.ticket.dto.TicketGradeDto;
-import java.time.LocalDateTime;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static com.heeverse.common.AssertUtils.assertThrowNPE;
 import static org.junit.jupiter.api.Assertions.assertAll;

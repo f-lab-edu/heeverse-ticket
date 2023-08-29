@@ -4,6 +4,8 @@ import com.heeverse.common.BaseEntity;
 import com.heeverse.concert.dto.presentation.ConcertRequestDto;
 import com.heeverse.concert.exception.ConcertTimeValidationException;
 import java.time.LocalDateTime;
+
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -11,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2023/08/04
  */
 @Slf4j
+@Getter
 public class Concert extends BaseEntity {
 
     private Long concertSeq;
