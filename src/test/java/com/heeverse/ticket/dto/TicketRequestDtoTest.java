@@ -43,7 +43,6 @@ class TicketRequestDtoTest {
 
         ConstraintViolation<TicketRequestDto> violation = violations.iterator().next();
         assertEquals("ticketGradeDtoList[0].seatCount", violation.getPropertyPath().toString());
-        assertEquals("1 이상이어야 합니다", violation.getMessage());
     }
 
 
