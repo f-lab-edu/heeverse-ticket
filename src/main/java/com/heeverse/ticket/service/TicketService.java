@@ -61,15 +61,18 @@ public class TicketService {
         List<Ticket> tickets = gradeTickets.stream()
             .flatMap(grade ->
                 IntStream.range(0, grade.getTicketCount())
-                    .mapToObj(idx -> new Ticket(new TicketSerialNumber(
-                            new TicketSerialTokenDto(ticketRequestDto.concertDate(),
-                                ticketRequestDto.concertSeq(), grade, idx)
-                        ), grade)
+                    .mapToObj(idx -> createTicket(ticketRequestDto, grade, idx)
                     )
             )
             .toList();
 
         ticketMapper.insertTicket(tickets);
+    }
+
+    private Ticket createTicket(TicketRequestDto ticketRequestDto, GradeTicket grade, int idx) {
+        return new Ticket(new TicketSerialNumber(
+                new TicketSerialTokenDto(ticketRequestDto.concertDate(),
+                        ticketRequestDto.concertSeq(), grade, idx)), grade);
     }
 
 }
