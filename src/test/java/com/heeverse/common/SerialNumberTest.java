@@ -67,7 +67,7 @@ class SerialNumberTest {
 
     @Test
     @DisplayName("티켓 시리얼 넘버는 [공연일]-[공연시퀀스]-[티켓등급명]-[티켓 등급에 할당된 장수, 시리얼번호]")
-    void ticket_serial_number_success() throws Exception {
+    void ticketSerialNumberSuccess() throws Exception {
 
         TicketSerialTokenDto serialTokenDto = getTicketSerialTokenDto(
             LocalDateTime.of(2022, 1, 2, 9, 10, 30),

@@ -68,7 +68,7 @@ class LoginAuthenticationTest {
 
     @Test
     @DisplayName("[로그인 성공] HttpStatus 는 redirection 다")
-    void when_login_success_should_return_OK() throws Exception {
+    void whenLoginSuccessShouldReturnOK() throws Exception {
 
         // given
         signUpTest();
@@ -81,7 +81,7 @@ class LoginAuthenticationTest {
 
     @Test
     @DisplayName("[로그인 성공] Authentication 의 타입은 UsernamePasswordAuthenticationToken 이다")
-    void when_success_login_authentication_should_return_usernamePwdAuthToken() throws Exception {
+    void whenSuccessLoginAuthenticationShouldReturnUsernamePwdAuthToken() throws Exception {
 
         // given
         signUpTest();
@@ -98,7 +98,7 @@ class LoginAuthenticationTest {
     @Test
     @WithAnonymousUser
     @DisplayName("[로그인 실패] 미등록 회원일 경우 Http Status 는 401 이다")
-    void when_login_fail_should_return_401() throws Exception {
+    void whenLoginFailShouldReturn401() throws Exception {
 
         LoginRequestDto loginRequestDto = toLoginRequestDto(validMemberReqDto);
         assertNull(memberMapper.findById(loginRequestDto.id()));
@@ -110,7 +110,7 @@ class LoginAuthenticationTest {
 
     @Test
     @DisplayName("[로그인 실패] 비밀번호 불일치 경우 Http Status 는 401 이다")
-    void when_login_fail_by_password_should_return_401() throws Exception {
+    void whenLoginFailByPasswordShouldReturn401() throws Exception {
 
         signUpTest();
         LoginRequestDto loginRequestDto = new LoginRequestDto(validMemberReqDto.getId(), "wrong_password");
@@ -125,7 +125,7 @@ class LoginAuthenticationTest {
     @Test
     @DisplayName("익명의 USER 의 /member 요청은 인증,인가 permitAll 이므로 정상적으로 수행되어야 한다")
     @WithAnonymousUser
-    void memeber_permitAll() throws Exception {
+    void memberPermitAll() throws Exception {
 
         getMemberSignUpAction(SIGN_UP_URI, validMemberReqDto)
                 .andExpect(status().isCreated());

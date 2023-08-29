@@ -32,7 +32,7 @@ class TicketRequestDtoTest {
 
     @Test
     @DisplayName("TicketRequestDto 유효성 검사시 필드 TicketGradeDto 검사도 함께 수행한다")
-    void ticketRequestDto_ticketGradeDtoList_field_should_not_null() throws Exception {
+    void ticketRequestDtoTicketGradeDtoListFieldShouldNotNull() throws Exception {
 
         List<TicketGradeDto> ticketGradeDtoList = new ArrayList<>();
         ticketGradeDtoList.add(new TicketGradeDto("VIP석", 0));
@@ -49,7 +49,7 @@ class TicketRequestDtoTest {
 
     @Test
     @DisplayName("@NotNull 위반 개수 검사")
-    void ticketRequestDto_not_null() {
+    void ticketRequestDtoNotNull() {
 
         assertAll(
             () -> assertViolationCount(new TicketRequestDto(null, null, null), 2),
@@ -61,7 +61,7 @@ class TicketRequestDtoTest {
 
     @Test
     @DisplayName("@Min=1 유효성 위반 개수 테스트")
-    void min_violation_count() {
+    void minViolationCount() {
          assertAll(
              () -> assertViolationCount(new TicketGradeDto("VIP", 0), 1),
              () -> assertViolationCount(new TicketGradeDto("VIP", 1), 0),
@@ -72,7 +72,7 @@ class TicketRequestDtoTest {
 
     @Test
     @DisplayName("@NotBlank 유효성 위반 개수 테스트")
-    void notBlank_violation_test() {
+    void notBlankViolationTest() {
         assertViolationCount(new TicketGradeDto( "VIP", 1), 0);
         assertViolationCount(new TicketGradeDto( "", 1), 1);
         assertViolationCount(new TicketGradeDto( null, 1), 1);
