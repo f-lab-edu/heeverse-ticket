@@ -1,10 +1,8 @@
 package com.heeverse.ticket.domain;
 
 import com.heeverse.common.SerialNumber;
-import java.time.LocalDateTime;
-import lombok.Getter;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.StringJoiner;
 

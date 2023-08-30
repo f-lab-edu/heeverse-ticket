@@ -1,9 +1,5 @@
 package com.heeverse.security;
 
-import static com.heeverse.common.Constants.TOKEN_NAME;
-import static com.heeverse.common.Constants.VAULT_PATH;
-import static com.heeverse.common.Constants.VAULT_SECRETS;
-
 import com.heeverse.common.DateAdapter;
 import com.heeverse.member.domain.entity.Member;
 import com.heeverse.member.service.MemberService;
@@ -13,12 +9,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import java.nio.charset.StandardCharsets;
-import java.security.Key;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.Optional;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,6 +19,15 @@ import org.springframework.vault.core.VaultKeyValueOperations;
 import org.springframework.vault.core.VaultKeyValueOperationsSupport;
 import org.springframework.vault.core.VaultOperations;
 import org.springframework.vault.support.VaultResponse;
+
+import java.nio.charset.StandardCharsets;
+import java.security.Key;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.Optional;
+
+import static com.heeverse.common.Constants.*;
 
 /**
  * @author jeongheekim
