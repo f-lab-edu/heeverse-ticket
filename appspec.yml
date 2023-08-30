@@ -2,7 +2,7 @@ version: 0.0
 os: linux
 files:
   - source:  /
-    destination: /home/ubuntu/github_action
+    destination: /home/ubuntu/workspace/heeverse-ticket
     overwrite: yes
 
 permissions:
@@ -13,6 +13,6 @@ permissions:
 
 hooks:
   ApplicationStart:
-    - location: scripts/heeverse_deploy.sh
+    - location: scripts/deploy.sh
       timeout: 60
       runas: ubuntu
