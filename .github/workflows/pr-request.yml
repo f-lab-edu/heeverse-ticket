@@ -20,6 +20,11 @@ jobs:
           java-version: 17
           distribution: 'temurin'
 
+      - name: Test
+        run: |
+          chmod +x gradlew
+          ./gradlew test
+
       - name: Run Coverage
         run: |
           chmod +x gradlew
