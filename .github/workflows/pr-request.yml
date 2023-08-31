@@ -25,13 +25,8 @@ jobs:
           chmod +x gradlew
           ./gradlew test
 
-      - name: Generate JaCoCo badge
-        id: jacoco
-        uses: cicirello/jacoco-badge-generator@v2
-        with:
-          badges-directory: badges
-          generate-branches-badge: true
-          generate-summary: true
+      - name: Run Test Coverage
+        run: ./gradlew jacocoTestReport
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3

@@ -23,4 +23,6 @@ fi
 
 DEPLOY_JAR=$DEPLOY_PATH$JAR_NAME
 echo ">>> DEPLOY_JAR 배포"    >> $BASE_PATH/deploy.log
-nohup java -jar $DEPLOY_JAR >> $BASE_PATH/deploy.log 2>$BASE_PATH/deploy_err.log &
+nohup java -jar \
+        -Dspring.profiles.active=dev \
+        $DEPLOY_JAR >> $BASE_PATH/deploy.log 2>$BASE_PATH/deploy_err.log &
