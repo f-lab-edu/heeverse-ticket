@@ -6,6 +6,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -70,7 +71,7 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
         String principal = (String) authResult.getPrincipal();
         String token = jwtTokenProvider.generateToken(principal, authResult);
 
-        response.setHeader("Authorization", "Bearer " + token);
+        response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
     }

@@ -2,6 +2,7 @@ package com.heeverse.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heeverse.security.JsonAuthenticationFilter;
+import com.heeverse.security.JwtAuthenticationFilter;
 import com.heeverse.security.JwtTokenProvider;
 import jakarta.servlet.DispatcherType;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 
 /**
@@ -34,7 +36,6 @@ public class SecurityConfig {
 
     private final ObjectMapper objectMapper;
     private final JwtTokenProvider jwtTokenProvider;
-
 
     @Bean
     public static PasswordEncoder passwordEncoder() {
@@ -50,36 +51,33 @@ public class SecurityConfig {
         return http.build();
     }
 
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
         http.csrf(AbstractHttpConfigurer::disable)
-            .securityContext(securityContext -> {
-                securityContext.securityContextRepository(
-                    new HttpSessionSecurityContextRepository());
-            })
-            //.addFilterAt(new JwtAuthenticationFilter(jwtTokenProvider),
-            //    BasicAuthenticationFilter.class)
-            .addFilterAt(new JsonAuthenticationFilter(
-                authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)),
-                jwtTokenProvider, objectMapper), UsernamePasswordAuthenticationFilter.class)
+                .securityContext(securityContext -> {
+                    securityContext.securityContextRepository(
+                            new HttpSessionSecurityContextRepository());
+                })
+                .addFilterAt(new JwtAuthenticationFilter(jwtTokenProvider),
+                        BasicAuthenticationFilter.class)
+                .addFilterAt(new JsonAuthenticationFilter(
+                        authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)),
+                        jwtTokenProvider, objectMapper), UsernamePasswordAuthenticationFilter.class)
 
-            .authorizeHttpRequests((request) -> request
-
-                .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
-                .requestMatchers("/login").permitAll()
-                .requestMatchers(HttpMethod.POST, "/member").permitAll()
-                .requestMatchers(HttpMethod.POST, "/concert").permitAll()
-                .requestMatchers(HttpMethod.GET, "/concert").permitAll()
-                .anyRequest().authenticated());
+                .authorizeHttpRequests((request) -> request
+                        .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
+                        .requestMatchers("/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/member").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/concert").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/concert").permitAll()
+                        .anyRequest().authenticated());
 
         return http.build();
     }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig)
-        throws Exception {
+            throws Exception {
         return authConfig.getAuthenticationManager();
     }
 }
