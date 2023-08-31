@@ -34,11 +34,24 @@ jobs:
         id: jacoco
         uses: madrapps/jacoco-report@v1.6.1
         with:
-          title: \[\[ 테스트 커버리지 리포트 \]\]
+          title: ":chart_with_upwards_trend: 테스트 커버리지 리포트"
           paths: ${{ github.workspace }}/build/reports/jacoco/test/jacocoTestReport.xml
           token: ${{ secrets.GITHUB_TOKEN }}
           min-coverage-overall: 50
           min-coverage-changed-files: 50
+
+      - name: Generate JaCoCo Badge
+        id: jacoco
+        uses: cicirello/jacoco-badge-generator@v2
+        with:
+          generate-branches-badge: true
+
+      - name: Commit and push the badge (if it changed)
+        uses: EndBug/add-and-commit@v7
+        with:
+          default_author: heeverse-admin
+          message: 'commit badge'
+          add: '*.svg'
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
