@@ -20,13 +20,21 @@ jobs:
           java-version: 17
           distribution: 'temurin'
 
-      - name: Run Test
+      - name: Run Coverage
         run: |
           chmod +x gradlew
-          ./gradlew test
+          ./gradlew jacocoTestReport
 
-      - name: Run Test Coverage
-        run: ./gradlew jacocoTestReport
+      - name: Add coverage to PR
+        id: jacoco
+        uses: madrapps/jacoco-report@v1.6.1
+        with:
+          paths: |
+            ${{ github.workspace }}/**/build/reports/jacoco/prodNormalDebugCoverage/prodNormalDebugCoverage.xml,
+            ${{ github.workspace }}/**/build/reports/jacoco/**/debugCoverage.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          min-coverage-overall: 40
+          min-coverage-changed-files: 60
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
