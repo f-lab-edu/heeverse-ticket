@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
-    private final List<String> excludePathList = List.of("/member", "/login");
+    private final List<String> excludePathList = List.of("/member", "/login","/concert");
 
     public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;
