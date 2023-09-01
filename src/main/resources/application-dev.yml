@@ -17,6 +17,6 @@ logging:
 
 vault:
   scheme: http
-  uri: 3.22.218.43
+  uri: 127.0.0.1
   token: hvs.frFvDB3V7L4UYrBlQ6fFvBtD
   port: 8200
