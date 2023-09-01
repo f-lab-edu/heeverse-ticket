@@ -11,6 +11,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.el.parser.Token;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -85,7 +86,7 @@ public class JwtTokenProvider implements InitializingBean {
                     .parseClaimsJws(headerAuth)
                     .getBody();
 
-            if (!claims.getExpiration().before(new Date())) {
+            if ((new Date()).after(claims.getExpiration())) {
                 throw new TokenExpiredException();
             }
 
@@ -95,8 +96,10 @@ public class JwtTokenProvider implements InitializingBean {
 
             Member member = memberService.findMember(claims.get(CLIAM_ID_KEY).toString())
                     .orElseThrow(() -> new AuthenticationServiceException("존재하지 않는 멤버입니다."));
-            return new UsernamePasswordAuthenticationToken(member, null,authorities);
+            return new UsernamePasswordAuthenticationToken(member, null, authorities);
 
+        } catch (TokenExpiredException e) {
+            throw new TokenExpiredException();
         } catch (Exception e) {
             throw new JwtParsingException();
         }
