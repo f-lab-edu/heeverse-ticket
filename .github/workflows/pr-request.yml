@@ -2,7 +2,7 @@ name: Code Coverage
 
 on:
   pull_request:
-    branches: [ dev ]
+    branches: [ dev, feat/36/ticket-order ]
     paths: [ '**.java', '.github/workflows/pr-request.yml', 'build.gradle' ]
   workflow_dispatch:
 
