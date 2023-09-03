@@ -1,5 +1,6 @@
 package com.heeverse.concert.controller;
 
+import com.heeverse.VaultContainerProvider;
 import com.heeverse.concert.domain.entity.Concert;
 import com.heeverse.concert.domain.mapper.ConcertMapper;
 import com.heeverse.concert.dto.presentation.ConcertRequestDto;
@@ -31,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Transactional
 @ActiveProfiles(profiles = "local")
-public class ConcertIntegrationTest {
+public class ConcertIntegrationTest extends VaultContainerProvider {
 
     @Autowired
     MockMvc mockMvc;

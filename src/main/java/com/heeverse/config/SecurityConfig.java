@@ -44,6 +44,7 @@ public class SecurityConfig {
     }
 
     @Bean
+    @Profile("local")
     @Order(Ordered.HIGHEST_PRECEDENCE)
     SecurityFilterChain h2ConsoleSecurityFilterChain(HttpSecurity http) throws Exception {
         http.securityMatcher(PathRequest.toH2Console());

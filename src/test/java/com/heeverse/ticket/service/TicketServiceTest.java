@@ -1,6 +1,7 @@
 package com.heeverse.ticket.service;
 
 
+import com.heeverse.VaultContainerProvider;
 import com.heeverse.ticket.domain.mapper.TicketTestHelper;
 import com.heeverse.ticket.dto.TicketGradeDto;
 import com.heeverse.ticket.dto.TicketRequestDto;
@@ -21,7 +22,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 @ActiveProfiles("local")
 @Transactional
 @SpringBootTest
-class TicketServiceTest {
+class TicketServiceTest extends VaultContainerProvider {
     private static Long concertSeq;
 
     @Autowired

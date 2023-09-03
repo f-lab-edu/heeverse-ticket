@@ -1,5 +1,6 @@
 package com.heeverse.member.service;
 
+import com.heeverse.VaultContainerProvider;
 import com.heeverse.member.domain.mapper.MemberMapper;
 import com.heeverse.member.dto.MemberRequestDto;
 import com.heeverse.member.exception.DuplicatedMemberException;
