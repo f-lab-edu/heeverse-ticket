@@ -38,7 +38,7 @@ jobs:
       - name: Print Public IP
         run: |
           echo ${{ steps.ip.outputs.ipv4 }}
-          echo ${{ steps.ip.outputs가.ipv6 }}
+          echo ${{ steps.ip.outputs.ipv6 }}
 
       - name: Add Github Actions IP to Security group
         run: |
