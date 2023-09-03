@@ -31,13 +31,13 @@ jobs:
           java-version: 17
           distribution: 'temurin'
 
-      - name: executing remote ssh commands using password
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          port: ${{ secrets.PORT }}
+#      - name: executing remote ssh commands using password
+#        uses: appleboy/ssh-action@v1.0.0
+#        with:
+#          host: ${{ secrets.HOST }}
+#          username: ${{ secrets.USERNAME }}
+#          password: ${{ secrets.PASSWORD }}
+#          port: ${{ secrets.PORT }}
 
 #      - name: Add Github Actions IP to Security group
 #        run: |
