@@ -31,14 +31,23 @@ jobs:
           java-version: 17
           distribution: 'temurin'
 
+      - name: Get Github Actions IP
+        id: ip
+        uses: haythem/public-ip@v1.2
+
+      - name: Print Public IP
+        run: |
+          echo ${{ steps.ip.outputs.ipv4 }}
+          echo ${{ steps.ip.outputs가.ipv6 }}
+
       - name: Add Github Actions IP to Security group
         run: |
-          aws ec2 authorize-security-group-ingress --group-id ${{ env.AWS_SG_ID }} --protocol tcp --port 8200 --cidr ${{ steps.ip.outputs.ipv4 }}/32    
+          aws ec2 authorize-security-group-ingress --group-id ${{ env.AWS_SG_ID }} --protocol tcp --port 8200 --cidr ${{ steps.ip.outputs.ipv4 }}/32 
 
       - name: Test
         run: |
           chmod +x gradlew
-          ./gradlew test
+          ./gradlew clean build -x test
 
       - name: Remove Github Actions IP from security group
         run: |
