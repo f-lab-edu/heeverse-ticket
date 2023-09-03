@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ActiveProfiles("local")
 @Transactional
 @SpringBootTest
-class MemberServiceTest {
+class MemberServiceTest extends VaultContainerProvider{
 
     @Autowired
     private MemberService memberService;

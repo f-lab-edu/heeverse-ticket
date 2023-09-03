@@ -2,6 +2,7 @@ package com.heeverse.member;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heeverse.ControllerTestHelper;
+import com.heeverse.VaultContainerProvider;
 import com.heeverse.member.dto.LoginRequestDto;
 import com.heeverse.member.dto.MemberRequestDto;
 import org.junit.jupiter.api.*;
@@ -25,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @Transactional
 @ActiveProfiles(profiles = "local")
-public class MemberIntegrationTest {
+public class MemberIntegrationTest extends VaultContainerProvider {
 
     private final String LOGIN_URI = "/login";
     private final String SIGN_UP_URI = "/member";
