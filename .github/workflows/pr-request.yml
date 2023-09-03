@@ -47,7 +47,7 @@ jobs:
       - name: Test
         run: |
           chmod +x gradlew
-          ./gradlew clean build -x test
+          ./gradlew test 
 
       - name: Remove Github Actions IP from security group
         run: |
