@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,7 +16,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.util.ContentCachingRequestWrapper;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
+
+import static com.heeverse.security.ClaimConstants.TOKEN_TYPE;
 
 /**
  * JSON 구조의 Login 데이터를 AuthenticationToken 으로 변환
@@ -71,9 +75,9 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
         String principal = (String) authResult.getPrincipal();
         String token = jwtTokenProvider.generateToken(principal, authResult);
 
-        response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
+        response.setHeader(HttpHeaders.AUTHORIZATION, TOKEN_TYPE + " " + token);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
     }
 
 }
