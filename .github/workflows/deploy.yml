@@ -2,14 +2,18 @@ name: heeverse-deploy
 
 on:
   push:
-    branches:
-      - dev
+    branches: [ dev ]
+    paths: [ '**.java', '.github/workflows/pr-request.yml', 'build.gradle' ]
 
 env:
-  S3_BUCKET_NAME: heeversebucket
   RESOURCE_PATH: ./src/main/resources/application-dev.yml
-  CODE_DEPLOY_APPLICATION_NAME: heeverse-api
-  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: heeverse-server
+  AWS_PUBLIC_IP: ${{ secrets.AWS_PUBLIC_IP }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+  AWS_SG_ID: ${{ secrets.AWS_SG_ID }}
+  USERNAME: ${{ secrets.USERNAME }}
+  KEY: ${{ secrets.KEY }}
 
 jobs:
   build:
@@ -25,37 +29,34 @@ jobs:
           java-version: 17
           distribution: 'temurin'
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x ./gradlew
-        shell: bash
+      - name: Get Github action IP
+        id: ip
+        uses: haythem/public-ip@v1.2
 
-        # [2]
-      - name: Build with Gradle
-        run: ./gradlew build
-        shell: bash
+      - name: Add Github Actions IP to Security group
+        run: |
+          aws ec2 authorize-security-group-ingress --group-id ${{ env.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32 
 
-        # [3]
-      - name: Make zip file
-        run: zip -r ./$GITHUB_SHA.zip .
-        shell: bash
-
-        # [4]
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+      - name: Set yaml file
+        uses: microsoft/variable-substitution@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }} 
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
-          aws-region: ${{ secrets.AWS_REGION }} 
+          files: ${{ env.RESOURCE_PATH }}
+        env:
+          vault.uri: localhost
 
-        # [5]
-      - name: Upload to S3
-        run: aws s3 cp --region us-east-2 ./$GITHUB_SHA.zip s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip
+      - name: Deploy to dev server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AWS_PUBLIC_IP }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          script: |
+            cd /home/ubuntu/workspace/heeverse-ticket
+            git stash
+            git pull origin
+            . ./heeverse-ticket/deploy.sh
 
-        # [6]
-      - name: Code Deploy
-        run: | 
-          aws deploy create-deployment \
-          --deployment-config-name CodeDeployDefault.AllAtOnce \
-          --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
-          --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
-          --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$GITHUB_SHA.zip
+      - name: Remove Github Actions IP from security group
+        run: |
+          aws ec2 revoke-security-group-ingress --group-id ${{ env.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+        if: always()
