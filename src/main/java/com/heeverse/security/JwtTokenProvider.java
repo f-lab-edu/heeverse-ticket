@@ -3,15 +3,12 @@ package com.heeverse.security;
 import com.heeverse.common.DateAdapter;
 import com.heeverse.member.domain.entity.Member;
 import com.heeverse.member.service.MemberService;
-import com.heeverse.security.exception.JwtParsingException;
-import com.heeverse.security.exception.TokenExpiredException;
 import com.heeverse.security.exception.VaultTokenNotExistException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.el.parser.Token;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -33,6 +30,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.heeverse.common.Constants.*;
+import static com.heeverse.security.ClaimConstants.*;
 
 /**
  * @author jeongheekim
@@ -60,49 +58,51 @@ public class JwtTokenProvider implements InitializingBean {
 
     public String generateToken(String id, Authentication authentication) {
         String auth = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(","));
-
-        Map<String, String> claimMap = new HashMap<>();
-        claimMap.put(CLIAM_ID_KEY, id);
-        claimMap.put(CLAIM_AUTH_KEY, auth);
-
         return Jwts.builder()
-                .setClaims(claimMap)
+                .setClaims(claimToMap(id, auth))
                 .setIssuedAt(new Date())
                 .setExpiration(new DateAdapter(LocalDateTime.now().plus(TOKEN_DURATION_TIME)).toDate())
                 .signWith(key)
                 .compact();
     }
 
+    private Map<String, String> claimToMap(String id, String auth) {
+        Map<String, String> claimMap = new HashMap<>();
+        claimMap.put(ID, id);
+        claimMap.put(AUTH, auth);
+        return claimMap;
+    }
+
     public Authentication parsing(String headerAuth) {
+        Member member = null;
+        Collection<? extends GrantedAuthority> authorities = null;
+
         if (ObjectUtils.isEmpty(headerAuth)) {
             throw new IllegalArgumentException();
         }
 
         try {
             headerAuth = headerAuth.replaceAll(TOKEN_TYPE, "").trim();
-            Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(key)
-                    .build()
-                    .parseClaimsJws(headerAuth)
-                    .getBody();
+            Claims claims = createJwtClaims(headerAuth);
 
-            if ((new Date()).after(claims.getExpiration())) {
-                throw new TokenExpiredException();
-            }
-
-            Collection<? extends GrantedAuthority> authorities = Arrays.stream(claims.get(CLAIM_AUTH_KEY).toString().split(","))
+            authorities = Arrays.stream(claims.get(AUTH).toString().split(","))
                     .map(SimpleGrantedAuthority::new)
                     .toList();
 
-            Member member = memberService.findMember(claims.get(CLIAM_ID_KEY).toString())
-                    .orElseThrow(() -> new AuthenticationServiceException("존재하지 않는 멤버입니다."));
-            return new UsernamePasswordAuthenticationToken(member, null, authorities);
+            member = validateMember(claims);
 
-        } catch (TokenExpiredException e) {
-            throw new TokenExpiredException();
         } catch (Exception e) {
-            throw new JwtParsingException();
+            log.error("JWT Parsing Exception : {}", e.getMessage());
         }
+        return new UsernamePasswordAuthenticationToken(member, null, authorities);
+    }
+
+    private Claims createJwtClaims(String headerAuth) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(headerAuth)
+                .getBody();
     }
 
     private String getJwtKey() {
@@ -113,6 +113,11 @@ public class JwtTokenProvider implements InitializingBean {
         Assert.notNull(read, "vault read value must be null!");
         return Optional.ofNullable((String) read.getRequiredData().get(TOKEN_NAME))
                 .orElseThrow(VaultTokenNotExistException::new);
+    }
+
+    private Member validateMember(Claims claims) {
+        return memberService.findMember(claims.get(ID).toString())
+                .orElseThrow(() -> new AuthenticationServiceException("존재하지 않는 멤버입니다."));
     }
 
 }
