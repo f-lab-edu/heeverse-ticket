@@ -3,7 +3,7 @@ name: heeverse-deploy
 on:
   push:
     branches: [ dev ]
-    paths: [ '**.java', '.github/workflows/pr-request.yml', 'build.gradle' ]
+    paths: [ '**.java', '.github/workflows/deploy.yml', 'build.gradle' ]
 
 env:
   RESOURCE_PATH: ./src/main/resources/application-dev.yml
