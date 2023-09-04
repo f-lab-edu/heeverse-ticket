@@ -57,6 +57,7 @@ public class JwtTokenProvider implements InitializingBean {
     }
 
     public String generateToken(String id, Authentication authentication) {
+        Assert.notNull(authentication, "authentication은 not null입니다.");
         String auth = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(","));
         return Jwts.builder()
                 .setClaims(claimToMap(id, auth))
@@ -109,7 +110,7 @@ public class JwtTokenProvider implements InitializingBean {
         VaultKeyValueOperations keyValueOperations = vaultOperations.opsForKeyValue(VAULT_PATH,
                 VaultKeyValueOperationsSupport.KeyValueBackend.KV_1);
 
-        VaultResponse read = keyValueOperations.get(VAULT_SECRETS);
+        VaultResponse read = keyValueOperations.get(VAULT_AUTH_SECRETS);
         Assert.notNull(read, "vault read value must be null!");
         return Optional.ofNullable((String) read.getRequiredData().get(TOKEN_NAME))
                 .orElseThrow(VaultTokenNotExistException::new);

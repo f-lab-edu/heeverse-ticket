@@ -37,6 +37,7 @@ public class SecurityConfig {
 
     private final ObjectMapper objectMapper;
     private final JwtTokenProvider jwtTokenProvider;
+    private final VaultOperationService vaultOperationService;
 
     @Bean
     public static PasswordEncoder passwordEncoder() {
@@ -60,7 +61,7 @@ public class SecurityConfig {
                     securityContext.securityContextRepository(
                             new HttpSessionSecurityContextRepository());
                 })
-                .addFilterAt(new JwtAuthenticationFilter(jwtTokenProvider),
+                .addFilterAt(new JwtAuthenticationFilter(jwtTokenProvider, vaultOperationService),
                         BasicAuthenticationFilter.class)
                 .addFilterAt(new JsonAuthenticationFilter(
                         authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)),
