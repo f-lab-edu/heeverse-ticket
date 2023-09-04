@@ -29,6 +29,11 @@ jobs:
           java-version: 17
           distribution: 'temurin'
 
+      - name: Build with Gradle
+        run: |
+          chmod +x gradlew
+          ./gradlew build
+
       - name: Get Github action IP
         id: ip
         uses: haythem/public-ip@v1.2
