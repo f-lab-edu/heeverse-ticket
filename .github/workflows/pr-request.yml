@@ -35,11 +35,6 @@ jobs:
         id: ip
         uses: haythem/public-ip@v1.2
 
-      - name: Print Public IP
-        run: |
-          echo ${{ steps.ip.outputs.ipv4 }}
-          echo ${{ steps.ip.outputs.ipv6 }}
-
       - name: Add Github Actions IP to Security group
         run: |
           aws ec2 authorize-security-group-ingress --group-id ${{ env.AWS_SG_ID }} --protocol tcp --port 8200 --cidr ${{ steps.ip.outputs.ipv4 }}/32 
