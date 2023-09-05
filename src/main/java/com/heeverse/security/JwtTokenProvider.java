@@ -3,6 +3,7 @@ package com.heeverse.security;
 import com.heeverse.common.DateAdapter;
 import com.heeverse.member.domain.entity.Member;
 import com.heeverse.member.service.MemberService;
+import com.heeverse.security.exception.JwtParsingException;
 import com.heeverse.security.exception.VaultTokenNotExistException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -75,27 +76,26 @@ public class JwtTokenProvider implements InitializingBean {
     }
 
     public Authentication parsing(String headerAuth) {
-        Member member = null;
+        Claims claims = null;
         Collection<? extends GrantedAuthority> authorities = null;
 
         if (ObjectUtils.isEmpty(headerAuth)) {
             throw new IllegalArgumentException();
         }
+        headerAuth = headerAuth.replaceAll(TOKEN_TYPE, "").trim();
 
         try {
-            headerAuth = headerAuth.replaceAll(TOKEN_TYPE, "").trim();
-            Claims claims = createJwtClaims(headerAuth);
-
+            claims = createJwtClaims(headerAuth);
             authorities = Arrays.stream(claims.get(AUTH).toString().split(","))
                     .map(SimpleGrantedAuthority::new)
                     .toList();
 
-            member = validateMember(claims);
-
         } catch (Exception e) {
-            log.error("JWT Parsing Exception : {}", e.getMessage());
+            log.error("[JwtParsingException]{} : {}", e.getCause(), e.getMessage());
+            throw new JwtParsingException(e.getMessage(), e);
         }
-        return new UsernamePasswordAuthenticationToken(member, null, authorities);
+
+        return new UsernamePasswordAuthenticationToken(validateMember(claims), null, authorities);
     }
 
     private Claims createJwtClaims(String headerAuth) {
