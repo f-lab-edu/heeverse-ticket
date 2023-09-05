@@ -71,6 +71,25 @@
             concert_seq = #{concertSeq}
     </select>
 
+    <select id="findTicketsByTicketSeqList" parameterType="java.util.List"
+            resultType="com.heeverse.ticket.domain.entity.Ticket">
+        SELECT
+            seq,
+            ticket_serial_number,
+            grade_name,
+            concert_seq,
+            create_datetime
+        FROM
+            ticket
+        WHERE
+            seq  IN
+        <foreach collection="list" item="ticketSeq" separator="," open="(" close=")">
+            ${ticketSeq}
+        </foreach>
+        AND order_seq IS NULL
+
+    </select>
+
 
     <select id="countTicket" parameterType="java.lang.Long"
             resultType="int">
@@ -81,5 +100,27 @@
         WHERE
             concert_seq = #{concertSeq}
     </select>
+
+    <select id="selectForUpdate" parameterType="java.util.List" resultType="java.lang.Long">
+        SELECT
+            seq
+        FROM ticket
+        WHERE
+            seq  IN
+            <foreach collection="list" item="ticketSeq" separator="," open="(" close=")">
+                #{ticketSeq}
+            </foreach>
+        FOR UPDATE
+    </select>
+
+   <update id="updateTicketOrderSeq" parameterType="com.heeverse.ticket.dto.persistence.TicketRequestMapperDto">
+       UPDATE
+        ticket
+       SET order_seq = ${ticketOrderSeq}
+       WHERE seq IN
+       <foreach collection="lockTicketSeqList" item="ticketSeq" separator="," open="(" close=")">
+           ${ticketSeq}
+       </foreach>
+   </update>
 
 </mapper>

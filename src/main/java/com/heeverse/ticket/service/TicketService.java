@@ -5,6 +5,7 @@ import com.heeverse.ticket.domain.TicketSerialTokenDto;
 import com.heeverse.ticket.domain.entity.GradeTicket;
 import com.heeverse.ticket.domain.entity.Ticket;
 import com.heeverse.ticket.domain.mapper.TicketMapper;
+import com.heeverse.ticket.dto.persistence.TicketRequestMapperDto;
 import com.heeverse.ticket.dto.TicketRequestDto;
 import com.heeverse.ticket.exception.DuplicatedTicketException;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.IntStream;
-
 
 /**
  * @author gutenlee
@@ -40,6 +40,10 @@ public class TicketService {
         return ticketMapper.findTickets(concertSeq);
     }
 
+    @Transactional(readOnly = true)
+    public List<Ticket> getTicketsByTicketSeqList(List<Long> ticketSeqList) {
+        return ticketMapper.findTicketsByTicketSeqList(ticketSeqList);
+    }
 
     private boolean existTicket(TicketRequestDto ticketRequestDto) {
         return 0 < ticketMapper.countTicket(ticketRequestDto.concertSeq());
@@ -76,4 +80,12 @@ public class TicketService {
                         ticketRequestDto.concertSeq(), grade, idx)), grade);
     }
 
+    @Transactional(propagation = Propagation.MANDATORY)
+    public List<Long> ticketSelectForUpdate(List<Long> ticketSetList) {
+        return ticketMapper.selectForUpdate(ticketSetList);
+    }
+
+    public int updateTicketOrderSeq(List<Long> lockTicketSeqList, Long ticketOrderSeq) {
+        return ticketMapper.updateTicketOrderSeq(new TicketRequestMapperDto(lockTicketSeqList, ticketOrderSeq));
+    }
 }
