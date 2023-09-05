@@ -59,7 +59,7 @@ jobs:
           script: |
             cd /home/ubuntu/workspace/heeverse-ticket
             git stash
-            git pull origin
+            git pull origin ${{ github.ref_name }}
             . script/deploy.sh
 
       - name: Remove Github Actions IP from security group
