@@ -60,7 +60,7 @@ jobs:
             cd /home/ubuntu/workspace/heeverse-ticket
             git stash
             git pull origin
-            . ./heeverse-ticket/script/deploy.sh
+            . script/deploy.sh
 
       - name: Remove Github Actions IP from security group
         run: |
