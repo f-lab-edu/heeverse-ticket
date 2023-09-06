@@ -10,4 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(code = HttpStatus.FORBIDDEN)
 public class JwtParsingException extends RuntimeException {
 
+    public JwtParsingException(String message, Exception e) {
+        super(message, e);
+    }
 }

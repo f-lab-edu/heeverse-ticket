@@ -3,10 +3,10 @@ package com.heeverse.ticket.domain;
 import com.heeverse.common.Delimiter;
 import com.heeverse.common.SerialTokenDto;
 import com.heeverse.ticket.domain.entity.GradeTicket;
-import java.time.LocalDateTime;
-import lombok.*;
+import lombok.Getter;
+import lombok.NonNull;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * @author gutenlee

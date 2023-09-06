@@ -1,9 +1,8 @@
 package com.heeverse.ticket.domain.mapper;
 
-import com.heeverse.ticket.domain.entity.Ticket;
 import com.heeverse.ticket.domain.entity.GradeTicket;
+import com.heeverse.ticket.domain.entity.Ticket;
 import org.apache.ibatis.annotations.Mapper;
-
 
 import java.util.List;
 

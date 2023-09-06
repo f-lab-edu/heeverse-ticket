@@ -1,13 +1,10 @@
 package com.heeverse.ticket.service;
 
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-
 import com.heeverse.ticket.domain.mapper.TicketTestHelper;
 import com.heeverse.ticket.dto.TicketGradeDto;
 import com.heeverse.ticket.dto.TicketRequestDto;
 import com.heeverse.ticket.exception.DuplicatedTicketException;
-import java.time.LocalDateTime;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -16,6 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 @ActiveProfiles("local")
 @Transactional
