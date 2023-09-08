@@ -21,8 +21,11 @@ else
   sleep 5
 fi
 
+SCOUTER_BASE_PATH='/home/ubuntu/workspace/scouter'
 DEPLOY_JAR=$DEPLOY_PATH/$JAR_NAME
 echo ">>> DEPLOY_JAR 배포"    >> $BASE_PATH/deploy.log
 nohup java -jar \
         -Dspring.profiles.active=dev \
+        -javaagent:$SCOUTER_BASE_PATH/scouter/agent.java/scouter.agent.jar \
+        -Dscouter.config=$SCOUTER_BASE_PATH/scouter/conf/scouter.conf \
         $DEPLOY_JAR >> $BASE_PATH/deploy.log 2>$BASE_PATH/deploy_err.log &
