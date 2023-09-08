@@ -38,17 +38,17 @@ jobs:
           aws ec2 authorize-security-group-ingress --group-id ${{ env.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32 
           aws ec2 authorize-security-group-ingress --group-id ${{ env.AWS_SG_ID }} --protocol tcp --port 8200 --cidr ${{ steps.ip.outputs.ipv4 }}/32 
           
-      - name: Build with Gradle
-        run: |
-          chmod +x gradlew
-          ./gradlew build
-
       - name: Set yaml file
         uses: microsoft/variable-substitution@v1
         with:
           files: ${{ env.RESOURCE_PATH }}
         env:
           vault.uri: localhost
+      
+      - name: Build with Gradle
+        run: |
+          chmod +x gradlew
+          ./gradlew build -x test
 
       - name: Deploy to dev server
         uses: appleboy/ssh-action@master
