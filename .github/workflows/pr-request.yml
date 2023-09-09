@@ -42,7 +42,7 @@ jobs:
       - name: Test
         run: |
           chmod +x gradlew
-          ./gradlew test 
+          SPRING_PROFILES_ACTIVE=dev-test ./gradlew test 
 
       - name: Remove Github Actions IP from security group
         run: |
@@ -63,6 +63,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           min-coverage-overall: 50
           min-coverage-changed-files: 50
+          update-comment: true
 
       - name: Generate JaCoCo Badge
         id: jacoco-badge
