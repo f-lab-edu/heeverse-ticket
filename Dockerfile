@@ -1,14 +1,18 @@
 FROM eclipse-temurin:17
 
 
-ARG WORKSPACE=/workspace/heeverse
+RUN groupadd -g 1026 heeverse
+RUN useradd -r -u 1026 -g heeverse appuser
+RUN chown -R :heeverse /tmp
 
-RUN mkdir -p ${WORKSPACE}
+USER appuser
 
-COPY ./build/libs/*.jar ${WORKSPACE}/heeverse-api.jar
+ARG WORKSPACE=/tmp/workspace/heeverse
+RUN mkdir -p -m 755 ${WORKSPACE}
+
+
+COPY --chmod=755 ./build/libs/*.jar ${WORKSPACE}/heeverse-api.jar
 COPY ./script/deploy.sh ${WORKSPACE}
 
 
-USER root
-
-ENTRYPOINT ["sh", "/workspace/heeverse/deploy.sh"]
+ENTRYPOINT ["sh", "tmp/workspace/heeverse/deploy.sh"]

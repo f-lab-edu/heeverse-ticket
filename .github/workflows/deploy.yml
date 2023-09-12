@@ -31,11 +31,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Get Github action IP
+        id: ip
+        uses: haythem/public-ip@v1.2
+
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
 
+      - name: Add Github Actions IP to Security group
+        run: |
+          aws ec2 authorize-security-group-ingress --group-id ${{ env.AWS_SG_ID }} --protocol tcp --port 8200 --cidr ${{ steps.ip.outputs.ipv4 }}/32 
+
       - name: Run build with Gradle Wrapper
         run: SPRING_PROFILES_ACTIVE=dev-test ./gradlew build
+
+      - name: Remove Github Actions IP from security group
+        run: |
+          aws ec2 revoke-security-group-ingress --group-id ${{ env.AWS_SG_ID }} --protocol tcp --port 8200 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+        if: always()
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -93,7 +106,7 @@ jobs:
           script: |
             sudo docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}
             docker run -d --rm \ 
-                        -p 8081:8081 ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }} \
+                        -p 8080:80 ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }} \
                         -v home/ubuntu/workspace/heeverse:/workspace/heeverse/logs \
                         -v home/ubuntu/workspace/scouter:/workspace/heeverse/scouter
             

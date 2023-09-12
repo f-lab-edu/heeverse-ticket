@@ -1,6 +1,6 @@
 #!/bin/sh
 
-WORKSPACE='/workspace/heeverse'
+WORKSPACE='/tmp/workspace/heeverse'
 
 # log 경로
 LOG_PATH=$WORKSPACE/logs
@@ -22,4 +22,4 @@ nohup java -jar \
         -javaagent:$SCOUTER_BASE_PATH/scouter/agent.java/scouter.agent.jar \
         -Dscouter.config=$SCOUTER_BASE_PATH/scouter/agent.java/conf/scouter.conf \
         -Dadd-opensjava.base/java.lang=ALL-UNNAMED \
-        $DEPLOY_JAR >> $LOG_PATH/deploy.log 2>$LOG_PATH/deploy_err.log &
+        ."$DEPLOY_JAR"
