@@ -9,6 +9,7 @@ import com.heeverse.ticket.dto.persistence.TicketRequestMapperDto;
 import com.heeverse.ticket.dto.TicketRequestDto;
 import com.heeverse.ticket.exception.DuplicatedTicketException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,7 @@ import java.util.stream.IntStream;
  * @author gutenlee
  * @since 2023/08/04
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TicketService {

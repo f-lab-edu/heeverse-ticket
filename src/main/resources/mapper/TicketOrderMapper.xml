@@ -19,7 +19,7 @@
             #{bookingStatus},
             #{deleteFlag},
             #{createDateTime}
-         )
+         );
     </insert>
 
     <select id="selectTicketOrderList" parameterType="java.util.List">
@@ -34,6 +34,7 @@
                         ON o.seq = t.order_seq
                    JOIN concert AS c
                         ON c.seq = t.concert_seq
-        WHERE o.seq = ${ticketOrderSeq}
+        WHERE o.seq = ${ticketOrderSeq};
     </select>
+
 </mapper>

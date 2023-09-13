@@ -15,5 +15,4 @@ public interface TicketOrderMapper {
     void insertTicketOrder(TicketOrder ticketOrder);
 
     List<TicketOrderRequestMapperDto> selectTicketOrderList(Long ticketOrderSeq);
-
 }
