@@ -34,5 +34,7 @@ public class TicketTestHelper {
     public static Long 콘서트_생성하고_시퀀스_반환() {
          return 1L;
     }
-
+    public static List<Long> createTicketSeq() {
+        return List.of(1L, 2L, 3L);
+    }
 }
