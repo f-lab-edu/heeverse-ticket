@@ -11,12 +11,12 @@ import java.time.LocalDateTime;
  */
 @Getter
 public class TicketOrderResponseDto {
-    private String concertName;
-    private LocalDateTime concertDate;
-    private String ticketSerialNumber;
-    private String gradeName;
-    private LocalDateTime bookingDate;
-    private String bookingStatus;
+    private final String concertName;
+    private final LocalDateTime concertDate;
+    private final String ticketSerialNumber;
+    private final String gradeName;
+    private final LocalDateTime bookingDate;
+    private final String bookingStatus;
 
     public TicketOrderResponseDto(TicketOrderRequestMapperDto dto) {
         this.concertName = dto.concertName();
@@ -24,6 +24,6 @@ public class TicketOrderResponseDto {
         this.ticketSerialNumber = dto.ticketSerialNumber();
         this.gradeName = dto.gradeName();
         this.bookingDate = dto.bookingDate();
-        this.bookingStatus = dto.bookingStatus().getStatus();
+        this.bookingStatus = dto.bookingStatus().getDescription();
     }
 }
