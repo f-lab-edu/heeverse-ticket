@@ -6,8 +6,11 @@
 
     <property name="CONSOLE_LOG_PATTERN" value="${CONSOLE_LOG_PATTERN:-%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){green} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
     <property name="CONSOLE_LOG_CHARSET" value="${CONSOLE_LOG_CHARSET:-default}"/>
+    <property name="ERROR_LOG_FILE" value="error" />
+    <property name="LOG_FILE" value="daemon" />
+    <property name="LOG_DIR" value="/tmp/workspace/heeverse/logs" />
 
-    <springProfile name="local | dev">
+    <springProfile name="local | dev | dev-test">
         <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
             <encoder>
                 <pattern>${CONSOLE_LOG_PATTERN}</pattern>
@@ -15,12 +18,49 @@
             </encoder>
         </appender>
 
+        <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_DIR}/${LOG_FILE}.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <!-- 주 1회 rollover -->
+                <fileNamePattern>${LOG_FILE}.%d{yyyy-ww}.gz</fileNamePattern>
+                <!-- 4주치 로그 파일 보관. 단, 1GB 까지 가능 -->
+                <maxHistory>4</maxHistory>
+                <totalSizeCap>1GB</totalSizeCap>
+            </rollingPolicy>
+            <encoder>
+                <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+                <charset>${CONSOLE_LOG_CHARSET}</charset>
+            </encoder>
+        </appender>
+        <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_DIR}/${ERROR_LOG_FILE}.log</file>
+            <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+                <level>ERROR</level>
+            </filter>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <!-- 주 1회 rollover -->
+                <fileNamePattern>${ERROR_LOG_FILE}.%d{yyyy-ww}.gz</fileNamePattern>
+                <!-- 10주치 로그 파일 보관. 단, 1GB 까지 가능 -->
+                <maxHistory>10</maxHistory>
+                <totalSizeCap>1GB</totalSizeCap>
+            </rollingPolicy>
+            <encoder>
+                <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+                <charset>${CONSOLE_LOG_CHARSET}</charset>
+            </encoder>
+        </appender>
+
         <logger name="com.heeverse" level="DEBUG"  />
+        <logger name="com.heeverse" level="ERROR"  />
         <logger name="jdbc.sqlonly" level="INFO"  />
         <logger name="jdbc.resultsettable" level="INFO"  />
 
         <root level="INFO">
             <appender-ref ref="CONSOLE" />
+            <appender-ref ref="FILE" />
+        </root>
+        <root level="ERROR">
+            <appender-ref ref="ERROR_FILE" />
         </root>
     </springProfile>
 
