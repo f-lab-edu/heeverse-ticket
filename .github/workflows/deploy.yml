@@ -107,8 +107,8 @@ jobs:
             sudo docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}
             docker run -d --rm \ 
                         -p 8080:80 ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }} \
-                        -v home/ubuntu/workspace/heeverse:/workspace/heeverse/logs \
-                        -v home/ubuntu/workspace/scouter:/workspace/heeverse/scouter
+                        -v home/ubuntu/workspace/heeverse:tmp/workspace/heeverse/logs \
+                        -v home/ubuntu/workspace/scouter:tmp/workspace/heeverse/scouter
             
 
       - name: Remove Github Actions IP from security group
