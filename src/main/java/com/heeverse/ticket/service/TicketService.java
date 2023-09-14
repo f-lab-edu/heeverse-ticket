@@ -13,8 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.IntStream;
 
 /**
@@ -87,7 +89,14 @@ public class TicketService {
         return ticketMapper.selectForUpdate(ticketSetList);
     }
 
-    public int updateTicketOrderSeq(List<Long> lockTicketSeqList, Long ticketOrderSeq) {
+    public int updateTicketInfo(List<Long> lockTicketSeqList, Long ticketOrderSeq) {
+        validateTicketOrder(lockTicketSeqList, ticketOrderSeq);
         return ticketMapper.updateTicketOrderSeq(new TicketRequestMapperDto(lockTicketSeqList, ticketOrderSeq));
+    }
+
+    private void validateTicketOrder(List<Long> lockTicketSeqList, Long ticketOrderSeq) {
+        if (ObjectUtils.isEmpty(lockTicketSeqList) || ObjectUtils.isEmpty(ticketOrderSeq)){
+            throw new IllegalArgumentException("When Ordering Ticket, ticketSeqList, ticketOrderSeq have to be NOT NULL");
+        }
     }
 }

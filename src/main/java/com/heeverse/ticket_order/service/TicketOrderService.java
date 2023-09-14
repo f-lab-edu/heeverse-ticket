@@ -44,7 +44,7 @@ public class TicketOrderService {
 
         Long ticketOrderSeq = createTicketOrder(memberSeq);
 
-        int updateCount = ticketService.updateTicketOrderSeq(lockTicket(reqTicketSeqList), ticketOrderSeq);
+        int updateCount = ticketService.updateTicketInfo(lockTicket(reqTicketSeqList), ticketOrderSeq);
 
         if (updateCount != reqTicketSeqList.size()) {
             throw new TicketNotNormallyUpdatedException("Ticket Table order_seq update fail!");
