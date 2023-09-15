@@ -79,10 +79,6 @@ jobs:
             latest=true
           tags: |
             type=sha,format=short
-      
-      - name: image name and tag
-        run: |
-            echo "image_tag=${{ steps.meta.outputs.tags }}" >> $GITHUB_OUTPUT
 
       # docker image push
       - name: Build and push Docker image
@@ -115,9 +111,9 @@ jobs:
           key: ${{ secrets.KEY }}
           script: |
             set -e
-            sudo docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$IMAGE_TAG
+            sudo docker pull ${{ env.DOCKER_METADATA_OUTPUT_TAGS }}
             docker run -d --rm \ 
-                        -p 8080:80 ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$IMAGE_TAG \
+                        -p 8080:80 ${{ env.DOCKER_METADATA_OUTPUT_TAGS }} \
                         -v home/ubuntu/workspace/heeverse:/logs \
                         -v home/ubuntu/workspace/scouter:/scouter
             
