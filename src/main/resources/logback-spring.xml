@@ -19,7 +19,7 @@
         </appender>
 
         <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-            <file>${LOG_DIR}/${LOG_FILE}.log</file>
+            <file>${LOG_DIR}/${spring.profiles.active}/${LOG_FILE}.log</file>
             <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
                 <!-- 주 1회 rollover -->
                 <fileNamePattern>${LOG_FILE}.%d{yyyy-ww}.gz</fileNamePattern>
@@ -33,7 +33,7 @@
             </encoder>
         </appender>
         <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-            <file>${LOG_DIR}/${ERROR_LOG_FILE}.log</file>
+            <file>${LOG_DIR}/${spring.profiles.active}/${ERROR_LOG_FILE}.log</file>
             <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
                 <level>ERROR</level>
             </filter>
