@@ -8,7 +8,7 @@
     <property name="CONSOLE_LOG_CHARSET" value="${CONSOLE_LOG_CHARSET:-default}"/>
     <property name="ERROR_LOG_FILE" value="error" />
     <property name="LOG_FILE" value="daemon" />
-    <property name="LOG_DIR" value="/tmp/workspace/heeverse/logs" />
+    <property name="LOG_DIR" value="./logs" />
 
     <springProfile name="local | dev | dev-test">
         <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
