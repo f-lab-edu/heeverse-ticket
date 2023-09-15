@@ -79,6 +79,9 @@ jobs:
             latest=true
           tags: |
             type=sha,format=short
+            
+      - name: Set output
+        run: echo "DOCKER_METADATA_OUTPUT_TAGS=${{ env.DOCKER_METADATA_OUTPUT_TAGS }}" >> $GITHUB_OUTPUT
 
       # docker image push
       - name: Build and push Docker image
