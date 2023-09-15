@@ -79,6 +79,10 @@ jobs:
             latest=true
           tags: |
             type=sha,format=short
+      
+      - name: image name and tag
+        run: |
+            echo ${{ steps.meta.outputs.tags }} >> $IMAGE_TAG
 
       # docker image push
       - name: Build and push Docker image
@@ -113,7 +117,7 @@ jobs:
             set -e
             sudo docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}
             docker run -d --rm \ 
-                        -p 8080:80 ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }} \
+                        -p 8080:80 ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$IMAGE_TAG \
                         -v home/ubuntu/workspace/heeverse:/logs \
                         -v home/ubuntu/workspace/scouter:/scouter
             
