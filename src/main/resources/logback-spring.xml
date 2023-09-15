@@ -51,7 +51,6 @@
         </appender>
 
         <logger name="com.heeverse" level="DEBUG"  />
-        <logger name="com.heeverse" level="ERROR"  />
         <logger name="jdbc.sqlonly" level="INFO"  />
         <logger name="jdbc.resultsettable" level="INFO"  />
 
