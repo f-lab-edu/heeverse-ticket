@@ -1,6 +1,7 @@
 package com.heeverse.ticket_order.service;
 
 import com.heeverse.common.LockTemplate;
+import com.heeverse.common.util.StringUtils;
 import com.heeverse.ticket_order.domain.dto.TicketOrderRequestDto;
 import com.heeverse.ticket_order.domain.dto.TicketOrderResponseDto;
 import com.heeverse.ticket_order.domain.exception.TicketingFailException;
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.util.List;
 
 /**
@@ -22,12 +24,12 @@ public class TicketOrderFacade {
 
     private final LockTemplate lockTemplate;
     private final TicketOrderService ticketOrderService;
-    private static final String lockName = "heeverse";
-    private static final int timeoutSeconds = 30;
+    private final Duration lockTimeout = Duration.ofSeconds(30);
 
     @Transactional
     public List<TicketOrderResponseDto> startTicketOrderJob(TicketOrderRequestDto dto, Long memberSeq) {
-        lockTemplate.getLock(lockName, timeoutSeconds);
+        String lockName = StringUtils.createSeqListStr(dto.ticketSetList(),"_");
+        lockTemplate.getLock(lockName, (int) lockTimeout.getSeconds());
         try {
             Long ticketOrderSeq = ticketOrderService.orderTicket(dto, memberSeq);
             return ticketOrderService.getOrderTicket(ticketOrderSeq);
