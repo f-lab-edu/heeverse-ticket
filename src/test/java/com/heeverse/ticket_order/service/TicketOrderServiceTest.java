@@ -2,7 +2,6 @@ package com.heeverse.ticket_order.service;
 
 import ch.qos.logback.classic.Logger;
 import com.heeverse.ticket.domain.entity.Ticket;
-import com.heeverse.ticket.domain.mapper.TicketMapper;
 import com.heeverse.ticket.domain.mapper.TicketTestHelper;
 import com.heeverse.ticket.service.TicketService;
 import com.heeverse.ticket_order.domain.dto.TicketOrderRequestDto;

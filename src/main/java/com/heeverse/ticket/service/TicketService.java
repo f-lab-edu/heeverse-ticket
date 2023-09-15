@@ -91,6 +91,7 @@ public class TicketService {
 
     public int updateTicketInfo(List<Long> lockTicketSeqList, Long ticketOrderSeq) {
         validateTicketOrder(lockTicketSeqList, ticketOrderSeq);
+        lockTicketSeqList.forEach(seq -> log.info("[requested ticket seq] : {}", seq));
         return ticketMapper.updateTicketOrderSeq(new TicketRequestMapperDto(lockTicketSeqList, ticketOrderSeq));
     }
 
