@@ -1,8 +1,11 @@
 package com.heeverse.common;
 
+import com.heeverse.ticket.domain.entity.Ticket;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * @author jeongheekim
@@ -15,16 +18,11 @@ public class LockTemplate {
 
     private final LockMapper lockMapper;
 
-    public void getLock(String userLockName, int timeoutSeconds) {
-        log.info("start get Lock :{} , timeout : {}", userLockName, timeoutSeconds);
-        lockMapper.getLock(new NamedLockInfo(userLockName, timeoutSeconds));
-        log.info("success get Lock :{} , timeout : {}", userLockName, timeoutSeconds);
-    }
-
-    public void releaseLock(String userLockName) {
-        log.info("start release Lock :{}", userLockName);
-        lockMapper.releaseLock(new NamedLockInfo(userLockName, null));
-        log.info("success release Lock :{} ", userLockName);
+    public void getLock(List<Long> ticketSeqList) {
+        log.info("[LockTemplate] start record Lock");
+        List<Ticket> lockedTicketList = lockMapper.getLock(ticketSeqList);
+        lockedTicketList.forEach(v -> log.info("lock target ticket seq : {}", v.getSeq()));
+        log.info("[LockTemplate] success get Lock");
     }
 
 }

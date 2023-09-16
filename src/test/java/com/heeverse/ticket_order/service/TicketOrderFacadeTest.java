@@ -13,6 +13,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -26,10 +27,10 @@ import static com.heeverse.ticket_order.service.TicketOrderTestHelper.createTick
 @ActiveProfiles("dev")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest
-class TicketOrderServiceTest {
+class TicketOrderFacadeTest {
 
     @Autowired
-    private TicketOrderService ticketOrderService;
+    private TicketOrderFacade ticketOrderFacade;
 
     @Autowired
     private TicketService ticketService;
@@ -48,7 +49,7 @@ class TicketOrderServiceTest {
     @DisplayName("동시에 동일한 티켓 요청 시 ticket 테이블에")
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     class concurrentlySuccessTest {
-        Logger log = (Logger) LoggerFactory.getLogger(TicketOrderServiceTest.class);
+        Logger log = (Logger) LoggerFactory.getLogger(TicketOrderFacadeTest.class);
         @BeforeAll
         static void setUpTicketSeqList() {
             ticketSeqList = TicketTestHelper.createTicketSeq();
@@ -65,7 +66,7 @@ class TicketOrderServiceTest {
             for (int i = 0; i < threadCount; i++) {
                 executorService.submit(() -> {
                     try {
-                        ticketOrderSeq = ticketOrderService.orderTicket(dto, memberSeq);
+                        ticketOrderSeq = ticketOrderFacade.createTicketOrder(dto, memberSeq);
                         log.info("예매 성공 ticketOrderSeq : {}", ticketOrderSeq);
                     } catch (Exception e) {
                         log.error("ticket order test fail : {}", e.getMessage());
@@ -98,8 +99,8 @@ class TicketOrderServiceTest {
         @DisplayName("요청한 ticket 수와 예매된 티켓수가 일치한다.")
         @Test
         void ticketOrderInsertSizeTest() throws Exception {
-            List<Ticket> ticketsByTicketSeqList = ticketService.getTicketsByTicketSeqList(ticketSeqList);
-            Assertions.assertEquals(ticketsByTicketSeqList.size(), ticketSeqList.size());
+            long orderCount = ticketService.getTicketsByTicketSeqList(ticketSeqList).stream().filter(t -> Objects.nonNull(t.getOrderSeq())).count();
+            Assertions.assertEquals(orderCount, ticketSeqList.size());
         }
     }
 }

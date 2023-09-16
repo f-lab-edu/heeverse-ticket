@@ -24,20 +24,20 @@ public class TicketOrderFacade {
 
     private final LockTemplate lockTemplate;
     private final TicketOrderService ticketOrderService;
-    private final Duration lockTimeout = Duration.ofSeconds(30);
 
     @Transactional
     public List<TicketOrderResponseDto> startTicketOrderJob(TicketOrderRequestDto dto, Long memberSeq) {
-        String lockName = StringUtils.createSeqListStr(dto.ticketSetList(),"_");
-        lockTemplate.getLock(lockName, (int) lockTimeout.getSeconds());
         try {
-            Long ticketOrderSeq = ticketOrderService.orderTicket(dto, memberSeq);
+            Long ticketOrderSeq = createTicketOrder(dto, memberSeq);
             return ticketOrderService.getOrderTicket(ticketOrderSeq);
         } catch (Exception e) {
             log.error("티켓 예매 실패 : {}", e.getCause());
             throw new TicketingFailException(e.getMessage(), e);
-        } finally {
-            lockTemplate.releaseLock(lockName);
         }
+    }
+
+    protected Long createTicketOrder(TicketOrderRequestDto dto, Long memberSeq) throws Exception {
+        lockTemplate.getLock(dto.ticketSetList());
+        return ticketOrderService.orderTicket(dto, memberSeq);
     }
 }

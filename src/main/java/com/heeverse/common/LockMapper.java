@@ -1,6 +1,10 @@
 package com.heeverse.common;
 
+import com.heeverse.ticket.domain.entity.Ticket;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * @author jeongheekim
@@ -8,7 +12,6 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface LockMapper {
-    void getLock(NamedLockInfo namedLockInfo);
-    void releaseLock(NamedLockInfo namedLockInfo);
+    List<Ticket> getLock(@Param("ticketSeqList") List<Long> ticketSeqList);
 
 }

@@ -3,12 +3,14 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.heeverse.common.LockMapper">
 
-    <select id="getLock" parameterType="com.heeverse.common.NamedLockInfo">
-        SELECT GET_LOCK(#{lockName},${timeoutSeconds});
-    </select>
-
-    <select id="releaseLock" parameterType="com.heeverse.common.NamedLockInfo">
-        SELECT RELEASE_LOCK(#{lockName});
+    <select id="getLock" parameterType="java.util.List">
+        SELECT *
+        FROM ticket
+        WHERE seq IN
+            <foreach collection="ticketSeqList" item="ticketSeq" separator="," open="(" close=")">
+                ${ticketSeq}
+            </foreach>
+        FOR UPDATE;
     </select>
 
 </mapper>
