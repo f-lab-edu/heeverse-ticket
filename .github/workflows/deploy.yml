@@ -117,7 +117,7 @@ jobs:
           script: |
             set -e
             sudo docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
-            docker run --rm -p 8080:80 \
+            docker run -d --rm -p 8080:80 \
             --add-host=host.docker.internal:host-gateway \
             -v /home/ubuntu/workspace/heeverse/logs:/workspace/heeverse/logs \
             -v /home/ubuntu/workspace/scouter:/workspace/heeverse/scouter \
