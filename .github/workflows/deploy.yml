@@ -81,7 +81,7 @@ jobs:
             type=sha,format=short
             
       - name: Set output
-        run: echo "DOCKER_METADATA_OUTPUT_TAGS=${{ env.DOCKER_METADATA_OUTPUT_TAGS }}" >> $GITHUB_OUTPUT
+        run: echo "DOCKER_METADATA_OUTPUT_VERSION=${{ env.DOCKER_METADATA_OUTPUT_VERSION }}" >> $GITHUB_OUTPUT
 
       # docker image push
       - name: Build and push Docker image
