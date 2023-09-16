@@ -27,7 +27,7 @@ jobs:
       contents: read
       packages: write
     outputs:
-      image-tag: ${{ steps.imagetag.outputs.DOCKER_METADATA_OUTPUT_VERSION }}
+      image-tag: ${{ steps.imagetag.outputs.IMAGE_NAME_WITH_TAG }}
 
     steps:
       - name: Checkout
@@ -85,7 +85,7 @@ jobs:
       # image tag output 저장
       - name: Set output
         id: imagetag
-        run: echo "DOCKER_METADATA_OUTPUT_VERSION=${{ env.DOCKER_METADATA_OUTPUT_VERSION }}" >> $GITHUB_OUTPUT
+        run: echo "IMAGE_NAME_WITH_TAG=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.DOCKER_METADATA_OUTPUT_VERSION }}" >> $GITHUB_OUTPUT
 
       # docker image push
       - name: Build and push Docker image
@@ -100,8 +100,8 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     env:
-      IMAGE_TAG: ${{ needs.build.outputs.image-tag }}
-      IMAGE_NAME_WITH_TAG: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+      IMAGE: ${{ needs.build.outputs.image-tag }}
+
     steps:
       - name: Get Github action IP
         id: ip
@@ -119,13 +119,12 @@ jobs:
           key: ${{ secrets.KEY }}
           script: |
             set -e
-            sudo docker pull ${{ env.IMAGE_NAME_WITH_TAG }}
+            sudo docker pull ${{ env.IMAGE }}
             docker run --rm -p 8080:80 \
             --add-host=host.docker.internal:host-gateway \
             -v /home/ubuntu/workspace/heeverse/logs:/workspace/heeverse/logs \
             -v /home/ubuntu/workspace/scouter:/workspace/heeverse/scouter \
-            ${{ env.IMAGE_NAME_WITH_TAG }}
-            
+            ${{ env.IMAGE }}
 
       - name: Remove Github Actions IP from security group
         run: |
