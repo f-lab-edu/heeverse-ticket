@@ -12,8 +12,4 @@ public class TicketOrderTestHelper {
     public static TicketOrderRequestDto createTicketOrderRequestDto(List<Long> ticketSeqList) {
         return new TicketOrderRequestDto(ticketSeqList);
     }
-
-
-
-
 }

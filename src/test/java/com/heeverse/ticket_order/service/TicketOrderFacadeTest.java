@@ -50,6 +50,7 @@ class TicketOrderFacadeTest {
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     class concurrentlySuccessTest {
         Logger log = (Logger) LoggerFactory.getLogger(TicketOrderFacadeTest.class);
+
         @BeforeAll
         static void setUpTicketSeqList() {
             ticketSeqList = TicketTestHelper.createTicketSeq();
@@ -99,7 +100,9 @@ class TicketOrderFacadeTest {
         @DisplayName("요청한 ticket 수와 예매된 티켓수가 일치한다.")
         @Test
         void ticketOrderInsertSizeTest() throws Exception {
-            long orderCount = ticketService.getTicketsByTicketSeqList(ticketSeqList).stream().filter(t -> Objects.nonNull(t.getOrderSeq())).count();
+            long orderCount = ticketService.getTicketsByTicketSeqList(ticketSeqList)
+                    .stream()
+                    .filter(t -> Objects.nonNull(t.getOrderSeq())).count();
             Assertions.assertEquals(orderCount, ticketSeqList.size());
         }
     }
