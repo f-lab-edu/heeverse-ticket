@@ -27,7 +27,7 @@ jobs:
       contents: read
       packages: write
     outputs:
-          image-tag: ${{ steps.imagetag.outputs.DOCKER_METADATA_OUTPUT_VERSION }}
+      image-tag: ${{ steps.imagetag.outputs.DOCKER_METADATA_OUTPUT_VERSION }}
 
     steps:
       - name: Checkout
