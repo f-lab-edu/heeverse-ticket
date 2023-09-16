@@ -27,12 +27,12 @@ jobs:
       contents: read
       packages: write
     outputs:
-      image-tag: ${{ steps.imagetag.outputs.IMAGE_NAME_WITH_TAG }}
+      image-tag: ${{ steps.imagetag.outputs.DOCKER_METADATA_OUTPUT_VERSION }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-
+        
       - name: Set up JDK 17
         uses: actions/setup-java@v3.12.0
         with:
@@ -49,7 +49,6 @@ jobs:
       - name: Add Github Actions IP to Security group
         run: |
           aws ec2 authorize-security-group-ingress --group-id ${{ env.AWS_SG_ID }} --protocol tcp --port 8200 --cidr ${{ steps.ip.outputs.ipv4 }}/32 
-
       - name: Run build with Gradle Wrapper
         run: SPRING_PROFILES_ACTIVE=dev-test ./gradlew build
 
@@ -81,11 +80,10 @@ jobs:
             latest=true
           tags: |
             type=sha,format=short
-
       # image tag output 저장
       - name: Set output
         id: imagetag
-        run: echo "IMAGE_NAME_WITH_TAG=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.DOCKER_METADATA_OUTPUT_VERSION }}" >> $GITHUB_OUTPUT
+        run: echo "DOCKER_METADATA_OUTPUT_VERSION=${{ env.DOCKER_METADATA_OUTPUT_VERSION }}" >> $GITHUB_OUTPUT
 
       # docker image push
       - name: Build and push Docker image
@@ -100,8 +98,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     env:
-      IMAGE: ${{ needs.build.outputs.image-tag }}
-
+      IMAGE_TAG: ${{ needs.build.outputs.image-tag }}
     steps:
       - name: Get Github action IP
         id: ip
@@ -110,7 +107,7 @@ jobs:
       - name: Add Github Actions IP to Security group
         run: |
           aws ec2 authorize-security-group-ingress --group-id ${{ env.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32 
-
+          
       - name: Deploy to dev server
         uses: appleboy/ssh-action@master
         with:
@@ -119,13 +116,13 @@ jobs:
           key: ${{ secrets.KEY }}
           script: |
             set -e
-            sudo docker pull ${{ env.IMAGE }}
+            sudo docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
             docker run --rm -p 8080:80 \
             --add-host=host.docker.internal:host-gateway \
             -v /home/ubuntu/workspace/heeverse/logs:/workspace/heeverse/logs \
             -v /home/ubuntu/workspace/scouter:/workspace/heeverse/scouter \
-            ${{ env.IMAGE }}
-
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+            
       - name: Remove Github Actions IP from security group
         run: |
           aws ec2 revoke-security-group-ingress --group-id ${{ env.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
