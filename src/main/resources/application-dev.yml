@@ -17,6 +17,6 @@ logging:
 
 vault:
   scheme: http
-  uri: localhost
+  uri: host.docker.internal
   token: hvs.frFvDB3V7L4UYrBlQ6fFvBtD
   port: 8200
