@@ -26,6 +26,8 @@ jobs:
     permissions:
       contents: read
       packages: write
+    outputs:
+          image-tag: ${{ steps.imagetag.outputs.DOCKER_METADATA_OUTPUT_VERSION }}
 
     steps:
       - name: Checkout
@@ -79,8 +81,10 @@ jobs:
             latest=true
           tags: |
             type=sha,format=short
-            
+
+      # image tag output 저장
       - name: Set output
+        id: imagetag
         run: echo "DOCKER_METADATA_OUTPUT_VERSION=${{ env.DOCKER_METADATA_OUTPUT_VERSION }}" >> $GITHUB_OUTPUT
 
       # docker image push
@@ -97,6 +101,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - env:
+          IMAGE_TAG: ${{ needs.build.outputs.image-tag }}
       - name: Get Github action IP
         id: ip
         uses: haythem/public-ip@v1.2
@@ -104,7 +110,6 @@ jobs:
       - name: Add Github Actions IP to Security group
         run: |
           aws ec2 authorize-security-group-ingress --group-id ${{ env.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32 
-          aws ec2 authorize-security-group-ingress --group-id ${{ env.AWS_SG_ID }} --protocol tcp --port 8200 --cidr ${{ steps.ip.outputs.ipv4 }}/32 
 
       - name: Deploy to dev server
         uses: appleboy/ssh-action@master
@@ -114,9 +119,9 @@ jobs:
           key: ${{ secrets.KEY }}
           script: |
             set -e
-            sudo docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$DOCKER_METADATA_OUTPUT_VERSION
+            sudo docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$IMAGE_TAG
             docker run -d --rm \ 
-                        -p 8080:80 ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$DOCKER_METADATA_OUTPUT_VERSION \
+                        -p 8080:80 ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$IMAGE_TAG \
                         -v home/ubuntu/workspace/heeverse:/logs \
                         -v home/ubuntu/workspace/scouter:/scouter
             
@@ -124,5 +129,4 @@ jobs:
       - name: Remove Github Actions IP from security group
         run: |
           aws ec2 revoke-security-group-ingress --group-id ${{ env.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
-          aws ec2 revoke-security-group-ingress --group-id ${{ env.AWS_SG_ID }} --protocol tcp --port 8200 --cidr ${{ steps.ip.outputs.ipv4 }}/32
         if: always()
