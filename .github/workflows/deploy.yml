@@ -114,9 +114,9 @@ jobs:
           key: ${{ secrets.KEY }}
           script: |
             set -e
-            sudo docker pull ${{ env.DOCKER_METADATA_OUTPUT_VERSION }}
+            sudo docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$DOCKER_METADATA_OUTPUT_VERSION
             docker run -d --rm \ 
-                        -p 8080:80 ${{ env.DOCKER_METADATA_OUTPUT_VERSION }} \
+                        -p 8080:80 ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$DOCKER_METADATA_OUTPUT_VERSION \
                         -v home/ubuntu/workspace/heeverse:/logs \
                         -v home/ubuntu/workspace/scouter:/scouter
             
