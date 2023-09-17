@@ -94,6 +94,8 @@ jobs:
           context: .
           push: true
           tags: ${{ steps.meta.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
 
   deploy:
@@ -118,6 +120,8 @@ jobs:
           key: ${{ secrets.KEY }}
           script: |
             set -e
+            
+            docker ps -q --filter name=${{ env.IMAGE_NAME }} | grep -q . && docker stop ${{ env.IMAGE_NAME }} && docker rm -fv ${{ env.IMAGE_NAME }}
             sudo docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}
             docker run --rm -p 8080:80 \
             --add-host=host.docker.internal:host-gateway \
