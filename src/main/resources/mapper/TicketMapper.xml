@@ -124,4 +124,14 @@
        </foreach>
    </update>
 
+    <select id="getTicketLock" parameterType="java.util.List">
+        SELECT *
+        FROM ticket
+        WHERE seq IN
+        <foreach collection="ticketSeqList" item="ticketSeq" separator="," open="(" close=")">
+            ${ticketSeq}
+        </foreach>
+        FOR UPDATE;
+    </select>
+
 </mapper>

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * @date 2023/09/12
  */
 @ResponseStatus(HttpStatus.CONFLICT)
-public class TicketingFailException extends RuntimeException{
+public class TicketingFailException extends RuntimeException {
     public TicketingFailException(String message, Throwable cause) {
         super(message, cause);
     }
