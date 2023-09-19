@@ -41,7 +41,7 @@ jobs:
 
       - name: Get Github action IP
         id: ip
-        uses: haythem/public-ip@v1.2
+        uses: haythem/public-ip@v1.3
 
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
@@ -106,7 +106,7 @@ jobs:
     steps:
       - name: Get Github action IP
         id: ip
-        uses: haythem/public-ip@v1.2
+        uses: haythem/public-ip@v1.3
 
       - name: Add Github Actions IP to Security group
         run: |
@@ -122,12 +122,12 @@ jobs:
             set -e
             
             docker ps -q --filter name=${{ env.IMAGE_NAME }} | grep -q . && docker stop ${{ env.IMAGE_NAME }} && docker rm -fv ${{ env.IMAGE_NAME }}
-            sudo docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}
+            sudo docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
             docker run --rm -p 8080:8080 \
             --add-host=host.docker.internal:host-gateway \
             -v /home/ubuntu/workspace/heeverse/logs:/workspace/heeverse/logs \
             -v /home/ubuntu/workspace/scouter:/workspace/heeverse/scouter \
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{  env.IMAGE_TAG }}
             
 
       - name: Remove Github Actions IP from security group
