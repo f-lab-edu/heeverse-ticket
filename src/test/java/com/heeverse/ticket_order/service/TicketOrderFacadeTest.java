@@ -17,6 +17,8 @@ import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.heeverse.ticket_order.service.TicketOrderTestHelper.createTicketOrderRequestDto;
 
@@ -31,17 +33,13 @@ class TicketOrderFacadeTest {
 
     @Autowired
     private TicketOrderFacade ticketOrderFacade;
-
     @Autowired
     private TicketService ticketService;
-
     private static Long ticketOrderSeq;
-
     private static List<Long> ticketSeqList;
-
     private final int threadCount = 10;
-
     private final int threadPoolSize = 32;
+    private AtomicInteger failCount = new AtomicInteger(0);
 
 
     @Rollback
@@ -71,6 +69,7 @@ class TicketOrderFacadeTest {
                         log.info("예매 성공 ticketOrderSeq : {}", ticketOrderSeq);
                     } catch (Exception e) {
                         log.error("ticket order test fail : {}", e.getMessage());
+                        failCount.incrementAndGet();
                     } finally {
                         latch.countDown();
                     }
@@ -104,6 +103,13 @@ class TicketOrderFacadeTest {
                     .stream()
                     .filter(t -> Objects.nonNull(t.getOrderSeq())).count();
             Assertions.assertEquals(orderCount, ticketSeqList.size());
+        }
+
+        @Order(4)
+        @DisplayName("threadCount -1 개수는 티켓 예매 실패 count와 같다.")
+        @Test
+        void ticketOrderFailCountTest() {
+            Assertions.assertEquals(threadCount -1, failCount.get());
         }
     }
 }
