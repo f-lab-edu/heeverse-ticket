@@ -39,7 +39,7 @@ class TicketOrderFacadeTest {
     private static List<Long> ticketSeqList;
     private final int threadCount = 10;
     private final int threadPoolSize = 32;
-    private final AtomicInteger failCount = new AtomicInteger(0);
+    private AtomicInteger failCount = new AtomicInteger(0);
 
 
     @Transactional
