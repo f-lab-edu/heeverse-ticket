@@ -9,15 +9,14 @@ import org.junit.jupiter.api.*;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.heeverse.ticket_order.service.TicketOrderTestHelper.createTicketOrderRequestDto;
@@ -27,22 +26,23 @@ import static com.heeverse.ticket_order.service.TicketOrderTestHelper.createTick
  * @date 2023/09/10
  */
 @ActiveProfiles("dev")
+@Transactional
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest
 class TicketOrderFacadeTest {
 
     @Autowired
-    private TicketOrderFacade ticketOrderFacade;
+    private TicketOrderService ticketOrderService;
     @Autowired
     private TicketService ticketService;
     private static Long ticketOrderSeq;
     private static List<Long> ticketSeqList;
     private final int threadCount = 10;
     private final int threadPoolSize = 32;
-    private AtomicInteger failCount = new AtomicInteger(0);
+    private final AtomicInteger failCount = new AtomicInteger(0);
 
 
-    @Rollback
+    @Transactional
     @Nested
     @DisplayName("동시에 동일한 티켓 요청 시 ticket 테이블에")
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -65,11 +65,13 @@ class TicketOrderFacadeTest {
             for (int i = 0; i < threadCount; i++) {
                 executorService.submit(() -> {
                     try {
-                        ticketOrderSeq = ticketOrderFacade.createTicketOrder(dto, memberSeq);
+                        ticketOrderSeq = ticketOrderService.createTicketOrder(memberSeq);
+                        ticketService.getTicketLock(dto.ticketSetList());
+                        ticketOrderService.orderTicket(dto, ticketOrderSeq);
                         log.info("예매 성공 ticketOrderSeq : {}", ticketOrderSeq);
                     } catch (Exception e) {
-                        log.error("ticket order test fail : {}", e.getMessage());
                         failCount.incrementAndGet();
+                        log.error("ticket order test fail : {}", e.getMessage());
                     } finally {
                         latch.countDown();
                     }

@@ -6,6 +6,7 @@ import com.heeverse.ticket.service.TicketService;
 import com.heeverse.ticket_order.domain.dto.TicketOrderRequestDto;
 import com.heeverse.ticket_order.domain.dto.TicketOrderResponseDto;
 import com.heeverse.ticket_order.domain.dto.persistence.TicketOrderRequestMapperDto;
+import com.heeverse.ticket_order.domain.dto.persistence.TicketOrderUpdateMapperDto;
 import com.heeverse.ticket_order.domain.entity.TicketOrder;
 import com.heeverse.ticket_order.domain.exception.AlreadyBookedTicketException;
 import com.heeverse.ticket_order.domain.exception.TicketNotNormallyUpdatedException;
@@ -14,7 +15,6 @@ import io.jsonwebtoken.lang.Assert;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
@@ -34,28 +34,27 @@ public class TicketOrderService {
 
     private final TicketService ticketService;
     private final TicketOrderMapper ticketOrderMapper;
+    private BookingStatus bookingStatus = BookingStatus.SUCCESS;
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public Long orderTicket(TicketOrderRequestDto dto, Long memberSeq) throws Exception {
-
+    @Transactional
+    public void orderTicket(TicketOrderRequestDto dto, Long ticketOrderSeq) throws Exception {
         List<Long> reqTicketSeqList = dto.ticketSetList();
-
-        checkBookedTicket(dto, reqTicketSeqList);
-
-        Long ticketOrderSeq = createTicketOrder(memberSeq);
-
-        int updateCount = ticketService.updateTicketInfo(reqTicketSeqList, ticketOrderSeq);
-
-        if (updateCount != reqTicketSeqList.size()) {
-            throw new TicketNotNormallyUpdatedException("Ticket Table order_seq update fail!");
+        try {
+            checkBookedTicket(dto, reqTicketSeqList);
+            int updateCount = ticketService.updateTicketInfo(reqTicketSeqList, ticketOrderSeq);
+            if (updateCount != reqTicketSeqList.size()) {
+                log.error("Fail Update TicketOrderSeq");
+                throw new TicketNotNormallyUpdatedException("티켓 테이블에 order_seq update 실패");
+            }
+        } catch (Exception e) {
+            bookingStatus = BookingStatus.FAIL;
+        } finally {
+            changeTicketOrderStatus(new TicketOrderUpdateMapperDto(ticketOrderSeq, bookingStatus));
         }
-        return ticketOrderSeq;
     }
 
-    private Long createTicketOrder(Long memberSeq) throws Exception {
-        TicketOrder ticketOrder = new TicketOrder(memberSeq, LocalDateTime.now(), BookingStatus.DONE);
-        ticketOrderMapper.insertTicketOrder(ticketOrder);
-        return Optional.ofNullable(ticketOrder.getSeq()).orElseThrow(IllegalArgumentException::new);
+    public void changeTicketOrderStatus(TicketOrderUpdateMapperDto dto) {
+        ticketOrderMapper.updateTicketOrderStatus(dto);
     }
 
     private void checkBookedTicket(TicketOrderRequestDto dto, List<Long> reqTicketSeqList) {
@@ -70,9 +69,19 @@ public class TicketOrderService {
         }
     }
 
+    @Transactional(readOnly = true)
     public List<TicketOrderResponseDto> getOrderTicket(Long ticketOrderSeq) {
         Assert.notNull(ticketOrderSeq);
         List<TicketOrderRequestMapperDto> dtoList = ticketOrderMapper.selectTicketOrderList(ticketOrderSeq);
         return dtoList.stream().map(TicketOrderResponseDto::new).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public Long createTicketOrder(Long memberSeq) {
+        TicketOrder ticketOrder = new TicketOrder(memberSeq, LocalDateTime.now(), BookingStatus.READY);
+        ticketOrderMapper.insertTicketOrder(ticketOrder);
+        Long ticketOrderSeq = ticketOrder.getSeq();
+        log.info("createTicketOrder - ticket order seq : {}", ticketOrderSeq);
+        return Optional.ofNullable(ticketOrderSeq).orElseThrow(IllegalArgumentException::new);
     }
 }

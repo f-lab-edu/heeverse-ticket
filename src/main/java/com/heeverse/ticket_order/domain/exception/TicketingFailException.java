@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  */
 @ResponseStatus(HttpStatus.CONFLICT)
 public class TicketingFailException extends RuntimeException {
-    public TicketingFailException(String message, Throwable cause) {
-        super(message, cause);
+
+    public TicketingFailException(Throwable cause) {
+        super.initCause(cause);
     }
+
 }

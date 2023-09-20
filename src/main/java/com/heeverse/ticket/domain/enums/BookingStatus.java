@@ -8,7 +8,10 @@ import lombok.Getter;
  */
 @Getter
 public enum BookingStatus {
-    DONE("예매 완료"),
+
+    READY("예매 대기"),
+    SUCCESS("예매 성공"),
+    FAIL("예매 실패"),
     CANCEL("예매 취소");
 
     private final String description;
