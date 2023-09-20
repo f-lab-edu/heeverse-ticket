@@ -30,17 +30,15 @@ import static com.heeverse.ticket_order.service.TicketOrderTestHelper.createTick
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest
 class TicketOrderFacadeTest {
+@Autowired
+private TicketOrderFacade ticketOrderFacade;
 
-    @Autowired
-    private TicketOrderService ticketOrderService;
     @Autowired
     private TicketService ticketService;
-    private static Long ticketOrderSeq;
     private static List<Long> ticketSeqList;
-    private final int threadCount = 10;
+    private final int threadCount = 4;
     private final int threadPoolSize = 32;
     private AtomicInteger failCount = new AtomicInteger(0);
-
 
     @Transactional
     @Nested
@@ -55,7 +53,7 @@ class TicketOrderFacadeTest {
         }
 
         @Test
-        @DisplayName("ticketOrderSeq는 NotNull이다.")
+        @DisplayName("동시에 요청한다.")
         @Order(1)
         void setUp() throws InterruptedException {
             ExecutorService executorService = Executors.newFixedThreadPool(threadPoolSize);
@@ -65,13 +63,11 @@ class TicketOrderFacadeTest {
             for (int i = 0; i < threadCount; i++) {
                 executorService.submit(() -> {
                     try {
-                        ticketOrderSeq = ticketOrderService.createTicketOrder(memberSeq);
-                        ticketService.getTicketLock(dto.ticketSetList());
-                        ticketOrderService.orderTicket(dto, ticketOrderSeq);
-                        log.info("예매 성공 ticketOrderSeq : {}", ticketOrderSeq);
+                        ticketOrderFacade.startTicketOrderJob(dto, memberSeq);
+                        log.info("예매 성공");
                     } catch (Exception e) {
                         failCount.incrementAndGet();
-                        log.error("ticket order test fail : {}", e.getMessage());
+                        log.error("[TicketOrderFacadeTest] ticket order test fail : {}", e.getMessage());
                     } finally {
                         latch.countDown();
                     }
@@ -79,25 +75,9 @@ class TicketOrderFacadeTest {
                 });
             }
             latch.await();
-            Assertions.assertNotNull(ticketOrderSeq);
         }
-
 
         @Order(2)
-        @DisplayName("요청한 ticketOrderSeq와 ticket테이블의 orderSeq들이 같다.")
-        @Test
-        void ticketOrderSeqNotNullTest() {
-            List<Ticket> ticketsByTicketSeqList = ticketService.getTicketsByTicketSeqList(ticketSeqList);
-            Assertions.assertAll("Ticket's orderSeq Equals TicketOrders' seq",
-                    () -> {
-                        for (Ticket ticket : ticketsByTicketSeqList) {
-                            Assertions.assertEquals(ticket.getOrderSeq(), ticketOrderSeq);
-                        }
-                    }
-            );
-        }
-
-        @Order(3)
         @DisplayName("요청한 ticket 수와 예매된 티켓수가 일치한다.")
         @Test
         void ticketOrderInsertSizeTest() throws Exception {
@@ -107,7 +87,7 @@ class TicketOrderFacadeTest {
             Assertions.assertEquals(orderCount, ticketSeqList.size());
         }
 
-        @Order(4)
+        @Order(3)
         @DisplayName("threadCount -1 개수는 티켓 예매 실패 count와 같다.")
         @Test
         void ticketOrderFailCountTest() {

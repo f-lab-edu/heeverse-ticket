@@ -17,5 +17,5 @@ public interface TicketOrderMapper {
 
     List<TicketOrderRequestMapperDto> selectTicketOrderList(Long ticketOrderSeq);
 
-    int updateTicketOrderStatus(TicketOrderUpdateMapperDto dto);
+    void updateTicketOrderStatus(TicketOrderUpdateMapperDto dto);
 }

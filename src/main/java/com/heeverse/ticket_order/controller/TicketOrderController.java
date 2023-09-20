@@ -29,7 +29,7 @@ public class TicketOrderController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<List<TicketOrderResponseDto>> orderTicket(@RequestBody @Valid TicketOrderRequestDto dto, Authentication authentication) {
+    public ResponseEntity<List<TicketOrderResponseDto>> orderTicket(@RequestBody @Valid TicketOrderRequestDto dto, Authentication authentication) throws Exception {
         Member member = (Member) authentication.getPrincipal();
         return ResponseEntity.ok(ticketOrderFacade.startTicketOrderJob(dto, member.getSeq()));
     }

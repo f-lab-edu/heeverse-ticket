@@ -122,6 +122,7 @@
        <foreach collection="lockTicketSeqList" item="ticketSeq" separator="," open="(" close=")">
            ${ticketSeq}
        </foreach>
+       AND order_seq IS NULL
    </update>
 
     <select id="getTicketLock" parameterType="java.util.List">
