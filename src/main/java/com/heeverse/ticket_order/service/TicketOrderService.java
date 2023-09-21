@@ -34,9 +34,9 @@ public class TicketOrderService {
 
     private final TicketService ticketService;
     private final TicketOrderMapper ticketOrderMapper;
+    private BookingStatus bookingStatus = BookingStatus.SUCCESS;
 
-
-    @Transactional
+    @Transactional(noRollbackFor = TicketNotNormallyUpdatedException.class)
     public void orderTicket(TicketOrderRequestDto dto, Long ticketOrderSeq) throws Exception {
         List<Long> reqTicketSeqList = dto.ticketSetList();
         try {
@@ -48,8 +48,10 @@ public class TicketOrderService {
             }
         } catch (Exception e) {
             log.error("TicketOrderService - orderTicket 실패 : {} ", e.getMessage());
-
+            bookingStatus = BookingStatus.FAIL;
             throw new TicketNotNormallyUpdatedException(e);
+        } finally {
+            changeTicketOrderStatus(new TicketOrderUpdateMapperDto(ticketOrderSeq, bookingStatus));
         }
     }
 

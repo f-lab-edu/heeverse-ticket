@@ -5,8 +5,8 @@ import com.heeverse.ticket.domain.TicketSerialTokenDto;
 import com.heeverse.ticket.domain.entity.GradeTicket;
 import com.heeverse.ticket.domain.entity.Ticket;
 import com.heeverse.ticket.domain.mapper.TicketMapper;
-import com.heeverse.ticket.dto.persistence.TicketRequestMapperDto;
 import com.heeverse.ticket.dto.TicketRequestDto;
+import com.heeverse.ticket.dto.persistence.TicketRequestMapperDto;
 import com.heeverse.ticket.exception.DuplicatedTicketException;
 import com.heeverse.ticket_order.domain.exception.LockOccupancyFailureException;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.IntStream;
 
 /**

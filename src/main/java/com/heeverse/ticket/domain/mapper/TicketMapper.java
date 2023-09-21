@@ -29,6 +29,4 @@ public interface TicketMapper {
 
     List<Ticket> getTicketLock(@Param("ticketSeqList") List<Long> ticketSeqList);
 
-
-
 }
