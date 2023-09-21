@@ -3,6 +3,8 @@ package com.heeverse.ticket_order.controller;
 import com.heeverse.member.domain.entity.Member;
 import com.heeverse.ticket_order.domain.dto.TicketOrderRequestDto;
 import com.heeverse.ticket_order.domain.dto.TicketOrderResponseDto;
+import com.heeverse.ticket_order.domain.dto.TicketRemainsDto;
+import com.heeverse.ticket_order.domain.dto.TicketRemainsResponseDto;
 import com.heeverse.ticket_order.service.TicketOrderFacade;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,5 +34,14 @@ public class TicketOrderController {
     public ResponseEntity<List<TicketOrderResponseDto>> orderTicket(@RequestBody @Valid TicketOrderRequestDto dto, Authentication authentication) throws Exception {
         Member member = (Member) authentication.getPrincipal();
         return ResponseEntity.ok(ticketOrderFacade.startTicketOrderJob(dto, member.getSeq()));
+    }
+
+
+    @GetMapping("/remains")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<List<TicketRemainsResponseDto>> aggregateTicketRemains(
+            @RequestBody TicketRemainsDto ticketRemainsDto) {
+        return ResponseEntity.ok(ticketOrderFacade.getTicketRemains(ticketRemainsDto));
+
     }
 }

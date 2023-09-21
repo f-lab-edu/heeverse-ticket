@@ -2,22 +2,28 @@ package com.heeverse.ticket_order.service;
 
 import ch.qos.logback.classic.Logger;
 import com.heeverse.ticket.domain.entity.Ticket;
+import com.heeverse.ticket.domain.enums.BookingStatus;
 import com.heeverse.ticket.domain.mapper.TicketTestHelper;
 import com.heeverse.ticket.service.TicketService;
 import com.heeverse.ticket_order.domain.dto.TicketOrderRequestDto;
+import com.heeverse.ticket_order.domain.dto.TicketRemainsDto;
+import com.heeverse.ticket_order.domain.dto.TicketRemainsResponseDto;
 import org.junit.jupiter.api.*;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import static com.heeverse.ticket_order.service.TicketOrderTestHelper.createTicketOrderRequestDto;
 
@@ -30,8 +36,9 @@ import static com.heeverse.ticket_order.service.TicketOrderTestHelper.createTick
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest
 class TicketOrderFacadeTest {
-@Autowired
-private TicketOrderFacade ticketOrderFacade;
+
+    @Autowired
+    private TicketOrderFacade ticketOrderFacade;
 
     @Autowired
     private TicketService ticketService;
@@ -93,5 +100,83 @@ private TicketOrderFacade ticketOrderFacade;
         void ticketOrderFailCountTest() {
             Assertions.assertEquals(threadCount -1, failCount.get());
         }
+
+
+        @TestFactory
+        long getConcertSeq() {
+            return 1;
+        }
+
+        @TestFactory
+        long getNotExistsConcertSeq() {
+            return Long.MAX_VALUE;
+        }
+
+        @TestFactory
+        void lockTicketRowRecord() throws Exception {
+            List<Long> possibleTicketSeq = ticketService.getTicket(getConcertSeq())
+                    .stream().filter(ticket -> ticket.getOrderSeq() == null).limit(3)
+                    .map(Ticket::getSeq)
+                    .collect(Collectors.toList());
+
+            TicketOrderRequestDto dto = createTicketOrderRequestDto(possibleTicketSeq);
+            Long memberSeq = 14L;
+
+            ticketOrderFacade.startTicketOrderJob(dto, memberSeq).forEach(ordered -> {
+                Assertions.assertEquals(BookingStatus.SUCCESS, BookingStatus.valueOf(ordered.getBookingStatus()));
+            });
+
+        }
+
+        @Test
+        @DisplayName("티켓 잔여 집계 성공")
+        void ticketRemainsTest() throws Exception {
+            List<TicketRemainsResponseDto> ticketRemains = ticketOrderFacade.getTicketRemains(new TicketRemainsDto(getConcertSeq()));
+
+            Assertions.assertFalse(CollectionUtils.isEmpty(ticketRemains));
+        }
+
+        @Test
+        @DisplayName("티켓 잔여 조회 실패")
+        void ticketRemainsFailTest() throws Exception {
+            List<TicketRemainsResponseDto> ticketRemains = ticketOrderFacade.getTicketRemains(new TicketRemainsDto(getNotExistsConcertSeq()));
+            Assertions.assertTrue(CollectionUtils.isEmpty(ticketRemains));
+        }
+
+        @Test
+        @Timeout(value = 1000, unit = TimeUnit.MILLISECONDS)
+        @DisplayName("티켓 예매중 티켓 집계 조회시 데드락이 아니라면 소요 시간은 1000 밀리 세컨드 이하")
+        void selectTicketRemainsWhenRecordLockedTest() throws Exception {
+            int threads = 2;
+            ExecutorService executors = Executors.newFixedThreadPool(threads);
+            CountDownLatch latch = new CountDownLatch(threads);
+
+            executors.submit(() -> {
+                try {
+                    for (int i = 0; i < 100; i++) {
+                        lockTicketRowRecord();
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                } finally {
+                    latch.countDown();
+                }
+            });
+
+            executors.submit(() -> {
+                long start = System.nanoTime();
+
+                ticketOrderFacade.getTicketRemains(new TicketRemainsDto(getConcertSeq()));
+
+                long end = System.nanoTime();
+
+                System.out.println("티켓 집계 조회 : " +   TimeUnit.MILLISECONDS.convert((end - start), TimeUnit.NANOSECONDS) + " millis");
+                latch.countDown();
+            });
+
+            latch.await();
+        }
+
+
     }
 }

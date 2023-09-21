@@ -135,4 +135,18 @@
         FOR UPDATE;
     </select>
 
+
+    <select id="aggregateTicketRemains" parameterType="java.lang.Long"
+            resultType="com.heeverse.ticket_order.domain.dto.persistence.TicketRemainsResponseMapperDto">
+        SELECT
+            concert_seq,
+            grade_name,
+            count(grade_name) AS remains
+        FROM ticket
+        WHERE concert_seq = ${concertSeq}
+            AND order_seq is NULL
+           OR cancelled_flag = 1
+        GROUP BY grade_name
+    </select>
+
 </mapper>
