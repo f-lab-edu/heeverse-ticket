@@ -117,10 +117,10 @@ public class TicketService {
     @Transactional(readOnly = true)
     public List<TicketRemainsResponseDto> getTicketRemains(long concertSeq) {
 
-        List<TicketRemainsResponseMapperDto> remainsTicketList = ticketMapper.aggregateTicketRemains(concertSeq);
+        List<TicketRemainsResponseMapperDto> remainsTicketList = ticketMapper.aggregateTicketRemains(concertSeq, true);
 
         if (CollectionUtils.isEmpty(remainsTicketList)) {
-            throw new IllegalArgumentException(concertSeq + " -> 콘서트 시퀀스 정보가 없습니다.");
+            throw new IllegalArgumentException(concertSeq + " -> 발행된 티켓이 없어 집계 불가능 합니다.");
         }
 
         return remainsTicketList.stream()

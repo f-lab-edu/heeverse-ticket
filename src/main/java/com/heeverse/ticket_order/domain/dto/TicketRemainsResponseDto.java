@@ -19,4 +19,12 @@ public class TicketRemainsResponseDto {
         this.remain = mapperDto.remains();
     }
 
+    @Override
+    public String toString() {
+        return "TicketRemainsResponseDto{" +
+                "concertSeq=" + concertSeq +
+                ", gradeTicket='" + gradeTicket + '\'' +
+                ", remain=" + remain +
+                '}';
+    }
 }

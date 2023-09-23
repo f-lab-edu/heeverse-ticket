@@ -8,6 +8,7 @@ import com.heeverse.ticket.service.TicketService;
 import com.heeverse.ticket_order.domain.dto.TicketOrderRequestDto;
 import com.heeverse.ticket_order.domain.dto.TicketRemainsDto;
 import com.heeverse.ticket_order.domain.dto.TicketRemainsResponseDto;
+import com.heeverse.ticket_order.domain.exception.TicketAggregationFailException;
 import org.junit.jupiter.api.*;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +19,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -103,27 +101,37 @@ class TicketOrderFacadeTest {
 
 
         @TestFactory
-        long getConcertSeq() {
+        private long getConcertSeq() {
             return 1;
         }
 
         @TestFactory
-        long getNotExistsConcertSeq() {
+        private long getNotExistsConcertSeq() {
             return Long.MAX_VALUE;
         }
 
         @TestFactory
-        void lockTicketRowRecord() throws Exception {
-            List<Long> possibleTicketSeq = ticketService.getTicket(getConcertSeq())
-                    .stream().filter(ticket -> ticket.getOrderSeq() == null).limit(3)
+        private List<Long> getUnorderedTicket(long concertSeq) {
+            List<Long> possibleTicketSeq = ticketService.getTicket(concertSeq)
+                    .stream()
+                    .filter(ticket -> ticket.getOrderSeq() == null)
                     .map(Ticket::getSeq)
                     .collect(Collectors.toList());
 
-            TicketOrderRequestDto dto = createTicketOrderRequestDto(possibleTicketSeq);
+            Assertions.assertFalse(CollectionUtils.isEmpty(possibleTicketSeq));
+
+            return possibleTicketSeq;
+        }
+
+        @TestFactory
+        private void lockTicketRecord(List<Long> toOrderTicketSeq) throws Exception {
+
+            TicketOrderRequestDto dto = createTicketOrderRequestDto(toOrderTicketSeq);
             Long memberSeq = 14L;
 
             ticketOrderFacade.startTicketOrderJob(dto, memberSeq).forEach(ordered -> {
-                Assertions.assertEquals(BookingStatus.SUCCESS, BookingStatus.valueOf(ordered.getBookingStatus()));
+                log.info("ordered : {}",  ordered.toString());
+                Assertions.assertEquals(BookingStatus.SUCCESS.getDescription(), ordered.getBookingStatus());
             });
 
         }
@@ -137,46 +145,54 @@ class TicketOrderFacadeTest {
         }
 
         @Test
-        @DisplayName("티켓 잔여 조회 실패")
+        @DisplayName("발행된 티켓이 없으면 집계 조회 실패한다")
         void ticketRemainsFailTest() throws Exception {
-            List<TicketRemainsResponseDto> ticketRemains = ticketOrderFacade.getTicketRemains(new TicketRemainsDto(getNotExistsConcertSeq()));
-            Assertions.assertTrue(CollectionUtils.isEmpty(ticketRemains));
+            Assertions.assertThrowsExactly(TicketAggregationFailException.class,
+                    () -> ticketOrderFacade.getTicketRemains(new TicketRemainsDto(getNotExistsConcertSeq())
+            ));
         }
+
 
         @Test
-        @Timeout(value = 1000, unit = TimeUnit.MILLISECONDS)
-        @DisplayName("티켓 예매중 티켓 집계 조회시 데드락이 아니라면 소요 시간은 1000 밀리 세컨드 이하")
+        @DisplayName("티켓 예매 진행중에 티켓 집계 쿼리 정상조회된다")
         void selectTicketRemainsWhenRecordLockedTest() throws Exception {
-            int threads = 2;
-            ExecutorService executors = Executors.newFixedThreadPool(threads);
-            CountDownLatch latch = new CountDownLatch(threads);
 
-            executors.submit(() -> {
-                try {
-                    for (int i = 0; i < 100; i++) {
-                        lockTicketRowRecord();
+            List<List<Long>> subList = TicketOrderTestHelper.partitionSeq(getUnorderedTicket(getConcertSeq()), 3)
+                    .subList(1, 100);
+
+            int size = subList.size();
+            CountDownLatch latch = new CountDownLatch(size * 2);
+            ExecutorService executor = Executors.newScheduledThreadPool(10);
+            ExecutorService aggrExecutor = Executors.newScheduledThreadPool(10);
+
+            for (List<Long> toOrderTicketSeq : subList) {
+                executor.execute(() -> {
+                    try {
+                        lockTicketRecord(toOrderTicketSeq);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    } finally {
+                        latch.countDown();
                     }
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                } finally {
+                });
+            }
+
+            for (int i = 0; i < subList.size(); i++) {
+                aggrExecutor.execute(() -> {
+                    long start = System.nanoTime();
+                    List<TicketRemainsResponseDto> ticketRemains = ticketOrderFacade.getTicketRemains(new TicketRemainsDto(getConcertSeq()));
+                    for (TicketRemainsResponseDto ticketRemain : ticketRemains) {
+                        log.info("등급 {} / 잔여 {}", ticketRemain.gradeTicket, ticketRemain.remain);
+                    }
+                    long end = System.nanoTime();
+
+                    log.info("티켓 집계 조회 [" + 0 + "] : " + TimeUnit.MILLISECONDS.convert((end - start), TimeUnit.NANOSECONDS) + " millis");
+
                     latch.countDown();
-                }
-            });
-
-            executors.submit(() -> {
-                long start = System.nanoTime();
-
-                ticketOrderFacade.getTicketRemains(new TicketRemainsDto(getConcertSeq()));
-
-                long end = System.nanoTime();
-
-                System.out.println("티켓 집계 조회 : " +   TimeUnit.MILLISECONDS.convert((end - start), TimeUnit.NANOSECONDS) + " millis");
-                latch.countDown();
-            });
-
+                });
+            }
             latch.await();
+
         }
-
-
     }
 }

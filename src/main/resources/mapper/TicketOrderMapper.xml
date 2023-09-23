@@ -37,7 +37,9 @@
         WHERE o.seq = ${ticketOrderSeq};
     </select>
 
-    <update id="updateTicketOrderStatus" parameterType="com.heeverse.ticket_order.domain.dto.persistence.TicketOrderUpdateMapperDto">
+    <update id="updateTicketOrderStatus"
+
+            parameterType="com.heeverse.ticket_order.domain.dto.persistence.TicketOrderUpdateMapperDto">
         UPDATE
             ticket_order
         SET booking_status = #{bookingStatus}

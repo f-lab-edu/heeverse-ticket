@@ -64,7 +64,8 @@
             ticket_serial_number,
             grade_name,
             concert_seq,
-            create_datetime
+            create_datetime,
+            order_seq
         FROM
             ticket
         WHERE
@@ -136,7 +137,8 @@
     </select>
 
 
-    <select id="aggregateTicketRemains" parameterType="java.lang.Long"
+    <select id="aggregateTicketRemains"
+            parameterType="hashmap"
             resultType="com.heeverse.ticket_order.domain.dto.persistence.TicketRemainsResponseMapperDto">
         SELECT
             concert_seq,
@@ -145,7 +147,7 @@
         FROM ticket
         WHERE concert_seq = ${concertSeq}
             AND order_seq is NULL
-           OR cancelled_flag = 1
+           OR cancelled_flag = ${cancelledFlag}
         GROUP BY grade_name
     </select>
 

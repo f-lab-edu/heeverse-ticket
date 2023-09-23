@@ -7,13 +7,13 @@ import com.heeverse.ticket_order.domain.dto.TicketOrderResponseDto;
 import com.heeverse.ticket_order.domain.dto.TicketRemainsDto;
 import com.heeverse.ticket_order.domain.dto.TicketRemainsResponseDto;
 import com.heeverse.ticket_order.domain.dto.persistence.TicketOrderUpdateMapperDto;
+import com.heeverse.ticket_order.domain.exception.TicketAggregationFailException;
 import com.heeverse.ticket_order.domain.exception.TicketingFailException;
 import io.jsonwebtoken.lang.Assert;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -48,11 +48,10 @@ public class TicketOrderFacade {
 
 
     public List<TicketRemainsResponseDto> getTicketRemains(TicketRemainsDto ticketRemainsDto) {
-
         try {
             return ticketService.getTicketRemains(ticketRemainsDto.concertSeq());
         } catch (IllegalArgumentException e) {
-            return Collections.emptyList();
+            throw  new TicketAggregationFailException(e);
         }
     }
 }
