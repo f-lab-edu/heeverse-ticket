@@ -42,9 +42,8 @@ public class TicketOrderService {
         try {
             checkBookedTicket(dto, reqTicketSeqList);
             int updateCount = ticketService.updateTicketInfo(reqTicketSeqList, ticketOrderSeq);
-            if (updateCount != reqTicketSeqList.size()) {
-                log.error("Fail Update TicketOrderSeq");
-                throw new TicketNotNormallyUpdatedException("티켓 테이블에 order_seq update 실패");
+            if (updateCount == 0) {
+                throw new TicketNotNormallyUpdatedException("이미 예매 성공한 티켓으로 인해 티켓 테이블에 order_seq update 실패");
             }
         } catch (Exception e) {
             log.error("TicketOrderService - orderTicket 실패 : {} ", e.getMessage());
@@ -60,6 +59,7 @@ public class TicketOrderService {
     }
 
     private void checkBookedTicket(TicketOrderRequestDto dto, List<Long> reqTicketSeqList) {
+        //TODO 또 트랜잭션 타는거 생략하고 해보기
         List<Ticket> availableTicketList = ticketService.getTicketsByTicketSeqList(reqTicketSeqList)
                 .stream()
                 .filter(d -> ObjectUtils.isEmpty(d.getOrderSeq()))

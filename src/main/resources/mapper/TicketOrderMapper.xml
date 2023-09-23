@@ -37,6 +37,16 @@
         WHERE o.seq = ${ticketOrderSeq};
     </select>
 
+    <select id="selectAllTicketOrderList" resultType="com.heeverse.ticket_order.domain.entity.TicketOrder">
+        SELECT seq,
+               member_seq,
+               booking_date,
+               booking_status,
+               delete_flag
+        FROM ticket_order;
+    </select>
+
+
     <update id="updateTicketOrderStatus" parameterType="com.heeverse.ticket_order.domain.dto.persistence.TicketOrderUpdateMapperDto">
         UPDATE
             ticket_order

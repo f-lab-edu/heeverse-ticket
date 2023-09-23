@@ -15,6 +15,7 @@ logging:
   level:
     org:
       springframework:
+        transaction: TRACE
         security: INFO
 
 vault:
