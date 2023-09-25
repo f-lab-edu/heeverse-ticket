@@ -20,4 +20,6 @@ public interface TicketOrderMapper {
     List<TicketOrder> selectAllTicketOrderList();
 
     void updateTicketOrderStatus(TicketOrderUpdateMapperDto dto);
+
+    void rollback();
 }

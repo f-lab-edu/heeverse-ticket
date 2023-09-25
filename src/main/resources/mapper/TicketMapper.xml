@@ -135,4 +135,15 @@
         FOR UPDATE;
     </select>
 
+    <update id="rollbackTicketOrderSeq" parameterType="java.util.List">
+        UPDATE
+        ticket
+        SET order_seq = null
+        WHERE seq IN
+        <foreach collection="list" item="ticketSeq" separator="," open="(" close=")">
+            ${ticketSeq}
+        </foreach>
+        AND order_seq IS NOT NULL;
+    </update>
+
 </mapper>

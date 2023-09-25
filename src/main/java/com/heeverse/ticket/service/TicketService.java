@@ -109,4 +109,9 @@ public class TicketService {
             throw new LockOccupancyFailureException("해당 티켓 요청에 대한 LOCK 획득을 실패하였습니다.");
         }
     }
+
+    public void rollbackTicketOrderSeq(List<Long> ticketSeqList) {
+        int rollbackCount = ticketMapper.rollbackTicketOrderSeq(ticketSeqList);
+        log.info("티켓 예매 rollback success count : {}", rollbackCount);
+    }
 }
