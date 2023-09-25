@@ -23,7 +23,7 @@ public class TicketOrderFacade {
     private final TicketService ticketService;
     private final TicketOrderService ticketOrderService;
 
-    public List<TicketOrderResponseDto> startTicketOrderJob(TicketOrderRequestDto dto, Long memberSeq) throws Exception {
+    public List<TicketOrderResponseDto> startTicketOrderJob(TicketOrderRequestDto dto, Long memberSeq) {
         try {
             Long ticketOrderSeq = orderTicket(dto, memberSeq);
             return ticketOrderService.getOrderTicket(ticketOrderSeq);

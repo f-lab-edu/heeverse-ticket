@@ -32,30 +32,9 @@ public class TicketOrder extends BaseEntity {
         this.deleteFlag = deleteFlag;
     }
 
-
-
- /*   public TicketOrder(Long seq, Long memberSeq, LocalDateTime bookingDate, BookingStatus bookingStatus, boolean deleteFlag) {
-        System.out.println("!!!!!!!!!!!!bookingStatus = " + bookingStatus);
-        this.seq = seq;
-        this.memberSeq = memberSeq;
-        this.bookingDate = bookingDate;
-        this.bookingStatus = bookingStatus;
-        this.deleteFlag = deleteFlag;
-    }*/
-
     public TicketOrder(Long memberSeq, LocalDateTime bookingDate, BookingStatus bookingStatus) {
         this(null, memberSeq, bookingDate, bookingStatus, false);
     }
 
-    @Override
-    public String toString() {
-        return "TicketOrder{" +
-                "seq=" + seq +
-                ", memberSeq=" + memberSeq +
-                ", bookingDate=" + bookingDate +
-                ", bookingStatus=" + bookingStatus +
-                ", deleteFlag=" + deleteFlag +
-                '}';
-    }
 }
 
