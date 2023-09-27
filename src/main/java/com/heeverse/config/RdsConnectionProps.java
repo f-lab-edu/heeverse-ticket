@@ -17,7 +17,7 @@ import static com.heeverse.common.Constants.VAULT_PATH;
  */
 @Primary
 @Configuration
-@Profile(value = {"dev"})
+@Profile(value = {"dev", "prod"})
 public class RdsConnectionProps extends DataSourceProperties {
 
     private final VaultOperationService vaultOperationService;
