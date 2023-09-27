@@ -1,0 +1,34 @@
+spring:
+  h2:
+    console:
+      enabled: true
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+
+  sql:
+    init:
+      schema-locations: classpath:schema.sql
+      mode: embedded
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    arg-name-based-constructor-auto-mapping: true
+
+logging:
+  level:
+    org:
+      springframework:
+        jdbc:
+          datasource:
+            org.springframework.jdbc.datasource.DataSourceTransactionManager: DEBUG
+        security: TRACE
+
+vault:
+  scheme: http
+  uri: 3.22.218.43
+  token: hvs.frFvDB3V7L4UYrBlQ6fFvBtD
+  port: 8200

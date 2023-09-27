@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heeverse.member.domain.mapper.MemberMapper">
+
+  <select id="findById" parameterType="String"
+    resultType="com.heeverse.member.domain.entity.Member">
+    SELECT seq, id, password, user_name, email, create_datetime
+    FROM member
+    WHERE id = #{id}
+  </select>
+
+  <insert id="insertMember" parameterType="com.heeverse.member.domain.entity.Member">
+    INSERT INTO member (id, password, user_name, email, create_datetime)
+    VALUES (#{id}, #{password}, #{userName}, #{email}, #{createDateTime})
+  </insert>
+</mapper>

@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.1.1'
     id 'io.spring.dependency-management' version '1.1.0'
+    id 'jacoco'
 }
 
 group 'com.heeverse'
@@ -11,12 +12,15 @@ java {
     sourceCompatibility = '17'
 }
 
+jacoco {
+    toolVersion = "0.8.8"
+}
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
 }
-
 
 repositories {
     mavenCentral()
@@ -25,14 +29,43 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.2'
+    implementation 'org.springframework.boot:spring-boot-starter-validation:3.1.1'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc:3.1.1'
+    implementation 'org.springframework.vault:spring-vault-core:3.0.2'
+
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+    implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
+
     compileOnly 'org.projectlombok:lombok'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    runtimeOnly 'com.h2database:h2'
     runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.2'
+    testImplementation 'org.springframework.security:spring-security-test:6.1.2'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    reports {
+        xml.required = true
+        csv.required = true
+        html.required = false
+    }
+}
+
+
+
+jar {
+    enabled = false
 }

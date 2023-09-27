@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.heeverse.ticket.domain.mapper.TicketMapper">
+
+    <insert id="insertTicketGrade" parameterType="java.util.List">
+        INSERT INTO grade_ticket(
+            grade_name,
+            ticket_count,
+            concert_seq,
+            create_datetime
+        )
+        VALUES
+            <foreach item="grade" collection="list" separator=",">
+                (
+                    #{grade.gradeName},
+                    #{grade.ticketCount},
+                    #{grade.concertSeq},
+                    #{grade.createDateTime}
+                )
+            </foreach>
+    </insert>
+    
+    <select id="findTicketGrades" parameterType="java.lang.Long"
+            resultType="com.heeverse.ticket.domain.entity.GradeTicket">
+        SELECT
+            seq,
+            grade_name,
+            ticket_count,
+            concert_seq,
+            create_datetime
+        FROM
+            grade_ticket
+        WHERE
+            concert_seq = #{concertSeq}
+    </select>
+
+
+    <insert id="insertTicket" parameterType="java.util.List">
+        INSERT INTO ticket(
+            ticket_serial_number,
+            grade_name,
+            concert_seq,
+            create_datetime
+        )
+        VALUES
+            <foreach item="ticket" collection="list" separator=",">
+                (
+                    #{ticket.ticketSerialNumber},
+                    #{ticket.gradeName},
+                    #{ticket.concertSeq},
+                    #{ticket.createDateTime}
+                )
+            </foreach>
+    </insert>
+
+
+
+    <select id="findTickets" parameterType="java.lang.Long"
+            resultType="com.heeverse.ticket.domain.entity.Ticket">
+        SELECT
+            seq,
+            ticket_serial_number,
+            grade_name,
+            concert_seq,
+            create_datetime
+        FROM
+            ticket
+        WHERE
+            concert_seq = #{concertSeq}
+    </select>
+
+
+    <select id="countTicket" parameterType="java.lang.Long"
+            resultType="int">
+        SELECT
+            count(seq)
+        FROM
+            ticket
+        WHERE
+            concert_seq = #{concertSeq}
+    </select>
+
+</mapper>
