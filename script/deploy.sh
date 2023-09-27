@@ -18,7 +18,7 @@ echo ">>> DEPLOY_JAR 배포 시작"    >> $LOG_PATH/deploy.log
 echo ">>> DEPLOY_JAR :: $DEPLOY_JAR "  >> $LOG_PATH/deploy.log
 
 nohup java -jar \
-        -Dspring.profiles.active=dev \
+        -Dspring.profiles.active=${PROFILE} \
         -javaagent:$SCOUTER_BASE_PATH/scouter/agent.java/scouter.agent.jar \
         -Dscouter.config=$SCOUTER_BASE_PATH/scouter/agent.java/conf/scouter.conf \
         -Dadd-opensjava.base/java.lang=ALL-UNNAMED \

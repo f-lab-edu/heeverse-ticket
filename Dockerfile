@@ -11,4 +11,4 @@ RUN useradd -r -u 1026 -g heeverse appuser
 RUN chown -R appuser:heeverse /workspace
 USER appuser
 
-ENTRYPOINT [ "sh", "deploy.sh"]
+ENTRYPOINT [ "sh", "deploy.sh", "-Dspring.profiles.active=${PROFILE}"]

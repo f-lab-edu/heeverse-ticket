@@ -1,0 +1,76 @@
+name: heeverse-release-001
+
+on:
+  push:
+    branches: [ main ]
+
+env:
+  # docker hub
+  REGISTRY: gutenlee
+  IMAGE_NAME: heeverse-ticket-api
+
+  # NCP
+  NCP_HOST_1: ${{ secrets.NCP_HOST_1 }}
+  USERNAME: ${{ secrets.USERNAME }}
+  PASSWORD: ${{ secrets.PASSWORD }}
+
+
+jobs:
+  deploy-prod:
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Get Github action IP
+        id: ip
+        uses: haythem/public-ip@v1.3
+
+      - name: Make the script files executable
+        run: chmod +x ./script/ncpAddIp.sh ./script/ncpRemoveIp.sh
+
+      - name: Add Github Actions IP to ACG group
+        run: |
+          set -x
+          ./script/ncpAddIp.sh
+        env:
+          ACCESS_CONTROL_GROUP_NO:  ${{ secrets.ACCESS_CONTROL_GROUP_NO }}
+          VPC_NO: ${{ secrets.VPC_NO }}
+          NCP_ACCESS_KEY: ${{ secrets.NCP_ACCESS_KEY }}
+          NCP_SECRET_KEY: ${{ secrets.NCP_SECRET_KEY }}
+          IP: ${{ steps.ip.outputs.ipv4 }}
+          PORT: 22
+
+      - name: Deploy to dev server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.NCP_HOST_1 }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.PASSWORD }}
+          script: |
+            set -e
+            docker ps -q --filter name=${{ env.IMAGE_NAME }} | grep -q . && docker stop ${{ env.IMAGE_NAME }} && docker rm -fv ${{ env.IMAGE_NAME }}
+            sudo docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            docker run -d --rm \
+            --name=${{ env.IMAGE_NAME }} \
+            -p 8080:8080 \
+            --PROFILE=prod
+            --add-host=host.docker.internal:host-gateway \
+            -v /home/ubuntu/workspace/heeverse/logs:/workspace/heeverse/logs \
+            -v /home/ubuntu/workspace/scouter:/workspace/heeverse/scouter \
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+
+      - name: Remove Github Actions IP to ACG group
+        run: |
+          set -e
+          ./script/ncpRemoveIp.sh
+        env:
+          ACCESS_CONTROL_GROUP_NO:  ${{ secrets.ACCESS_CONTROL_GROUP_NO }}
+          VPC_NO: ${{ secrets.VPC_NO }}
+          NCP_ACCESS_KEY: ${{ secrets.NCP_ACCESS_KEY }}
+          NCP_SECRET_KEY: ${{ secrets.NCP_SECRET_KEY }}
+          IP: ${{ steps.ip.outputs.ipv4 }}
+          PORT: 22
+        if:
+          always()

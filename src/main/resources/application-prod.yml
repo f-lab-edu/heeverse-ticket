@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    arg-name-based-constructor-auto-mapping: true
+
+logging:
+  level:
+    org:
+      springframework:
+        security: INFO
+
+vault:
+  scheme: http
+  uri: 3.22.218.43
+  token: hvs.frFvDB3V7L4UYrBlQ6fFvBtD
+  port: 8200

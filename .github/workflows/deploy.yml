@@ -125,6 +125,7 @@ jobs:
             sudo docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
             docker run -d --rm \
             --name=${{ env.IMAGE_NAME }} \
+            --PROFILE=dev
             -p 8080:8080 \
             --add-host=host.docker.internal:host-gateway \
             -v /home/ubuntu/workspace/heeverse/logs:/workspace/heeverse/logs \
