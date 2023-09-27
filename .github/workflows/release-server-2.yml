@@ -56,7 +56,6 @@ jobs:
             sudo docker run -e PROFILE=prod -d --rm \
             --name=${{ env.IMAGE_NAME }} \
             -p 8080:8080 \
-            --PROFILE=prod
             --add-host=host.docker.internal:host-gateway \
             -v /home/ubuntu/workspace/heeverse/logs:/workspace/heeverse/logs \
             -v /home/ubuntu/workspace/scouter:/workspace/heeverse/scouter \
