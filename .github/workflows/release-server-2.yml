@@ -1,6 +1,10 @@
 name: heeverse-release-002
 
 on:
+  workflow_run:
+    workflows: [ heeverse-release-001 ]
+    types:
+      - completed
   push:
     branches: [ main ]
 
