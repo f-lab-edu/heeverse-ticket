@@ -51,9 +51,9 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           script: |
             set -e
-            docker ps -q --filter name=${{ env.IMAGE_NAME }} | grep -q . && docker stop ${{ env.IMAGE_NAME }} && docker rm -fv ${{ env.IMAGE_NAME }}
+            sudo docker ps -q --filter name=${{ env.IMAGE_NAME }} | grep -q . && docker stop ${{ env.IMAGE_NAME }} && docker rm -fv ${{ env.IMAGE_NAME }}
             sudo docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-            docker run -d --rm \
+            sudo docker run -d --rm \
             --name=${{ env.IMAGE_NAME }} \
             -p 8080:8080 \
             --PROFILE=prod
