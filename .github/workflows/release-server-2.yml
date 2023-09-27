@@ -48,7 +48,7 @@ jobs:
         with:
           host: ${{ secrets.NCP_HOST_2 }}
           username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.PASSWORD }}
+          password: ${{ secrets.PASSWORD }}
           script: |
             set -e
             docker ps -q --filter name=${{ env.IMAGE_NAME }} | grep -q . && docker stop ${{ env.IMAGE_NAME }} && docker rm -fv ${{ env.IMAGE_NAME }}
