@@ -1,12 +1,15 @@
 package com.heeverse.ticket_order.service;
 
 import ch.qos.logback.classic.Logger;
+import com.heeverse.common.ServiceTest;
+import com.heeverse.concert.domain.entity.ConcertHelper;
 import com.heeverse.member.domain.MemberTestHelper;
+import com.heeverse.ticket.domain.entity.GradeTicket;
+import com.heeverse.ticket.domain.entity.Ticket;
 import com.heeverse.ticket.domain.enums.BookingStatus;
 import com.heeverse.ticket.domain.mapper.TicketTestHelper;
 import com.heeverse.ticket.service.TicketService;
-import com.heeverse.ticket_order.domain.dto.TicketOrderRequestDto;
-import com.heeverse.ticket_order.domain.entity.TicketOrder;
+import com.heeverse.ticket_order.domain.dto.TicketOrderResponseDto;
 import com.heeverse.ticket_order.domain.exception.TicketingFailException;
 import com.heeverse.ticket_order.domain.mapper.TicketOrderMapper;
 import org.junit.jupiter.api.Assertions;
@@ -14,117 +17,92 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
-import static com.heeverse.ticket_order.service.TicketOrderTestHelper.createTicketOrderRequestDto;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * @author jeongheekim
  * @date 2023/09/10
  */
-@ActiveProfiles("dev")
-@Transactional
-@SpringBootTest
-class TicketOrderFacadeTest {
+
+class TicketOrderFacadeTest extends ServiceTest {
 
     @Autowired
     private TicketOrderFacade ticketOrderFacade;
-    @Autowired
-    private TicketOrderMapper ticketOrderMapper;
-    @Autowired
-    private TicketService ticketService;
-    private static final int threadCount = 4;
-    private static final int threadPoolSize = 32;
-    private final Logger log = (Logger) LoggerFactory.getLogger(TicketOrderFacadeTest.class);
-
 
     @DisplayName("이미 예매한 티켓이 없으면 티켓예매는 성공한다.")
     @Test
     void ticketOrderSuccessTest() throws Exception {
-        int expectedSuccessCount = 1;
-        orderTicket();
-        List<TicketOrder> ticketOrderList = ticketOrderMapper.selectAllTicketOrderList();
-        long ticketOrderSuccessCount = ticketOrderList.stream()
-                .filter(t -> t.getBookingStatus().equals(BookingStatus.SUCCESS))
+        int failCount = 0;
+        List<Long> ticketList = createTicket(createConcert());
+        Long memberSeq = memberFactory.createMember(MemberTestHelper.getMockMember());
+
+        List<TicketOrderResponseDto> dtoList = orderTicket(ticketList, memberSeq);
+        long ticketOrderFailCount = dtoList.stream()
+                .filter(t -> t.getBookingStatus().equals(BookingStatus.FAIL.getDescription()))
                 .count();
-        Assertions.assertEquals(expectedSuccessCount, ticketOrderSuccessCount);
+        Assertions.assertEquals(failCount, ticketOrderFailCount);
+    }
+
+    @DisplayName("티켓예매가 성공하면 리턴값은 NOTNULL이다.")
+    @Test
+    void ticketOrderSuccessResponseNotNullTest() throws Exception {
+        List<Long> ticketList = createTicket(createConcert());
+        Long memberSeq = memberFactory.createMember(MemberTestHelper.getMockMember());
+
+        assertNotNull(orderTicket(ticketList, memberSeq));
     }
 
     @DisplayName("이미 예매한 티켓을 예매하면 실패한다.")
     @Test
     void ticketOrderFailTest() throws Exception {
-        orderTicket();
-        Assertions.assertThrows(TicketingFailException.class,
-                () -> ticketOrderFacade.startTicketOrderJob(createTicketOrderRequestDto(TicketTestHelper.createTicketSeq()), MemberTestHelper.getMemberSeq()));
+        List<Long> ticketList = createTicket(createConcert());
+        Long memberSeq = memberFactory.createMember(MemberTestHelper.getMockMember());
+
+        orderTicket(ticketList, memberSeq);
+        Assertions.assertThrows(TicketingFailException.class, () -> orderTicket(ticketList, memberSeq));
     }
 
-    @Rollback
-    @DisplayName("동일한 티켓 예매 시 ticketOrder는 threadCount만큼 Insert된다.")
+    @DisplayName("티켓 예매 성공하면 예매 정보가 조회된다.")
     @Test
-    void successBookingStatusTest2() throws InterruptedException {
-        concurrencyRequest();
-        List<TicketOrder> ticketOrderList = ticketOrderMapper.selectAllTicketOrderList();
-        Assertions.assertEquals(ticketOrderList.size(), threadCount);
-        rollback();
-    }
-    @Rollback
-    @DisplayName("동일한 티켓 예매 시 주문상태가 SUCESS인 주문은 1건만 존재한다.")
-    @Test
-    void concurrencyBookingSuccessTest() throws InterruptedException {
-        concurrencyRequest();
-        List<TicketOrder> ticketOrderList = ticketOrderMapper.selectAllTicketOrderList();
-        long expectedCount = ticketOrderList.stream()
-                .filter(t -> t.getBookingStatus().equals(BookingStatus.SUCCESS))
-                .count();
-        Assertions.assertEquals(expectedCount, 1);
-        rollback();
-    }
-    @Rollback
-    @DisplayName("동일한 티켓 예매 시 주문상태가 FAIL인 주문은 threadCount -1 건 존재한다.")
-    @Test
-    void concurrencyBookingFailTest() throws InterruptedException {
-        concurrencyRequest();
-        List<TicketOrder> ticketOrderList = ticketOrderMapper.selectAllTicketOrderList();
-        long expectedCount = ticketOrderList.stream()
-                .filter(t -> t.getBookingStatus().equals(BookingStatus.FAIL))
-                .count();
-        Assertions.assertEquals(expectedCount, threadCount - 1);
-        rollback();
+    void ticketOrderSuccessResponseTest() throws Exception {
+        List<Long> ticketList = createTicket(createConcert());
+        Long memberSeq = memberFactory.createMember(MemberTestHelper.getMockMember());
+
+        List<TicketOrderResponseDto> dtoList = orderTicket(ticketList, memberSeq);
+        Assertions.assertAll(
+                () -> dtoList.forEach(dto -> Assertions.assertEquals(dto.getBookingStatus(), BookingStatus.SUCCESS.getDescription())),
+                () -> dtoList.forEach(dto -> Assertions.assertNotNull(dto.getTicketSerialNumber())),
+                () -> dtoList.forEach(dto -> Assertions.assertTrue(dto.getBookingDate().isBefore(LocalDateTime.now()))),
+                () -> dtoList.forEach(dto -> Assertions.assertNotNull(dto.getGradeName())),
+                () -> dtoList.forEach(dto -> Assertions.assertNotNull(dto.getConcertName()))
+        );
     }
 
-    private void concurrencyRequest() throws InterruptedException {
-        ExecutorService executorService = Executors.newFixedThreadPool(threadPoolSize);
-        CountDownLatch latch = new CountDownLatch(threadCount);
-        for (int i = 0; i < threadCount; i++) {
-            executorService.submit(() -> {
-                try {
-                    orderTicket();
-                } catch (Exception e) {
-                    log.error("[TicketOrderFacadeTest] ticket order test fail : {}", e.getMessage());
-                } finally {
-                    latch.countDown();
-                }
-            });
-        }
-        latch.await();
+    private Long createConcert() {
+        concertFactory.registerConcert(ConcertHelper.buildConcert());
+        return concertFactory.selectLatestConcertSeq();
     }
 
-    private void orderTicket() throws Exception {
-        TicketOrderRequestDto ticketOrderRequestDto = createTicketOrderRequestDto(TicketTestHelper.createTicketSeq());
-        ticketOrderFacade.startTicketOrderJob(ticketOrderRequestDto, MemberTestHelper.getMemberSeq());
+    private List<Long> createTicket(Long concertSeq) {
+        List<GradeTicket> gradeTickets = TicketTestHelper.buildTicketGrade(concertSeq);
+        ticketFactory.insertTicketGrade(gradeTickets);
+
+        List<Ticket> ticketList = gradeTickets.stream().map(gradeTicket ->
+                TicketTestHelper.buildTicket(concertSeq, gradeTicket)).toList();
+        ticketFactory.insertTicket(ticketList);
+
+        List<Ticket> tickets = ticketFactory.selectTicketSeqList(concertSeq);
+        return tickets.stream().map(Ticket::getSeq).collect(Collectors.toList());
     }
 
-    private void rollback() {
-        ticketService.rollbackTicketOrderSeq(TicketTestHelper.createTicketSeq());
-        ticketOrderMapper.rollback();
+
+    private List<TicketOrderResponseDto> orderTicket(List<Long> ticketList, Long memberSeq) throws Exception {
+        return ticketOrderFacade.startTicketOrderJob(TicketOrderTestHelper.createTicketOrderRequestDto(ticketList), memberSeq);
     }
 
 }

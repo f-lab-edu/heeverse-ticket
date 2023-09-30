@@ -37,7 +37,8 @@
     </select>
 
 
-    <insert id="insertTicket" parameterType="java.util.List">
+    <insert id="insertTicket"  useGeneratedKeys="true"
+            keyProperty="seq" parameterType="java.util.List">
         INSERT INTO ticket(
             ticket_serial_number,
             grade_name,
@@ -64,7 +65,8 @@
             ticket_serial_number,
             grade_name,
             concert_seq,
-            create_datetime
+            create_datetime,
+            order_seq
         FROM
             ticket
         WHERE

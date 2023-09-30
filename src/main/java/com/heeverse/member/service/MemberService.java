@@ -23,12 +23,12 @@ public class MemberService {
     }
 
     @Transactional
-    public void signup(MemberRequestDto memberRequestDto) {
+    public Long signup(MemberRequestDto memberRequestDto) {
         findMember(memberRequestDto.getId()).ifPresent(m -> {
             throw new DuplicatedMemberException();
             });
 
-        memberMapper.insertMember(Member.builder()
+        return memberMapper.insertMember(Member.builder()
             .id(memberRequestDto.getId())
             .userName(memberRequestDto.getUserName())
             .password(passwordEncoder.encode(memberRequestDto.getPassword()))
