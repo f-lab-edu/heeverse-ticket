@@ -46,6 +46,10 @@ public class TicketTestHelper {
         return new TicketRequestDto(concertId, concertDate, list);
     }
 
+    public static Long 콘서트_생성하고_시퀀스_반환() {
+         return 1L;
+    }
+
     /***
      * entity
      */

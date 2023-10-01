@@ -6,22 +6,17 @@ import com.heeverse.common.factory.TicketFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author jeongheekim
  * @date 2023/09/28
  */
-@ActiveProfiles("dev")
 @Transactional
+@ActiveProfiles("dev")
 @SpringBootTest
 public abstract class ServiceTest {
-
-    @Autowired
-    protected ConcertFactory concertFactory;
-
-    @Autowired
-    protected TicketFactory ticketFactory;
 
     @Autowired
     protected MemberFactory memberFactory;

@@ -37,13 +37,15 @@
         WHERE o.seq = ${ticketOrderSeq};
     </select>
 
-    <select id="selectAllTicketOrderList" resultType="com.heeverse.ticket_order.domain.entity.TicketOrder">
+    <select id="selectTicketOrderListByMemberSeq" resultType="com.heeverse.ticket_order.domain.entity.TicketOrder"
+    parameterType="Long">
         SELECT seq,
                member_seq,
                booking_date,
                booking_status,
                delete_flag
-        FROM ticket_order;
+        FROM ticket_order
+        WHERE member_seq = ${memberSeq};
     </select>
 
 
