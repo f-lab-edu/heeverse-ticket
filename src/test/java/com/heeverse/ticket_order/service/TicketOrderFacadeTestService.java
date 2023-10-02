@@ -9,16 +9,17 @@ import com.heeverse.member.domain.MemberTestHelper;
 import com.heeverse.ticket.domain.entity.GradeTicket;
 import com.heeverse.ticket.domain.entity.Ticket;
 import com.heeverse.ticket.domain.enums.BookingStatus;
-import com.heeverse.ticket.
-        domain.mapper.TicketTestHelper;
+import com.heeverse.ticket.domain.mapper.TicketTestHelper;
 import com.heeverse.ticket_order.domain.dto.TicketOrderResponseDto;
 import com.heeverse.ticket_order.domain.entity.TicketOrder;
 import com.heeverse.ticket_order.domain.exception.TicketingFailException;
 import com.heeverse.ticket_order.domain.mapper.TicketOrderMapper;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.Commit;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * @author jeongheekim
  * @date 2023/09/10
  */
-@Commit
+
 class TicketOrderFacadeTest extends IntegrationTestService {
 
     @Autowired
