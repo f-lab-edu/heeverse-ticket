@@ -1,0 +1,28 @@
+name: server-start
+
+on:
+  schedule:
+    - cron: '0 13 * * *'
+
+jobs:
+  server-start:
+    runs-on: ubuntu-latest
+    environment: prod
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Make the script files executable
+        run: chmod +x ./script/runNcpApi.sh
+
+      - name: Start nGrinder Servers
+        run: |
+          set -e
+          ./script/ncpAddIp.sh
+        env:
+          NGRINDER_AGENT_INSTANCE_ID: ${{ secrets.NGRINDER_AGENT_INSTANCE_ID }}
+          NGRINDER_CONTROLLER_INSTANCE_ID: ${{ secrets.NGRINDER_CONTROLLER_INSTANCE_ID }}
+          NCP_ACCESS_KEY: ${{ secrets.NCP_ACCESS_KEY }}
+          NCP_SECRET_KEY: ${{ secrets.NCP_SECRET_KEY }}
+          API_PATH: startServerInstances
