@@ -1,7 +1,7 @@
 package com.heeverse.ticket_order.service;
 
 import ch.qos.logback.classic.Logger;
-import com.heeverse.common.ServiceTest;
+import com.heeverse.common.IntegrationTestService;
 import com.heeverse.common.factory.ConcertFactory;
 import com.heeverse.common.factory.TicketFactory;
 import com.heeverse.concert.domain.entity.ConcertHelper;
@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * @date 2023/09/10
  */
 @Commit
-class TicketOrderFacadeTest extends ServiceTest {
+class TicketOrderFacadeTestService extends IntegrationTestService {
 
     @Autowired
     protected ConcertFactory concertFactory;
@@ -100,7 +100,7 @@ class TicketOrderFacadeTest extends ServiceTest {
 
         private static final int threadCount = 2;
         private static final int threadPoolSize = 32;
-        private final Logger log = (Logger) LoggerFactory.getLogger(TicketOrderFacadeTest.class);
+        private final Logger log = (Logger) LoggerFactory.getLogger(TicketOrderFacadeTestService.class);
 
         @DisplayName("동일한 티켓 예매 시 ticketOrder는 threadCount만큼 Insert된다.")
         @Test
