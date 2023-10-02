@@ -56,7 +56,4 @@
         WHERE seq = ${ticketOrderSeq}
     </update>
 
-    <delete id="rollback">
-        TRUNCATE TABLE ticket_order
-    </delete>
 </mapper>
