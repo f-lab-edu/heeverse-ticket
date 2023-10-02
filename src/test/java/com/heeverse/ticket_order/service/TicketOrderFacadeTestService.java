@@ -9,7 +9,8 @@ import com.heeverse.member.domain.MemberTestHelper;
 import com.heeverse.ticket.domain.entity.GradeTicket;
 import com.heeverse.ticket.domain.entity.Ticket;
 import com.heeverse.ticket.domain.enums.BookingStatus;
-import com.heeverse.ticket.domain.mapper.TicketTestHelper;
+import com.heeverse.ticket.
+        domain.mapper.TicketTestHelper;
 import com.heeverse.ticket_order.domain.dto.TicketOrderResponseDto;
 import com.heeverse.ticket_order.domain.entity.TicketOrder;
 import com.heeverse.ticket_order.domain.exception.TicketingFailException;
@@ -33,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * @date 2023/09/10
  */
 @Commit
-class TicketOrderFacadeTestService extends IntegrationTestService {
+class TicketOrderFacadeTest extends IntegrationTestService {
 
     @Autowired
     protected ConcertFactory concertFactory;
@@ -100,7 +101,7 @@ class TicketOrderFacadeTestService extends IntegrationTestService {
 
         private static final int threadCount = 2;
         private static final int threadPoolSize = 32;
-        private final Logger log = (Logger) LoggerFactory.getLogger(TicketOrderFacadeTestService.class);
+        private final Logger log = (Logger) LoggerFactory.getLogger(TicketOrderFacadeTest.class);
 
         @DisplayName("동일한 티켓 예매 시 ticketOrder는 threadCount만큼 Insert된다.")
         @Test
