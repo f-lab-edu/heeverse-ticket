@@ -3,7 +3,6 @@ name: server-start
 on:
   schedule:
     - cron: '0 13 * * *'
-    - timezone: 'Asia/Seoul'
 jobs:
   server-start:
     runs-on: ubuntu-latest

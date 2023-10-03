@@ -3,7 +3,6 @@ name: server-stop
 on:
   schedule:
     - cron: '0 20 * * *'
-    - timezone: 'Asia/Seoul'
 
 jobs:
   server-stop:
