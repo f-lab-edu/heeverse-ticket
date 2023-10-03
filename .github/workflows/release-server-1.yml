@@ -52,10 +52,9 @@ jobs:
             set -e
             sudo docker ps -q --filter name=${{ env.IMAGE_NAME }} | grep -q . && docker stop ${{ env.IMAGE_NAME }} && docker rm -fv ${{ env.IMAGE_NAME }}
             sudo docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-            sudo docker run -d --rm \
+            sudo docker run -e PROFILE=prod -d --rm \
             --name=${{ env.IMAGE_NAME }} \
             -p 8080:8080 \
-            --PROFILE=prod
             --add-host=host.docker.internal:host-gateway \
             -v /home/ubuntu/workspace/heeverse/logs:/workspace/heeverse/logs \
             -v /home/ubuntu/workspace/scouter:/workspace/heeverse/scouter \
