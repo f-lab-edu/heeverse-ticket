@@ -2,7 +2,8 @@ name: server-stop
 
 on:
   schedule:
-    - cron: '0 19 * * *'
+    - cron: '0 20 * * *'
+    - timezone: 'Asia/Seoul'
 
 jobs:
   server-stop:
@@ -12,6 +13,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with: { ref: main }
 
       - name: Make the script files executable
         run: chmod +x ./script/runNcpApi.sh
