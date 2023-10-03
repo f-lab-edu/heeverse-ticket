@@ -6,11 +6,12 @@ function makeSignature() {
 	TIMESTAMP=$(echo $(($(date +%s%N)/1000000)))
 	ACCESSKEY=$NCP_ACCESS_KEY
 	SECRETKEY=$NCP_SECRET_KEY
+	NCP_SERVER_API_PATH=$API_PATH
+	NGRINDER_AGENT=$NGRINDER_AGENT_INSTANCE_ID
+	NGRINDER_CONTROLLER=$NGRINDER_CONTROLLER_INSTANCE_ID
 
 	METHOD="GET"
-	URI="/vserver/v2/removeAccessControlGroupInboundRule?regionCode=KR&vpcNo=$VPC_NO&accessControlGroupNo=$ACCESS_CONTROL_GROUP_NO&accessControlGroupRuleList.1.protocolTypeCode=TCP&accessControlGroupRuleList.1.ipBlock=$IP/32&accessControlGroupRuleList.1.portRange=8888"
-
-	echo $IP
+	URI="/server/v2/$NCP_SERVER_API_PATH?serverInstanceNoList.1=$NGRINDER_AGENT&serverInstanceNoList.2=$NGRINDER_CONTROLLER"
 
 	SIG="$METHOD"' '"$URI"${nl}
 	SIG+="$TIMESTAMP"${nl}
