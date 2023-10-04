@@ -49,7 +49,7 @@ public class TicketOrderConcurrencyTest extends IntegrationTestService {
 
     @DisplayName("동일한 티켓 예매 시 ticketOrder는 threadCount만큼 Insert된다.")
     @Test
-    void successBookingStatusTest2() throws InterruptedException {
+    void successBookingStatusTest() throws InterruptedException {
         List<Long> ticketList = createTicket(createConcert());
         Long memberSeq = memberFactory.createMember(MemberTestHelper.getMockMember());
         concurrencyRequest(ticketList, memberSeq);
