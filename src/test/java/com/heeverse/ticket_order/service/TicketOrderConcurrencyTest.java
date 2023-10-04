@@ -15,6 +15,8 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -30,6 +32,7 @@ import java.util.stream.Collectors;
         executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(scripts = "/test-data/delete-test-data.sql",
         executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+@Transactional(isolation = Isolation.READ_COMMITTED)
 public class TicketOrderConcurrencyTest extends IntegrationTestService {
 
     @Autowired

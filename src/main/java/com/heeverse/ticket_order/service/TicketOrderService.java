@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDateTime;
@@ -56,7 +57,7 @@ public class TicketOrderService {
         }
     }
 
-    public void changeTicketOrderStatus(TicketOrderUpdateMapperDto dto) {
+    private void changeTicketOrderStatus(TicketOrderUpdateMapperDto dto) {
         ticketOrderMapper.updateTicketOrderStatus(dto);
     }
 

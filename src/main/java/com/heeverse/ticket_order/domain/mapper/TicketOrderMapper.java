@@ -21,5 +21,4 @@ public interface TicketOrderMapper {
 
     void updateTicketOrderStatus(TicketOrderUpdateMapperDto dto);
 
-    void rollback();
 }

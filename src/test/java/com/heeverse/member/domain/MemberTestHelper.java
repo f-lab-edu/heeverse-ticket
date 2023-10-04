@@ -19,7 +19,8 @@ public class MemberTestHelper {
 
     public static Member getMockMember() {
         Faker faker = new Faker(Locale.US);
-        return new Member(MEMBER_ID + faker.number().randomDigit(), PASSWORD, faker.name().name(), faker.internet().emailAddress());
+        String fakeName = faker.name().name();
+        return new Member(MEMBER_ID + fakeName, PASSWORD, fakeName, faker.internet().emailAddress());
     }
 
 }
