@@ -1,3 +1,4 @@
+BEGIN;
 SET @max_venue_seq = (SELECT MAX(seq) FROM venue);
 SET @max_artist_seq = (SELECT MAX(seq) FROM artist);
 SET @max_concert_seq = (SELECT MAX(seq) FROM concert);

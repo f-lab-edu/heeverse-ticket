@@ -1,4 +1,4 @@
-
+BEGIN;
 insert into venue (venue_name, address, seat_cnt, create_datetime)
 values ('고척돔','서울시 금천구',100000,now());
 
