@@ -11,6 +11,14 @@
     <property name="ERROR_LOG_FILE" value="error" />
     <property name="LOG_FILE" value="daemon" />
     <property name="LOG_DIR" value="./logs" />
+        <logger name="com.heeverse" level="DEBUG"  />
+        <logger name="jdbc.sqlonly" level="DEBUG"  />
+        <logger name="jdbc.resultsettable" level="INFO"  />
+
+        <root level="INFO">
+            <appender-ref ref="CONSOLE" />
+        </root>
+    </springProfile>
 
     <springProfile name="local | dev | dev-test">
         <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">

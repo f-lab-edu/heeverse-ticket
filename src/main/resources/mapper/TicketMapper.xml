@@ -65,7 +65,8 @@
             ticket_serial_number,
             grade_name,
             concert_seq,
-            create_datetime
+            create_datetime,
+            order_seq
         FROM
             ticket
         WHERE
