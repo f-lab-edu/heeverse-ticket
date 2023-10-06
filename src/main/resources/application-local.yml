@@ -25,7 +25,7 @@ logging:
         jdbc:
           datasource:
             org.springframework.jdbc.datasource.DataSourceTransactionManager: DEBUG
-        security: TRACE
+        security: ERROR
 
 vault:
   scheme: http

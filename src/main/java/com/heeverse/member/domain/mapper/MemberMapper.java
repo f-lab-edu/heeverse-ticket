@@ -13,5 +13,5 @@ public interface MemberMapper {
 
     Member findById(@Param("id") String id);
 
-    void insertMember(Member member);
+    Long insertMember(Member member);
 }
