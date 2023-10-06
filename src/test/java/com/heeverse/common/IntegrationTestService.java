@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @date 2023/09/28
  */
 @Transactional
-@ActiveProfiles("dev")
+@ActiveProfiles("dev-test")
 @SpringBootTest
 public abstract class IntegrationTestService {
 

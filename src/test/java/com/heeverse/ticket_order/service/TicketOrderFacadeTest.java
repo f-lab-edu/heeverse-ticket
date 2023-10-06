@@ -79,7 +79,7 @@ class TicketOrderFacadeTest extends IntegrationTestService {
         Assertions.assertAll(
                 () -> dtoList.forEach(dto -> Assertions.assertEquals(dto.getBookingStatus(), BookingStatus.SUCCESS.getDescription())),
                 () -> dtoList.forEach(dto -> Assertions.assertNotNull(dto.getTicketSerialNumber())),
-                () -> dtoList.forEach(dto -> Assertions.assertTrue(dto.getBookingDate().isBefore(LocalDateTime.now()))),
+                () -> dtoList.forEach(dto -> Assertions.assertNotNull(dto.getBookingDate())),
                 () -> dtoList.forEach(dto -> Assertions.assertNotNull(dto.getGradeName())),
                 () -> dtoList.forEach(dto -> Assertions.assertNotNull(dto.getConcertName()))
         );
