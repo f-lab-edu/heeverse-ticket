@@ -11,7 +11,6 @@ import com.heeverse.ticket.domain.enums.BookingStatus;
 import com.heeverse.ticket.domain.mapper.TicketTestHelper;
 import com.heeverse.ticket_order.domain.dto.TicketOrderResponseDto;
 import com.heeverse.ticket_order.domain.exception.TicketingFailException;
-import com.heeverse.ticket_order.domain.mapper.TicketOrderMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,7 +37,7 @@ class TicketOrderFacadeTest extends IntegrationTestService {
     private TicketOrderFacade ticketOrderFacade;
 
     @DisplayName("이미 예매한 티켓이 없으면 티켓예매는 성공한다.")
-    @Test    
+    @Test
     void ticketOrderSuccessTest() throws Exception {
         int failCount = 0;
         List<Long> ticketList = createTicket(createConcert());
@@ -106,5 +105,4 @@ class TicketOrderFacadeTest extends IntegrationTestService {
     private List<TicketOrderResponseDto> orderTicket(List<Long> ticketList, Long memberSeq) {
         return ticketOrderFacade.startTicketOrderJob(TicketOrderTestHelper.createTicketOrderRequestDto(ticketList), memberSeq);
     }
-
 }

@@ -3,6 +3,7 @@ package com.heeverse.ticket.domain.mapper;
 import com.heeverse.ticket.domain.entity.GradeTicket;
 import com.heeverse.ticket.domain.entity.Ticket;
 import com.heeverse.ticket.dto.persistence.TicketRequestMapperDto;
+import com.heeverse.ticket_order.domain.dto.persistence.TicketRemainsResponseMapperDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -28,4 +29,6 @@ public interface TicketMapper {
     List<Ticket> getTicketLock(@Param("ticketSeqList") List<Long> ticketSeqList);
 
     int rollbackTicketOrderSeq(List<Long> ticketSeqList);
+    List<TicketRemainsResponseMapperDto> aggregateTicketRemains(@Param("concertSeq") long concertSeq,
+                                                                @Param("cancelledFlag") boolean cancelledFlag);
 }

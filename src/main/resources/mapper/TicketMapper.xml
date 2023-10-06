@@ -65,8 +65,7 @@
             ticket_serial_number,
             grade_name,
             concert_seq,
-            create_datetime,
-            order_seq
+            create_datetime
         FROM
             ticket
         WHERE
@@ -135,6 +134,21 @@
             ${ticketSeq}
         </foreach>
         FOR UPDATE;
+    </select>
+
+
+    <select id="aggregateTicketRemains"
+            parameterType="hashmap"
+            resultType="com.heeverse.ticket_order.domain.dto.persistence.TicketRemainsResponseMapperDto">
+        SELECT
+            concert_seq,
+            grade_name,
+            count(grade_name) AS remains
+        FROM ticket
+        WHERE concert_seq = ${concertSeq}
+            AND order_seq is NULL
+           OR cancelled_flag = ${cancelledFlag}
+        GROUP BY grade_name
     </select>
 
     <update id="rollbackTicketOrderSeq" parameterType="java.util.List">

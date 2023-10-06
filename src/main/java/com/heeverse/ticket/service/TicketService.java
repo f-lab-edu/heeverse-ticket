@@ -8,15 +8,19 @@ import com.heeverse.ticket.domain.mapper.TicketMapper;
 import com.heeverse.ticket.dto.TicketRequestDto;
 import com.heeverse.ticket.dto.persistence.TicketRequestMapperDto;
 import com.heeverse.ticket.exception.DuplicatedTicketException;
+import com.heeverse.ticket_order.domain.dto.TicketRemainsResponseDto;
+import com.heeverse.ticket_order.domain.dto.persistence.TicketRemainsResponseMapperDto;
 import com.heeverse.ticket_order.domain.exception.LockOccupancyFailureException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
@@ -108,6 +112,20 @@ public class TicketService {
             log.error("[Ticket Lock] fail get Lock");
             throw new LockOccupancyFailureException("해당 티켓 요청에 대한 LOCK 획득을 실패하였습니다.");
         }
+    }
+
+    @Transactional(readOnly = true)
+    public List<TicketRemainsResponseDto> getTicketRemains(long concertSeq) {
+
+        List<TicketRemainsResponseMapperDto> remainsTicketList = ticketMapper.aggregateTicketRemains(concertSeq, true);
+
+        if (CollectionUtils.isEmpty(remainsTicketList)) {
+            throw new IllegalArgumentException(concertSeq + " -> 발행된 티켓이 없어 집계 불가능 합니다.");
+        }
+
+        return remainsTicketList.stream()
+                .map(TicketRemainsResponseDto::new)
+                .collect(Collectors.toList());
     }
 
     public void rollbackTicketOrderSeq(List<Long> ticketSeqList) {

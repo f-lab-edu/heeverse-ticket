@@ -3,6 +3,9 @@ package com.heeverse.ticket_order.service;
 import com.heeverse.ticket.service.TicketService;
 import com.heeverse.ticket_order.domain.dto.TicketOrderRequestDto;
 import com.heeverse.ticket_order.domain.dto.TicketOrderResponseDto;
+import com.heeverse.ticket_order.domain.dto.TicketRemainsDto;
+import com.heeverse.ticket_order.domain.dto.TicketRemainsResponseDto;
+import com.heeverse.ticket_order.domain.exception.TicketAggregationFailException;
 import com.heeverse.ticket_order.domain.exception.TicketingFailException;
 import io.jsonwebtoken.lang.Assert;
 import lombok.RequiredArgsConstructor;
@@ -40,5 +43,14 @@ public class TicketOrderFacade {
         Assert.notNull(ticketOrderSeq);
         ticketOrderService.orderTicket(dto, ticketOrderSeq);
         return ticketOrderSeq;
+    }
+
+
+    public List<TicketRemainsResponseDto> getTicketRemains(TicketRemainsDto ticketRemainsDto) {
+        try {
+            return ticketService.getTicketRemains(ticketRemainsDto.concertSeq());
+        } catch (IllegalArgumentException e) {
+            throw  new TicketAggregationFailException(e);
+        }
     }
 }
