@@ -1,27 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.heeverse.concert.domain.mapper.ConcertMapper">
 
-  <insert id="insertConcert" useGeneratedKeys="true"
-    parameterType="com.heeverse.concert.domain.entity.Concert">
-    INSERT INTO CONCERT (concert_name, concert_date, ticket_open_time, ticket_end_time,
-                         create_datetime, venue_seq, artist_seq)
-    VALUES (#{concertName}, #{concertDate}, #{ticketOpenTime}, #{ticketEndTime}, #{createDateTime},
-            #{venueSeq}, #{artistSeq})
-  </insert>
+    <insert id="insertConcert" useGeneratedKeys="true" keyProperty="seq"
+            parameterType="com.heeverse.concert.domain.entity.Concert">
+        INSERT INTO concert (concert_name, concert_date, ticket_open_time, ticket_end_time, create_datetime, venue_seq,
+                             artist_seq)
+        VALUES (#{concertName}, #{concertDate}, #{ticketOpenTime}, #{ticketEndTime}, #{createDateTime}, #{venueSeq},
+                #{artistSeq});
+    </insert>
 
-  <select id="selectConcertList" resultType="com.heeverse.concert.dto.persistence.ConcertResponseMapperDto"
-    parameterType="com.heeverse.concert.dto.persistence.ConcertRequestMapperDto">
-    SELECT CONCERT_NAME, CONCERT_DATE , ARTIST_NAME_KOR, ARTIST_NAME_ENG, VENUE_NAME
-    FROM CONCERT C
-    LEFT JOIN ARTIST A on C.ARTIST_SEQ = A.SEQ
-    LEFT JOIN VENUE V on C.VENUE_SEQ = V.SEQ
-    WHERE 1=1
-    <if test="concertName != ''">
-      and CONCERT_NAME like CONCAT('%',#{concertName},'%')
-    </if>
-    LIMIT ${size}
-    OFFSET ${offset}
-  </select>
+    <select id="selectConcertList" resultType="com.heeverse.concert.dto.persistence.ConcertResponseMapperDto"
+            parameterType="com.heeverse.concert.dto.persistence.ConcertRequestMapperDto">
+        SELECT CONCERT_NAME, CONCERT_DATE , ARTIST_NAME_KOR, ARTIST_NAME_ENG, VENUE_NAME
+        FROM CONCERT C
+        LEFT JOIN ARTIST A on C.ARTIST_SEQ = A.SEQ
+        LEFT JOIN VENUE V on C.VENUE_SEQ = V.SEQ
+        WHERE 1=1
+        <if test="concertName != ''">
+            and CONCERT_NAME like CONCAT('%',#{concertName},'%')
+        </if>
+        LIMIT ${size}
+        OFFSET ${offset}
+    </select>
+
+    <select id="selectLatestConcertSeq">
+        SELECT *
+        FROM concert
+        WHERE seq = (SELECT MAX(seq) FROM concert);
+    </select>
+
+    <select id="selectRegisteredConcertList" resultType="com.heeverse.concert.dto.persistence.RegisteredConcertMapperDto"
+            parameterType="List">
+        SELECT CONCERT_NAME, CONCERT_DATE , ARTIST_NAME_KOR, ARTIST_NAME_ENG, VENUE_NAME, t.GRADE_NAME, count(t.GRADE_NAME) as ticketCount
+        FROM concert c
+
+                 LEFT JOIN artist A on c.ARTIST_SEQ = A.SEQ
+                 LEFT JOIN venue V on c.VENUE_SEQ = V.SEQ
+                 LEFT JOIN ticket t on c.SEQ = t.CONCERT_SEQ
+        WHERE c.SEQ IN
+        <foreach collection="concertSeqList" item="seq" separator="," open="(" close=")">
+            ${seq}
+        </foreach>
+        group by t.GRADE_NAME
+    </select>
 </mapper>
