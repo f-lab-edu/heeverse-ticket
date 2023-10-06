@@ -5,6 +5,8 @@ import com.heeverse.concert.dto.presentation.ConcertRequestDto;
 import com.heeverse.concert.exception.ConcertTimeValidationException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.AutomapConstructor;
+import org.apache.ibatis.annotations.Param;
 
 import java.time.LocalDateTime;
 
@@ -16,7 +18,7 @@ import java.time.LocalDateTime;
 @Getter
 public class Concert extends BaseEntity {
 
-    private Long concertSeq;
+    private Long seq;
     private Long artistSeq;
     private Long venueSeq;
     private String concertName;
@@ -41,6 +43,15 @@ public class Concert extends BaseEntity {
         this.venueSeq = dto.getVenueSeq();
         this.concertName = dto.getConcertName();
         this.concertDate = dto.getConcertDate();
+        this.ticketOpenTime = ticketOpenTime;
+        this.ticketEndTime = ticketEndTime;
+    }
+
+    public Concert(Long artistSeq, Long venueSeq, String concertName, LocalDateTime concertDate, LocalDateTime ticketOpenTime, LocalDateTime ticketEndTime) {
+        this.artistSeq = artistSeq;
+        this.venueSeq = venueSeq;
+        this.concertName = concertName;
+        this.concertDate = concertDate;
         this.ticketOpenTime = ticketOpenTime;
         this.ticketEndTime = ticketEndTime;
     }

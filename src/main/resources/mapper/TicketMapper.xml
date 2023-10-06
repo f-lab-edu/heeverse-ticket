@@ -37,7 +37,8 @@
     </select>
 
 
-    <insert id="insertTicket" parameterType="java.util.List">
+    <insert id="insertTicket"  useGeneratedKeys="true"
+            keyProperty="seq" parameterType="java.util.List">
         INSERT INTO ticket(
             ticket_serial_number,
             grade_name,
@@ -64,8 +65,7 @@
             ticket_serial_number,
             grade_name,
             concert_seq,
-            create_datetime,
-            order_seq
+            create_datetime
         FROM
             ticket
         WHERE
@@ -150,5 +150,16 @@
            OR cancelled_flag = ${cancelledFlag}
         GROUP BY grade_name
     </select>
+
+    <update id="rollbackTicketOrderSeq" parameterType="java.util.List">
+        UPDATE
+        ticket
+        SET order_seq = null
+        WHERE seq IN
+        <foreach collection="list" item="ticketSeq" separator="," open="(" close=")">
+            ${ticketSeq}
+        </foreach>
+        AND order_seq IS NOT NULL;
+    </update>
 
 </mapper>

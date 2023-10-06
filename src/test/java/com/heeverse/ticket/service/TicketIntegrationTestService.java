@@ -21,7 +21,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 @ActiveProfiles("local")
 @Transactional
 @SpringBootTest
-class TicketServiceTest {
+class TicketIntegrationTestService {
     private static Long concertSeq;
 
     @Autowired

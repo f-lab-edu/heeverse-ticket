@@ -127,4 +127,9 @@ public class TicketService {
                 .map(TicketRemainsResponseDto::new)
                 .collect(Collectors.toList());
     }
+
+    public void rollbackTicketOrderSeq(List<Long> ticketSeqList) {
+        int rollbackCount = ticketMapper.rollbackTicketOrderSeq(ticketSeqList);
+        log.info("티켓 예매 rollback success count : {}", rollbackCount);
+    }
 }

@@ -24,12 +24,11 @@ public interface TicketMapper {
 
     List<Ticket> findTicketsByTicketSeqList(List<Long> ticketSeqList);
 
-    List<Long> selectForUpdate(List<Long> ticketSetList);
-
     int updateTicketOrderSeq(TicketRequestMapperDto dto);
 
     List<Ticket> getTicketLock(@Param("ticketSeqList") List<Long> ticketSeqList);
 
+    int rollbackTicketOrderSeq(List<Long> ticketSeqList);
     List<TicketRemainsResponseMapperDto> aggregateTicketRemains(@Param("concertSeq") long concertSeq,
                                                                 @Param("cancelledFlag") boolean cancelledFlag);
 }

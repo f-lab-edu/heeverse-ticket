@@ -37,4 +37,9 @@ public class GradeTicket extends BaseEntity {
         this.concertSeq = concertSeq;
     }
 
+    public GradeTicket(String gradeName, Integer ticketCount, Long concertSeq) {
+        this.gradeName = gradeName;
+        this.ticketCount = ticketCount;
+        this.concertSeq = concertSeq;
+    }
 }

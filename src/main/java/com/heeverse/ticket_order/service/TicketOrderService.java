@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDateTime;
@@ -32,28 +33,31 @@ import java.util.stream.Collectors;
 @Service
 public class TicketOrderService {
 
+    public final int UPDATE_FAIL_COUNT = 0;
     private final TicketService ticketService;
     private final TicketOrderMapper ticketOrderMapper;
 
-
-    @Transactional
-    public void orderTicket(TicketOrderRequestDto dto, Long ticketOrderSeq) throws Exception {
+    @Transactional(noRollbackFor = TicketNotNormallyUpdatedException.class)
+    public void orderTicket(TicketOrderRequestDto dto, Long ticketOrderSeq) {
         List<Long> reqTicketSeqList = dto.ticketSetList();
+        BookingStatus bookingStatus = BookingStatus.SUCCESS;
         try {
             checkBookedTicket(dto, reqTicketSeqList);
             int updateCount = ticketService.updateTicketInfo(reqTicketSeqList, ticketOrderSeq);
-            if (updateCount != reqTicketSeqList.size()) {
-                log.error("Fail Update TicketOrderSeq");
-                throw new TicketNotNormallyUpdatedException("티켓 테이블에 order_seq update 실패");
+            if (updateCount == UPDATE_FAIL_COUNT) {
+                log.error("이미 예매 성공한 티켓으로 인해 티켓 테이블에 order_seq update 실패");
+                throw new TicketNotNormallyUpdatedException("이미 예매 성공한 티켓으로 인해 티켓 테이블에 order_seq update 실패");
             }
         } catch (Exception e) {
             log.error("TicketOrderService - orderTicket 실패 : {} ", e.getMessage());
-
+            bookingStatus = BookingStatus.FAIL;
             throw new TicketNotNormallyUpdatedException(e);
+        } finally {
+            changeTicketOrderStatus(new TicketOrderUpdateMapperDto(ticketOrderSeq, bookingStatus));
         }
     }
 
-    public void changeTicketOrderStatus(TicketOrderUpdateMapperDto dto) {
+    private void changeTicketOrderStatus(TicketOrderUpdateMapperDto dto) {
         ticketOrderMapper.updateTicketOrderStatus(dto);
     }
 

@@ -2,6 +2,7 @@ package com.heeverse.concert.controller;
 
 import com.heeverse.common.PagingRequest;
 import com.heeverse.concert.dto.presentation.ConcertRequestDto;
+import com.heeverse.concert.dto.presentation.RegisteredConcertResponseDto;
 import com.heeverse.concert.dto.presentation.SearchConcertRequestDto;
 import com.heeverse.concert.dto.presentation.SearchConcertResponseDto;
 import com.heeverse.concert.service.ConcertService;
@@ -31,12 +32,12 @@ public class ConcertController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void create(@RequestBody List<@Valid ConcertRequestDto> dtoList) {
+    public List<RegisteredConcertResponseDto> create(@RequestBody List<@Valid ConcertRequestDto> dtoList) {
         if (ObjectUtils.isEmpty(dtoList)) {
             throw new IllegalArgumentException("requestDto 값이 비어있습니다.");
         }
-
-        concertService.registerConcert(dtoList);
+        List<Long> concertSeqList = concertService.registerConcert(dtoList);
+        return concertService.getRegisteredConcertList(concertSeqList);
     }
 
     @GetMapping

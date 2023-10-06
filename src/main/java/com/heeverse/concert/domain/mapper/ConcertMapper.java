@@ -3,7 +3,9 @@ package com.heeverse.concert.domain.mapper;
 import com.heeverse.concert.domain.entity.Concert;
 import com.heeverse.concert.dto.persistence.ConcertRequestMapperDto;
 import com.heeverse.concert.dto.persistence.ConcertResponseMapperDto;
+import com.heeverse.concert.dto.persistence.RegisteredConcertMapperDto;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -13,6 +15,8 @@ import java.util.List;
  */
 @Mapper
 public interface ConcertMapper {
-    Long insertConcert(Concert concert);
+    void insertConcert(Concert concert);
     List<ConcertResponseMapperDto> selectConcertList(ConcertRequestMapperDto dto);
+    Long selectLatestConcertSeq();
+    List<RegisteredConcertMapperDto> selectRegisteredConcertList(@Param("concertSeqList") List<Long> concertSeqList);
 }
