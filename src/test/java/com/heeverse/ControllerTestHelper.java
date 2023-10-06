@@ -20,4 +20,8 @@ public class ControllerTestHelper {
     }
 
 
+    public static MockMvc getNotSecuredMockMvc(WebApplicationContext context) {
+        return MockMvcBuilders.webAppContextSetup(context).build();
+    }
+
 }
