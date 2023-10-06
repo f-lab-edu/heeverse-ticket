@@ -6,7 +6,6 @@ package com.heeverse.common.util;
  */
 public class StringUtils {
 
-
     public static String leftPad(final String str, final int size, final char padChar) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < size; i++) {
@@ -15,6 +14,5 @@ public class StringUtils {
 
         return sb.substring(str.length()) + str;
     }
-
 
 }

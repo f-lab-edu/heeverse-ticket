@@ -1,4 +1,4 @@
-package com.heeverse.concert;
+package com.heeverse.concert.domain.entity;
 
 import com.heeverse.concert.dto.presentation.ConcertRequestDto;
 
@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
  * @author jeongheekim
  * @date 2023/08/28
  */
-public class ConcertRequestDtoFactory {
+public class ConcertHelper {
 
     public static ConcertRequestDto normalDto() {
         LocalDateTime now = LocalDateTime.now();
@@ -42,6 +42,16 @@ public class ConcertRequestDtoFactory {
             ticketOpenTime, ticketEndTime, 1L, 1L, null);
 
     }
+
+    public static Concert buildConcert() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime concertDate = now.plusYears(1);
+        LocalDateTime ticketOpenTime = now.plusDays(10);
+        LocalDateTime ticketEndTime = ticketOpenTime.plusDays(7);
+        return new Concert(1L, 1L,"BTS 콘서트", concertDate,
+                ticketOpenTime, ticketEndTime);
+    }
+
 
 
 }

@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ActiveProfiles("local")
 @Transactional
 @SpringBootTest
-class MemberServiceTest {
+class MemberIntegrationTestService {
 
     @Autowired
     private MemberService memberService;

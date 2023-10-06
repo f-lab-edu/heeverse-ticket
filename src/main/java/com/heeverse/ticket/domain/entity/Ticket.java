@@ -17,19 +17,20 @@ public class Ticket extends BaseEntity {
     private final String ticketSerialNumber;
     private final Long concertSeq;
     private final String gradeName;
-    private OrderInfo orderInfo;
+    private Long orderSeq;
 
     @AutomapConstructor
     private Ticket(
             @Param("seq") Long seq,
             @Param("ticketSerialNumber") String ticketSerialNumber,
             @Param("concertSeq") Long concertSeq,
-            @Param("gradeName") String gradeName
-    ) {
+            @Param("gradeName") String gradeName,
+            @Param("orderSeq") Long orderSeq) {
         this.seq = seq;
         this.ticketSerialNumber = ticketSerialNumber;
         this.concertSeq = concertSeq;
         this.gradeName = gradeName;
+        this.orderSeq = orderSeq;
     }
 
 
@@ -40,20 +41,13 @@ public class Ticket extends BaseEntity {
     }
 
 
-    public void toOrderedTicket(OrderInfo orderInfo) {
-        this.orderInfo = orderInfo;
-    }
-
-
-
-
     @Override
     public String toString() {
         return "Ticket{" +
                 "seq=" + seq +
                 ", ticketSerialNumber='" + ticketSerialNumber + '\'' +
                 ", concertSeq=" + concertSeq +
-                ", orderInfo=" + orderInfo +
+                ", orderSeq=" + orderSeq +
                 '}';
     }
 }

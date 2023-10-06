@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.heeverse.ticket_order.domain.mapper.TicketOrderMapper">
+    <insert id="insertTicketOrder" useGeneratedKeys="true"
+            keyProperty="seq" parameterType="com.heeverse.ticket_order.domain.entity.TicketOrder">
+        INSERT INTO ticket_order
+        (
+             member_seq,
+             booking_date,
+             booking_status,
+             delete_flag,
+             create_datetime
+         )
+        VALUES (
+            ${memberSeq},
+            #{bookingDate},
+            #{bookingStatus},
+            #{deleteFlag},
+            #{createDateTime}
+         );
+    </insert>
+
+    <select id="selectTicketOrderList" parameterType="java.util.List">
+        SELECT concert_name,
+               concert_date,
+               ticket_serial_number,
+               grade_name,
+               booking_date,
+               booking_status
+        FROM ticket_order AS o
+                   JOIN ticket AS t
+                        ON o.seq = t.order_seq
+                   JOIN concert AS c
+                        ON c.seq = t.concert_seq
+        WHERE o.seq = ${ticketOrderSeq};
+    </select>
+
+    <select id="selectTicketOrderListByMemberSeq" resultType="com.heeverse.ticket_order.domain.entity.TicketOrder"
+    parameterType="Long">
+        SELECT seq,
+               member_seq,
+               booking_date,
+               booking_status,
+               delete_flag
+        FROM ticket_order
+        WHERE member_seq = ${memberSeq};
+    </select>
+
+
+    <update id="updateTicketOrderStatus" parameterType="com.heeverse.ticket_order.domain.dto.persistence.TicketOrderUpdateMapperDto">
+        UPDATE
+            ticket_order
+        SET booking_status = #{bookingStatus}
+        WHERE seq = ${ticketOrderSeq}
+    </update>
+
+</mapper>
