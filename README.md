@@ -1,5 +1,10 @@
 # heeverse-ticket
 
+<p align="center"><img src="https://github.com/f-lab-edu/heeverse-ticket/assets/45592236/3695851d-bbb9-4dc7-893d-ade79cb79558" width="200" height="200"/></p>
+
+아이돌 팬 플랫폼 개발사 "위버스" 사명을 차용한 Heeverse Ticket 입니다.<br>
+아이돌 콘서트 티켓팅 API 서버 프로젝트 입니다.
+
 ## 🎫 프로젝트 목표
 
 - “아이돌 티켓팅 서비스는 어떻게 구현할까?”를 고민하였습니다.
@@ -58,6 +63,8 @@
 | ngrinder-agent | 4 core | 4GB |
 | ngrinder-controller | 1 core | 2GB |
 
+## 🎫 프로젝트 WIKI
+[프로젝트 wiki](https://github.com/f-lab-edu/heeverse-ticket/wiki)
 
 ## 🎫 코드 커버리지
 ![Coverage](.github/badges/jacoco.svg)
