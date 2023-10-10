@@ -50,6 +50,7 @@
 ## 🎫 Technical issue 해결 과정
 
 ## 🎫 ERD
+[링크](https://www.erdcloud.com/d/apAy7QL9TrN6WsDij)
 
 
 ## 🎫 프로젝트 WIKI
