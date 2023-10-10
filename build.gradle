@@ -77,18 +77,32 @@ test {
 }
 
 asciidoctor {
-    inputs.dir snippetsDir
-    configurations 'asciidoctorExt'
-    dependsOn test
+    dependsOn test // 문서가 생성되기 전에 테스트가 실행되도록 한다.
+    inputs.dir snippetsDir // 스니펫 디렉터리를 입력으로 구성한다.
 }
 
+asciidoctor.doFirst {
+    delete file('src/main/resources/static/docs') // 기존에 존재하는 docs를 삭제해준다.
+}
 jar {
     enabled = false
 }
 // jar에 문서도 같이 패키징
 bootJar {
     dependsOn asciidoctor
-    from ("${asciidoctor.outputDir}/html5") {
-        into 'static/docs'
+    copy {
+        from "${asciidoctor.outputDir}"
+        into 'BOOT-INF/classes/static/docs'
     }
+}
+
+task copyDocument(type: Copy) {
+    dependsOn asciidoctor
+
+    from file("build/asciidoc/html5/")
+    into file("src/main/resources/static/docs")
+}
+
+build {
+    dependsOn copyDocument
 }

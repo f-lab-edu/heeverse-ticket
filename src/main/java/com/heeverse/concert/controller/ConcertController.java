@@ -38,7 +38,8 @@ public class ConcertController {
             throw new IllegalArgumentException("requestDto 값이 비어있습니다.");
         }
         List<Long> concertSeqList = concertService.registerConcert(dtoList);
-        return ResponseEntity.created(URI.create(INDEX_URI))
+        return ResponseEntity
+                .created(URI.create(INDEX_URI))
                 .body(concertService.getRegisteredConcertList(concertSeqList));
     }
 

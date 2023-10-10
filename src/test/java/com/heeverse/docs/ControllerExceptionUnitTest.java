@@ -1,4 +1,4 @@
-package com.heeverse.common;
+package com.heeverse.docs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heeverse.common.exception.ErrorMessage;
@@ -25,7 +25,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
-import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -33,11 +32,7 @@ import java.util.List;
 
 import static com.heeverse.ControllerTestHelper.Endpoint;
 import static com.heeverse.ControllerTestHelper.getRestDocsMockMvc;
-import static com.heeverse.common.ApiDocumentUtils.getDocumentRequest;
-import static com.heeverse.common.ApiDocumentUtils.getDocumentResponse;
 import static org.mockito.Mockito.when;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -49,7 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 2023/10/06
  */
 @WebMvcTest
-@AutoConfigureRestDocs(uriScheme = "https", uriHost = "docs.api.com")
+@AutoConfigureRestDocs
 public class ControllerExceptionUnitTest {
 
     private final String ERROR_RESPONSE_FIELD_NAME = "message";
@@ -91,7 +86,8 @@ public class ControllerExceptionUnitTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(res -> status().isConflict())
-                .andExpect(jsonPath(ERROR_RESPONSE_FIELD_NAME).value(ErrorMessage.CLIENT_ERROR.message));
+                .andExpect(jsonPath(ERROR_RESPONSE_FIELD_NAME).value(ErrorMessage.CLIENT_ERROR.message))
+                .andDo(MemberDocsResultFactory.memberErrorDocs());
 
     }
 
@@ -108,12 +104,11 @@ public class ControllerExceptionUnitTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(res -> status().isConflict())
-                .andExpect(jsonPath(ERROR_RESPONSE_FIELD_NAME).value(ErrorMessage.CLIENT_ERROR.message));
+                .andExpect(jsonPath(ERROR_RESPONSE_FIELD_NAME).value(ErrorMessage.CLIENT_ERROR.message))
+                .andDo(ConcertDocsResultFactory.errorDocs());
     }
 
 
-
-    //@Disabled
     @Test
     @DisplayName("/ticket-order, POST 예외 응답 Body 테스트")
     @WithMockMember
@@ -127,7 +122,9 @@ public class ControllerExceptionUnitTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(res -> status().isBadRequest())
-                .andExpect(jsonPath(ERROR_RESPONSE_FIELD_NAME).value(ErrorMessage.CLIENT_ERROR.message));
+                .andExpect(jsonPath(ERROR_RESPONSE_FIELD_NAME).value(ErrorMessage.CLIENT_ERROR.message))
+                .andDo(TicketDocsResultFactory.ticketOrderErrorDocs());
+
     }
 
 
@@ -143,7 +140,8 @@ public class ControllerExceptionUnitTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(res -> status().isBadRequest())
-                .andExpect(jsonPath(ERROR_RESPONSE_FIELD_NAME).value(ErrorMessage.CLIENT_ERROR.message));
+                .andExpect(jsonPath(ERROR_RESPONSE_FIELD_NAME).value(ErrorMessage.CLIENT_ERROR.message))
+                .andDo(TicketDocsResultFactory.tickerRemainsErrorDocs());
     }
 
 
@@ -152,7 +150,7 @@ public class ControllerExceptionUnitTest {
     void undefined_error() throws Exception {
 
         when(ticketOrderFacade.getTicketRemains(Mockito.any()))
-                .thenThrow(ArithmeticException.class);
+                .thenThrow(RuntimeException.class);
 
         mockMvc.perform(get(Endpoint.TICKET.잔여_티켓_집계)
                         .content(om.writeValueAsString(new TicketRemainsDto(1L)))
@@ -160,7 +158,6 @@ public class ControllerExceptionUnitTest {
                 .andDo(print())
                 .andExpect(res -> status().isBadRequest())
                 .andExpect(jsonPath(ERROR_RESPONSE_FIELD_NAME).value(ErrorMessage.UNDEFINED_ERROR.message));
-
     }
 
 

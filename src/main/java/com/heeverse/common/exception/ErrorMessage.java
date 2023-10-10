@@ -22,7 +22,7 @@ public enum ErrorMessage {
 
     public static String convert(HttpStatus httpStatus) {
         if (isEmpty(httpStatus) || isSuccess(httpStatus)){
-            throw new IllegalArgumentException("4xx, 5xx HttpStatus가 아닙니다 : " + httpStatus);
+            return UNDEFINED_ERROR.message;
         }
 
         if (httpStatus.equals(UNAUTHORIZED)){

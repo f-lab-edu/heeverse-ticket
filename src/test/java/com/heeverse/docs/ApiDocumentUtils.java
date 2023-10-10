@@ -1,4 +1,4 @@
-package com.heeverse.common;
+package com.heeverse.docs;
 
 import org.springframework.restdocs.operation.preprocess.OperationRequestPreprocessor;
 import org.springframework.restdocs.operation.preprocess.OperationResponsePreprocessor;
@@ -10,7 +10,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
  * @since 2023/10/08
  */
 public class ApiDocumentUtils {
-    static OperationRequestPreprocessor getDocumentRequest() {
+    public static OperationRequestPreprocessor getDocumentRequest() {
         return preprocessRequest(
                 modifyUris()
                         .scheme("https")
@@ -19,7 +19,7 @@ public class ApiDocumentUtils {
                 prettyPrint());
     }
 
-    static OperationResponsePreprocessor getDocumentResponse() {
+    public static OperationResponsePreprocessor getDocumentResponse() {
         return preprocessResponse(prettyPrint());
     }
 }
