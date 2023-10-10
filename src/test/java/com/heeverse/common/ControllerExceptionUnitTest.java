@@ -1,7 +1,6 @@
 package com.heeverse.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.heeverse.ControllerTestHelper;
 import com.heeverse.common.exception.ErrorMessage;
 import com.heeverse.common.factory.WithMockMember;
 import com.heeverse.concert.domain.entity.ConcertHelper;
@@ -17,20 +16,28 @@ import com.heeverse.ticket_order.domain.exception.TicketingFailException;
 import com.heeverse.ticket_order.service.TicketOrderFacade;
 import com.heeverse.ticket_order.service.TicketOrderTestHelper;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
 
+import static com.heeverse.ControllerTestHelper.Endpoint;
+import static com.heeverse.ControllerTestHelper.getRestDocsMockMvc;
+import static com.heeverse.common.ApiDocumentUtils.getDocumentRequest;
+import static com.heeverse.common.ApiDocumentUtils.getDocumentResponse;
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -42,13 +49,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 2023/10/06
  */
 @WebMvcTest
+@AutoConfigureRestDocs(uriScheme = "https", uriHost = "docs.api.com")
 public class ControllerExceptionUnitTest {
 
-    private final String LOGIN_URI = "/login";
-    private final String SIGN_UP_URI = "/member";
-    private final String 콘서트_등록 = "/concert";
-    private final String 티켓_예매 = "/ticket-order";
-    private final String 잔여_티켓_집계 = "/ticket-order/remains";
     private final String ERROR_RESPONSE_FIELD_NAME = "message";
 
     @MockBean
@@ -65,9 +68,10 @@ public class ControllerExceptionUnitTest {
 
     private MockMvc mockMvc;
 
+
     @BeforeEach
-    void setUp() {
-        mockMvc = ControllerTestHelper.getNotSecuredMockMvc(wac);
+    void setUp(@Autowired RestDocumentationContextProvider restDocumentation) {
+        mockMvc = getRestDocsMockMvc(wac, restDocumentation);
     }
 
 
@@ -81,7 +85,8 @@ public class ControllerExceptionUnitTest {
         when(memberService.signup(Mockito.any())).
                 thenThrow(DuplicatedMemberException.class);
 
-        mockMvc.perform(post(SIGN_UP_URI)
+
+        mockMvc.perform(post(Endpoint.Member.회원가입)
                         .content(om.writeValueAsString(mockDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -98,7 +103,7 @@ public class ControllerExceptionUnitTest {
         when(concertService.registerConcert(Mockito.any()))
                 .thenThrow(DuplicatedTicketException.class);
 
-        mockMvc.perform(post(콘서트_등록)
+        mockMvc.perform(post(Endpoint.CONCERT.콘서트_등록)
                         .content(om.writeValueAsString(List.of(ConcertHelper.normalDto())))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -108,23 +113,21 @@ public class ControllerExceptionUnitTest {
 
 
 
-    @Disabled
+    //@Disabled
     @Test
     @DisplayName("/ticket-order, POST 예외 응답 Body 테스트")
     @WithMockMember
     void ticketOrderTest() throws Exception {
 
-        // TODO : mocking 적용 안되는 듯
         when(ticketOrderFacade.startTicketOrderJob(Mockito.any(), Mockito.anyLong()))
                 .thenThrow(TicketingFailException.class);
 
-
-        mockMvc.perform(post(티켓_예매)
+        mockMvc.perform(post(Endpoint.TICKET.티켓_예매)
                         .content(om.writeValueAsString(TicketOrderTestHelper.createTicketOrderRequestDto(List.of(1L))))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(res -> status().isBadRequest())
-                .andExpect(jsonPath(ERROR_RESPONSE_FIELD_NAME).value(ErrorMessage.SERVER_ERROR.message));
+                .andExpect(jsonPath(ERROR_RESPONSE_FIELD_NAME).value(ErrorMessage.CLIENT_ERROR.message));
     }
 
 
@@ -135,12 +138,30 @@ public class ControllerExceptionUnitTest {
         when(ticketOrderFacade.getTicketRemains(Mockito.any()))
                 .thenThrow(TicketAggregationFailException.class);
 
-
-        mockMvc.perform(get(잔여_티켓_집계)
+        mockMvc.perform(get(Endpoint.TICKET.잔여_티켓_집계)
                         .content(om.writeValueAsString(new TicketRemainsDto(1L)))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(res -> status().isBadRequest())
                 .andExpect(jsonPath(ERROR_RESPONSE_FIELD_NAME).value(ErrorMessage.CLIENT_ERROR.message));
     }
+
+
+    @Test
+    @DisplayName("정의되지 않은 RuntimeException 경우 에러 메세지")
+    void undefined_error() throws Exception {
+
+        when(ticketOrderFacade.getTicketRemains(Mockito.any()))
+                .thenThrow(ArithmeticException.class);
+
+        mockMvc.perform(get(Endpoint.TICKET.잔여_티켓_집계)
+                        .content(om.writeValueAsString(new TicketRemainsDto(1L)))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(res -> status().isBadRequest())
+                .andExpect(jsonPath(ERROR_RESPONSE_FIELD_NAME).value(ErrorMessage.UNDEFINED_ERROR.message));
+
+    }
+
+
 }

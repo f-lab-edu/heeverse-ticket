@@ -1,11 +1,13 @@
 package com.heeverse.common.exception;
 
+import ch.qos.logback.classic.Logger;
 import com.heeverse.member.exception.DuplicatedMemberException;
 import com.heeverse.ticket.exception.DuplicatedTicketException;
 import com.heeverse.ticket_order.domain.exception.AlreadyBookedTicketException;
 import com.heeverse.ticket_order.domain.exception.LockOccupancyFailureException;
 import com.heeverse.ticket_order.domain.exception.TicketAggregationFailException;
 import com.heeverse.ticket_order.domain.exception.TicketingFailException;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -15,13 +17,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.Objects;
 
-/**
- * @author gutenlee
- * @since 2023/10/06
- */
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final int UNDEFINED_STATUS = -1;
+    private final Logger log = (Logger) LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler({
             MethodArgumentNotValidException.class,
@@ -35,7 +36,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({
             TicketAggregationFailException.class
     })
-    public ResponseEntity<?> badRequestException() {
+    public ResponseEntity<?> badRequestException(TicketAggregationFailException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse(ErrorMessage.convert(HttpStatus.BAD_REQUEST)));
     }
@@ -44,7 +45,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({
             AuthenticationServiceException.class
     })
-    public ResponseEntity<?> authException() {
+    public ResponseEntity<?> authException(AuthenticationServiceException e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(new ErrorResponse(ErrorMessage.convert(HttpStatus.UNAUTHORIZED)));
     }
@@ -65,7 +66,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(LockOccupancyFailureException.class)
     public ResponseEntity<?> serverException() {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ErrorMessage.convert(HttpStatus.INTERNAL_SERVER_ERROR));
+                .body(new ErrorResponse(ErrorMessage.convert(HttpStatus.INTERNAL_SERVER_ERROR)));
+    }
+
+    @ExceptionHandler({
+            Exception.class
+    })
+    public ResponseEntity<?> undefinedException(Exception e) {
+        log.warn("REST API 규약에 정의되지 않은 예외 {}", e.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse(ErrorMessage.convert(HttpStatus.resolve(UNDEFINED_STATUS))));
     }
 
 
