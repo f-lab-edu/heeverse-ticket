@@ -2,8 +2,7 @@ name: server-start
 
 on:
   schedule:
-    - cron: '0 13 * * *'
-
+    - cron: '0 4 * * *'
 jobs:
   server-start:
     runs-on: ubuntu-latest
@@ -12,6 +11,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with: { ref: main }
 
       - name: Make the script files executable
         run: chmod +x ./script/runNcpApi.sh
@@ -19,7 +19,7 @@ jobs:
       - name: Start nGrinder Servers
         run: |
           set -e
-          ./script/ncpAddIp.sh
+          ./script/runNcpApi.sh
         env:
           NGRINDER_AGENT_INSTANCE_ID: ${{ secrets.NGRINDER_AGENT_INSTANCE_ID }}
           NGRINDER_CONTROLLER_INSTANCE_ID: ${{ secrets.NGRINDER_CONTROLLER_INSTANCE_ID }}
