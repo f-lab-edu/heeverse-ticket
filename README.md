@@ -29,16 +29,16 @@
 - Vault 서버를 설정하여 민감정보 관리
 - Nignx를 Reverse Proxy로 사용하여 로드밸런싱
 - 쿼리 분석, 인덱싱을 통한 성능 개선
-- Github Action을 사용한 자동화된 CI/CD 구축
+- Docker로 서버 환경에 격리되고 Github Action으로 사용한 자동화된 CI/CD
 - nGrinder로 부하&성능 테스트를 거치며 점진적 개선
 - Scouter로 WAS의 CPU 사용량, Thread, Heap, GC 모니터링
-- Docker로 서버 환경에 의존적이지 않은 배포 환경
 
 ### 테스트 & 협업
 
 - Stub을 사용한 단위테스트 작성
 - 고립된 테스트 코드를 통해 의존적이지 않은 테스트 코드 작성
-- REST API 표준 규격화 & 문서화
+- 블랙박스와 화이트박스 테스트 코드 작성
+- REST API 표준 규격화
 - 의사결정에는 ADR문서를 활용하여 옵션 조사 및 비교 후 결정
 - 공식문서에 근거한 PR 리뷰 작성
   
