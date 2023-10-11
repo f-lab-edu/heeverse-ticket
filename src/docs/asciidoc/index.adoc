@@ -50,17 +50,17 @@ include::{snippets}/concert/http-response.adoc[]
 
 == 티켓
 === [티켓 예매 요청 Body]
-
 include::{snippets}/ticket-order/request-fields.adoc[]
+=== [티멧 예매 HTTP Example]
 include::{snippets}/ticket-order/http-request.adoc[]
 
 === 응답
 include::{snippets}/ticket-order/response-fields.adoc[]
 include::{snippets}/ticket-order/http-response.adoc[]
 
-=== [잔여 티켓 예매 요청 Body]
-
+=== [잔여 티켓 조회 요청 Body]
 include::{snippets}/ticket-order/remains/request-fields.adoc[]
+=== [잔여 티켓 조회 HTTP Example]
 include::{snippets}/ticket-order/remains/http-request.adoc[]
 
 === 응답
