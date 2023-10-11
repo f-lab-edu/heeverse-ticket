@@ -20,8 +20,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
@@ -43,8 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author gutenlee
  * @since 2023/10/06
  */
-@WebMvcTest
-@AutoConfigureRestDocs
+@WebMvcTestForRestDocs
 public class ControllerExceptionUnitTest {
 
     private final String ERROR_RESPONSE_FIELD_NAME = "message";
@@ -94,7 +91,7 @@ public class ControllerExceptionUnitTest {
 
     @Test
     @DisplayName("/concert, POST 예외 응답 Body 테스트")
-    void loginTest() throws Exception {
+    void concertExceptionTest() throws Exception {
 
         when(concertService.registerConcert(Mockito.any()))
                 .thenThrow(DuplicatedTicketException.class);
@@ -105,14 +102,14 @@ public class ControllerExceptionUnitTest {
                 .andDo(print())
                 .andExpect(res -> status().isConflict())
                 .andExpect(jsonPath(ERROR_RESPONSE_FIELD_NAME).value(ErrorMessage.CLIENT_ERROR.message))
-                .andDo(ConcertDocsResultFactory.errorDocs());
+                .andDo(ConcertDocsResultFactory.concertErrorDocs());
     }
 
 
     @Test
     @DisplayName("/ticket-order, POST 예외 응답 Body 테스트")
     @WithMockMember
-    void ticketOrderTest() throws Exception {
+    void ticketOrderExceptionTest() throws Exception {
 
         when(ticketOrderFacade.startTicketOrderJob(Mockito.any(), Mockito.anyLong()))
                 .thenThrow(TicketingFailException.class);
@@ -130,7 +127,7 @@ public class ControllerExceptionUnitTest {
 
     @Test
     @DisplayName("/ticker-order/remains, GET 예외 응답 Body 테스트")
-    void ticketRemainsTest() throws Exception {
+    void ticketRemainsExceptionTest() throws Exception {
 
         when(ticketOrderFacade.getTicketRemains(Mockito.any()))
                 .thenThrow(TicketAggregationFailException.class);
@@ -147,7 +144,7 @@ public class ControllerExceptionUnitTest {
 
     @Test
     @DisplayName("정의되지 않은 RuntimeException 경우 에러 메세지")
-    void undefined_error() throws Exception {
+    void undefinedExceptionTest() throws Exception {
 
         when(ticketOrderFacade.getTicketRemains(Mockito.any()))
                 .thenThrow(RuntimeException.class);

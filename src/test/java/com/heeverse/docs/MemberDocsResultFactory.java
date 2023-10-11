@@ -25,7 +25,7 @@ public class MemberDocsResultFactory {
     }
 
     public static RestDocumentationResultHandler memberErrorDocs() {
-        return document("member",
+        return document("error/member",
                 getDocumentRequest(),
                 getDocumentResponse(),
                 getCommonRequestSnippet(),

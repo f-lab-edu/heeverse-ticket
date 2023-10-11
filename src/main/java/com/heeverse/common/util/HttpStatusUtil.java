@@ -12,16 +12,14 @@ import org.springframework.http.HttpStatus;
 public class HttpStatusUtil {
 
     public static boolean isError(HttpStatus status) {
-        return status.is4xxClientError() || status.is5xxServerError();
+        return !status.is2xxSuccessful();
     }
 
     public static boolean isSuccess(HttpStatus status) {
-        return status.is2xxSuccessful()
-                || status.is1xxInformational()
-                    || status.is3xxRedirection();
+        return !isError(status);
     }
 
-    public static boolean isEmpty(HttpStatus status) {
+    public static boolean isNull(HttpStatus status) {
         return status == null;
     }
 }

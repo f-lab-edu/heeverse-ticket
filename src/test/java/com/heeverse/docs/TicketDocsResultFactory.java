@@ -34,7 +34,7 @@ public class TicketDocsResultFactory {
     }
 
     public static ResultHandler ticketOrderErrorDocs() {
-        return document("ticket-order",
+        return document("error/ticket-order",
                 getDocumentRequest(),
                 getDocumentResponse(),
                 getTicketOrderRequestSnippet(),
@@ -45,8 +45,25 @@ public class TicketDocsResultFactory {
         );
     }
 
-    public static ResultHandler tickerRemainsErrorDocs() {
+
+    public static ResultHandler tickerRemainsResponseDocs() {
         return document("ticket-order/remains",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                requestFields(
+                        fieldWithPath("concertSeq").type(JsonFieldType.NUMBER).description("공연 시퀀스")
+                ),
+                responseFields(
+                        fieldWithPath("[]concertSeq").type(JsonFieldType.NUMBER).description("콘서트 시퀀스"),
+                        fieldWithPath("[]gradeTicket").type(JsonFieldType.STRING).description("티켓 등급"),
+                        fieldWithPath("[]remain").type(JsonFieldType.NUMBER).description("잔여 티켓 수")
+                )
+        );
+    }
+
+
+    public static ResultHandler tickerRemainsErrorDocs() {
+        return document("error/ticket-order/remains",
                 getDocumentRequest(),
                 getDocumentResponse(),
                 requestFields(

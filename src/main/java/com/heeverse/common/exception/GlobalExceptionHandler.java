@@ -69,8 +69,8 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse(ErrorMessage.convert(HttpStatus.INTERNAL_SERVER_ERROR)));
     }
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<?> undefinedException(RuntimeException e) {
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<?> undefinedException(Exception e) {
         log.warn("REST API 규약에 정의되지 않은 예외 {}", e.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorResponse(ErrorMessage.convert(HttpStatus.resolve(UNDEFINED_STATUS))));

@@ -15,7 +15,10 @@ import com.heeverse.ticket.domain.enums.BookingStatus;
 import com.heeverse.ticket.domain.mapper.TicketTestHelper;
 import com.heeverse.ticket_order.domain.dto.TicketOrderRequestDto;
 import com.heeverse.ticket_order.domain.dto.TicketOrderResponseDto;
+import com.heeverse.ticket_order.domain.dto.TicketRemainsDto;
+import com.heeverse.ticket_order.domain.dto.TicketRemainsResponseDto;
 import com.heeverse.ticket_order.domain.dto.persistence.TicketOrderRequestMapperDto;
+import com.heeverse.ticket_order.domain.dto.persistence.TicketRemainsResponseMapperDto;
 import com.heeverse.ticket_order.service.TicketOrderFacade;
 import com.heeverse.ticket_order.service.TicketOrderTestHelper;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,20 +26,21 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import static com.heeverse.ControllerTestHelper.getRestDocsMockMvc;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -46,8 +50,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 2023/10/08
  */
 
-@WebMvcTest
-@AutoConfigureRestDocs
+@WebMvcTestForRestDocs
 public class ControllerResponseUnitTest {
 
     @MockBean
@@ -63,6 +66,7 @@ public class ControllerResponseUnitTest {
     private WebApplicationContext wac;
 
     private MockMvc mockMvc;
+    private static final Random random = new Random();
 
 
     @BeforeEach
@@ -72,7 +76,7 @@ public class ControllerResponseUnitTest {
 
     @Test
     @DisplayName("/member POST, 정상 응답 Body 테스트")
-    void memberException() throws Exception {
+    void memberResponseTest() throws Exception {
 
         MemberRequestDto mockDto = MemberTestHelper.mockingMemberRequestDto();
 
@@ -91,7 +95,7 @@ public class ControllerResponseUnitTest {
 
     @Test
     @DisplayName("/concert, POST 정상 응답 Body 테스트")
-    void concertTest() throws Exception {
+    void concertResponseTest() throws Exception {
 
         when(concertService.registerConcert(Mockito.any())).thenReturn(List.of(1L));
 
@@ -110,35 +114,18 @@ public class ControllerResponseUnitTest {
     @Test
     @DisplayName("/ticket-order, POST 정상 응답 Body 테스트")
     @WithMockMember
-    void ticketOrderTest() throws Exception {
+    void ticketOrderResponseTest() throws Exception {
 
-        // 공연
-        Concert concert = ConcertHelper.buildConcert();
+        // given
         long concertSeq = 1L;
-        // 티켓
-        List<GradeTicket> gradeTickets = TicketTestHelper.buildTicketGrade(concertSeq);
-        List<Ticket> tickets = gradeTickets.stream()
-                .map(grade -> TicketTestHelper.buildTicket(concertSeq, grade))
-                .toList();
-        // 예매 요청
-        TicketOrderRequestDto orderRequestDtos = TicketOrderTestHelper.createTicketOrderRequestDto(tickets.stream()
-                .map(Ticket::getSeq)
-                .collect(Collectors.toList()));
+        TicketOrderRequestDto orderRequestDtos = givenTicketOrderRequest(concertSeq);
+        List<TicketOrderResponseDto> orderResponseDtos = givenTicketOrderResponse(concertSeq);
 
-        List<TicketOrderResponseDto> orderResponseDtos = tickets.stream()
-                .map(ticket -> new TicketOrderResponseDto(
-                                    new TicketOrderRequestMapperDto(
-                                            concert.getConcertName(),
-                                            concert.getConcertDate(),
-                                            ticket.getTicketSerialNumber(),
-                                            ticket.getGradeName(),
-                                            LocalDateTime.now(),
-                                            BookingStatus.SUCCESS)
-                )).collect(Collectors.toList());
-
+        // when
         when(ticketOrderFacade.startTicketOrderJob(Mockito.any(), Mockito.any()))
                 .thenReturn(orderResponseDtos);
 
+        // then
         mockMvc.perform(post(ControllerTestHelper.Endpoint.TICKET.티켓_예매)
                         .content(om.writeValueAsString(orderRequestDtos))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -148,5 +135,82 @@ public class ControllerResponseUnitTest {
 
     }
 
+
+    @Test
+    @DisplayName("/ticker-order/remains, GET 정상 응답 Body 테스트")
+    void ticketRemainsResponseTest() throws Exception {
+        // given
+        long concertSeq = 1L;
+        List<TicketRemainsResponseDto> ticketRemainsResponseDtos = givenTicketRemainsResponse(concertSeq);
+
+        // when
+        when(ticketOrderFacade.getTicketRemains(Mockito.any()))
+                .thenReturn(ticketRemainsResponseDtos);
+
+        // then
+        mockMvc.perform(get(ControllerTestHelper.Endpoint.TICKET.잔여_티켓_집계)
+                        .content(om.writeValueAsString(new TicketRemainsDto(concertSeq)))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(res -> status().is2xxSuccessful().match(res))
+                .andDo(TicketDocsResultFactory.tickerRemainsResponseDocs());
+    }
+
+
+    private static List<Ticket> givenTickets(long concertSeq) {
+        List<GradeTicket> gradeTickets = TicketTestHelper.buildTicketGrade(concertSeq);
+        return gradeTickets.stream()
+                .map(grade -> TicketTestHelper.buildTicket(concertSeq, grade))
+                .map(ticket -> {
+                    try {
+                        Field seq = ticket.getClass().getDeclaredField("seq");
+                        seq.setAccessible(true);
+                        seq.set(ticket, random.nextLong(10));
+                        return ticket;
+                    } catch (NoSuchFieldException | IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .toList();
+    }
+
+    private static TicketOrderRequestDto givenTicketOrderRequest(long concertSeq) {
+        List<Ticket> tickets = givenTickets(concertSeq);
+        return TicketOrderTestHelper.createTicketOrderRequestDto(
+                tickets.stream()
+                    .map(Ticket::getSeq)
+                    .collect(Collectors.toList())
+        );
+    }
+
+    private static List<TicketOrderResponseDto> givenTicketOrderResponse(long concertSeq) {
+        Concert concert = ConcertHelper.buildConcert();
+        List<Ticket> tickets = givenTickets(concertSeq);
+        return tickets.stream()
+                .map(ticket -> new TicketOrderResponseDto(
+                        new TicketOrderRequestMapperDto(
+                                concert.getConcertName(),
+                                concert.getConcertDate(),
+                                ticket.getTicketSerialNumber(),
+                                ticket.getGradeName(),
+                                LocalDateTime.now(),
+                                BookingStatus.SUCCESS)
+                )).collect(Collectors.toList());
+    }
+
+
+    private List<TicketRemainsResponseDto> givenTicketRemainsResponse(long concertSeq) {
+        List<Ticket> tickets = givenTickets(concertSeq);
+        return tickets.stream()
+                .map(ticket -> new TicketRemainsResponseDto(
+                            new TicketRemainsResponseMapperDto(
+                                    concertSeq,
+                                    ticket.getGradeName(),
+                                    random.nextInt(1,
+                                            50_000)
+                            )
+                ))
+                .collect(Collectors.toList());
+    }
 
 }

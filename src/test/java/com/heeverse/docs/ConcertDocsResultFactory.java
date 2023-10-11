@@ -8,7 +8,6 @@ import static com.heeverse.docs.ApiDocumentUtils.getDocumentRequest;
 import static com.heeverse.docs.ApiDocumentUtils.getDocumentResponse;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.snippet.Attributes.key;
 
 /**
  * @author gutenlee
@@ -32,8 +31,8 @@ public class ConcertDocsResultFactory {
         );
     }
 
-    public static RestDocumentationResultHandler errorDocs() {
-        return document("concert",
+    public static RestDocumentationResultHandler concertErrorDocs() {
+        return document("error/concert",
                 getDocumentRequest(),
                 getDocumentResponse(),
                 getCommonRequestSnippet(),

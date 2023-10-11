@@ -2,7 +2,7 @@ package com.heeverse.common.exception;
 
 import org.springframework.http.HttpStatus;
 
-import static com.heeverse.common.util.HttpStatusUtil.isEmpty;
+import static com.heeverse.common.util.HttpStatusUtil.isNull;
 import static com.heeverse.common.util.HttpStatusUtil.isSuccess;
 import static org.springframework.http.HttpStatus.*;
 
@@ -21,7 +21,7 @@ public enum ErrorMessage {
     }
 
     public static String convert(HttpStatus httpStatus) {
-        if (isEmpty(httpStatus) || isSuccess(httpStatus)){
+        if (isNull(httpStatus) || isSuccess(httpStatus)){
             return UNDEFINED_ERROR.message;
         }
 
