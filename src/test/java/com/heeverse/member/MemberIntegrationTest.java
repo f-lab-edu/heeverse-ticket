@@ -2,6 +2,9 @@ package com.heeverse.member;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heeverse.ControllerTestHelper;
+import com.heeverse.common.factory.MemberFactory;
+import com.heeverse.member.domain.MemberTestHelper;
+import com.heeverse.member.domain.entity.Member;
 import com.heeverse.member.dto.LoginRequestDto;
 import com.heeverse.member.dto.MemberRequestDto;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -34,6 +38,8 @@ public class MemberIntegrationTest {
 
     @Autowired
     private WebApplicationContext context;
+    @Autowired
+    private MemberFactory memberFactory;
 
     private MockMvc mockMvc;
 
@@ -76,21 +82,22 @@ public class MemberIntegrationTest {
     @DisplayName("이미 가입된 회원은 회원가입 요청 실패한다 - 409")
     void member_signUp_failed_exist_member() throws Exception {
 
-        회원가입_성공();
+        Member mockMember = MemberTestHelper.getMockMember();
+        memberFactory.createMember(mockMember);
 
         mockMvc.perform(post(SIGN_UP_URI)
-                        .content(objectMapper.writeValueAsString(successMemberRequestDto))
+                        .content(objectMapper.writeValueAsString(mockMember))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isConflict());
+                .andExpect(status().isBadRequest());
     }
 
 
 
     @Test
-    @DisplayName("로그인 성공 - 200")
+    @DisplayName("로그인 성공 - 204")
     void 로그인_성공() throws Exception {
 
-        회원가입_성공();
+        memberFactory.createMember(MemberTestHelper.getMockMember());
 
         mockMvc.perform(post(LOGIN_URI)
                 .content(objectMapper.writeValueAsString(

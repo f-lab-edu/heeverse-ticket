@@ -3,6 +3,7 @@ plugins {
     id 'org.springframework.boot' version '3.1.1'
     id 'io.spring.dependency-management' version '1.1.0'
     id 'jacoco'
+    id "org.asciidoctor.jvm.convert" version "3.3.2"
 }
 
 group 'com.heeverse'
@@ -20,6 +21,7 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
+    asciidoctorExt
 }
 
 repositories {
@@ -47,6 +49,8 @@ dependencies {
     runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
 
+    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.2'
     testImplementation 'org.springframework.security:spring-security-test:6.1.2'
@@ -65,8 +69,45 @@ jacocoTestReport {
     }
 }
 
-
-
 jar {
     enabled = false
 }
+
+ext {
+    snippetsDir = file('build/generated-snippets')
+}
+
+test {
+    outputs.dir snippetsDir
+}
+
+asciidoctor {
+    dependsOn test // 문서가 생성되기 전에 테스트가 실행되도록 한다.
+    inputs.dir snippetsDir // 스니펫 디렉터리를 입력으로 구성한다.
+    outputDir = file("build/docs")
+}
+
+asciidoctor.doFirst {
+    delete file('static/docs') // 기존에 존재하는 docs를 삭제해준다.
+}
+jar {
+    enabled = false
+}
+// jar에 문서도 같이 패키징
+bootJar {
+    dependsOn asciidoctor
+    from ("${asciidoctor.outputDir}") {
+        into 'static/docs'
+    }
+}
+tasks.register('copyDocument', Copy) { // (12)
+    dependsOn asciidoctor
+    from file("${asciidoctor.outputDir}")
+    into file("src/main/resources/static/docs")
+}
+
+build {
+    dependsOn copyDocument
+}
+
+

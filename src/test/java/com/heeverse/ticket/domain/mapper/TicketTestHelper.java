@@ -4,13 +4,9 @@ import com.heeverse.ticket.domain.entity.GradeTicket;
 import com.heeverse.ticket.domain.entity.Ticket;
 import com.heeverse.ticket.dto.TicketGradeDto;
 import com.heeverse.ticket.dto.TicketRequestDto;
-import com.heeverse.ticket.service.TicketService;
-import jakarta.annotation.Resource;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author gutenlee

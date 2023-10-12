@@ -1,0 +1,68 @@
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+:site-url: /build/asciidoc/html5/
+
+= Heeverse-ticket API
+
+#### 버전 : v1.0.0
+Heeverse-ticket API는 RESTful API 규격을 지향합니다.
+
+
+== 공통
+
+=== Base Path
+- localhost:8080
+
+=== 에러 메세지
+include::{snippets}/error/member/response-fields.adoc[]
+
+
+== 회원
+
+=== [회원 생성 요청 Body]
+include::{snippets}/member/request-fields.adoc[]
+=== [회원 생성 HTTP Example]
+include::{snippets}/member/http-request.adoc[]
+
+=== 응답
+include::{snippets}/member/http-response.adoc[]
+
+== 콘서트
+
+=== [콘서트 생성 요청 Body]
+include::{snippets}/concert/request-fields.adoc[]
+
+=== [콘서트 생성 HTTP Example]
+include::{snippets}/concert/http-request.adoc[]
+=== 응답
+include::{snippets}/concert/response-fields.adoc[]
+include::{snippets}/concert/http-response.adoc[]
+
+
+
+
+== 티켓
+=== [티켓 예매 요청 Body]
+include::{snippets}/ticket-order/request-fields.adoc[]
+=== [티멧 예매 HTTP Example]
+include::{snippets}/ticket-order/http-request.adoc[]
+
+=== 응답
+include::{snippets}/ticket-order/response-fields.adoc[]
+include::{snippets}/ticket-order/http-response.adoc[]
+
+=== [잔여 티켓 조회 요청 Body]
+include::{snippets}/ticket-order/remains/request-fields.adoc[]
+=== [잔여 티켓 조회 HTTP Example]
+include::{snippets}/ticket-order/remains/http-request.adoc[]
+
+=== 응답
+include::{snippets}/ticket-order/remains/response-fields.adoc[]
+include::{snippets}/ticket-order/remains/http-response.adoc[]
