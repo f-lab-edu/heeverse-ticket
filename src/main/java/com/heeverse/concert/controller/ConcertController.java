@@ -9,13 +9,15 @@ import com.heeverse.concert.service.ConcertService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
+
+import static com.heeverse.common.IndexController.INDEX_URI;
 
 /**
  * @author jeongheekim
@@ -31,17 +33,17 @@ public class ConcertController {
     private final ConcertService concertService;
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public List<RegisteredConcertResponseDto> create(@RequestBody List<@Valid ConcertRequestDto> dtoList) {
+    public ResponseEntity<List<RegisteredConcertResponseDto>> create(@RequestBody List<@Valid ConcertRequestDto> dtoList) {
         if (ObjectUtils.isEmpty(dtoList)) {
             throw new IllegalArgumentException("requestDto 값이 비어있습니다.");
         }
         List<Long> concertSeqList = concertService.registerConcert(dtoList);
-        return concertService.getRegisteredConcertList(concertSeqList);
+        return ResponseEntity
+                .created(URI.create(INDEX_URI))
+                .body(concertService.getRegisteredConcertList(concertSeqList));
     }
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<SearchConcertResponseDto>> getConcertList(
         @RequestParam String concertName, @RequestParam int page, @RequestParam int size) {
         log.info("조회 concertName : {}, page: {}, size:{} ", concertName, page, size);

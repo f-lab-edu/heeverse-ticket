@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.Assert;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -27,6 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final VaultOperationService vaultOperationService;
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
 
     @Override
@@ -34,7 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
         UrlProps urlProps = vaultOperationService.getProps(VAULT_PATH, VAULT_URL_SECRETES, UrlProps.class);
         String[] urlArr = urlProps.url().split(",");
-        return Arrays.stream(urlArr).anyMatch(path::startsWith);
+        return Arrays.stream(urlArr).anyMatch(pattern -> pathMatcher.match(pattern, path));
     }
 
     @Override
