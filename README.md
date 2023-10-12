@@ -29,7 +29,7 @@
 - Vault 서버를 설정하여 민감정보 관리
 - Nignx를 Reverse Proxy로 사용하여 로드밸런싱
 - 쿼리 분석, 인덱싱을 통한 성능 개선
-- Docker로 서버 환경에 격리되고 Github Action으로 사용한 자동화된 CI/CD
+- Docker로 서버 환경에 격리되고 Github Action으로 자동화된 CI/CD 구축
 - nGrinder로 부하&성능 테스트를 거치며 점진적 개선
 - Scouter로 WAS의 CPU 사용량, Thread, Heap, GC 모니터링
 
@@ -41,13 +41,14 @@
 - REST API 표준 규격화
 - 의사결정에는 ADR문서를 활용하여 옵션 조사 및 비교 후 결정
 - 공식문서에 근거한 PR 리뷰 작성
-  
+  정
 
 ## 🎫 API 엔트포인트별 3차 개선 지표
 
 
 
 ## 🎫 Technical issue 해결 과정
+- Stub이 시나리오대로 동작하지 않는 문제 ([링크](https://guui-dev-lee.tistory.com/15))
 
 ## 🎫 ERD
 [링크](https://www.erdcloud.com/d/apAy7QL9TrN6WsDij)
