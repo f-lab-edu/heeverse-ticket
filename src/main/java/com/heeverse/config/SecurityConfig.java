@@ -69,7 +69,7 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests((request) -> request
                         .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
-                        .requestMatchers("/docs/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/docs/index.html").permitAll()
                         .requestMatchers("/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/member").permitAll()
                         .requestMatchers(HttpMethod.POST, "/concert").permitAll()

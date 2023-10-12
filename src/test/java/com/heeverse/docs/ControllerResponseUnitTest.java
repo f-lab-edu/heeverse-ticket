@@ -36,6 +36,7 @@ import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 import static com.heeverse.ControllerTestHelper.getRestDocsMockMvc;
@@ -66,7 +67,7 @@ public class ControllerResponseUnitTest {
     private WebApplicationContext wac;
 
     private MockMvc mockMvc;
-    private static final Random random = new Random();
+    private static final Random random = ThreadLocalRandom.current();
 
 
     @BeforeEach
@@ -78,7 +79,7 @@ public class ControllerResponseUnitTest {
     @DisplayName("/member POST, 정상 응답 Body 테스트")
     void memberResponseTest() throws Exception {
 
-        MemberRequestDto mockDto = MemberTestHelper.mockingMemberRequestDto();
+        final MemberRequestDto mockDto = MemberTestHelper.mockingMemberRequestDto();
 
         when(memberService.signup(Mockito.any())).thenReturn(1L);
 
@@ -97,9 +98,12 @@ public class ControllerResponseUnitTest {
     @DisplayName("/concert, POST 정상 응답 Body 테스트")
     void concertResponseTest() throws Exception {
 
-        when(concertService.registerConcert(Mockito.any())).thenReturn(List.of(1L));
+        // given
+        final List<Long> givenConcertSeq = List.of(1L);
 
-        when(concertService.getRegisteredConcertList(List.of(1L)))
+        when(concertService.registerConcert(Mockito.any())).thenReturn(givenConcertSeq);
+
+        when(concertService.getRegisteredConcertList(givenConcertSeq))
                 .thenReturn(List.of(ConcertHelper.mockRegisteredConcertResponseDto()));
 
         mockMvc.perform(post(ControllerTestHelper.Endpoint.CONCERT.콘서트_등록)
@@ -117,9 +121,9 @@ public class ControllerResponseUnitTest {
     void ticketOrderResponseTest() throws Exception {
 
         // given
-        long concertSeq = 1L;
-        TicketOrderRequestDto orderRequestDtos = givenTicketOrderRequest(concertSeq);
-        List<TicketOrderResponseDto> orderResponseDtos = givenTicketOrderResponse(concertSeq);
+        final long concertSeq = 1L;
+        final TicketOrderRequestDto orderRequestDtos = givenTicketOrderRequest(concertSeq);
+        final List<TicketOrderResponseDto> orderResponseDtos = givenTicketOrderResponse(concertSeq);
 
         // when
         when(ticketOrderFacade.startTicketOrderJob(Mockito.any(), Mockito.any()))
@@ -140,8 +144,8 @@ public class ControllerResponseUnitTest {
     @DisplayName("/ticker-order/remains, GET 정상 응답 Body 테스트")
     void ticketRemainsResponseTest() throws Exception {
         // given
-        long concertSeq = 1L;
-        List<TicketRemainsResponseDto> ticketRemainsResponseDtos = givenTicketRemainsResponse(concertSeq);
+        final long concertSeq = 1L;
+        final List<TicketRemainsResponseDto> ticketRemainsResponseDtos = givenTicketRemainsResponse(concertSeq);
 
         // when
         when(ticketOrderFacade.getTicketRemains(Mockito.any()))

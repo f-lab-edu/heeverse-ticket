@@ -72,7 +72,7 @@ public class ControllerExceptionUnitTest {
     @DisplayName("/member POST, 예외 응답 Body 테스트")
     void memberException() throws Exception {
 
-        MemberRequestDto mockDto = MemberTestHelper.mockingMemberRequestDto();
+        final MemberRequestDto mockDto = MemberTestHelper.mockingMemberRequestDto();
 
         when(memberService.signup(Mockito.any())).
                 thenThrow(DuplicatedMemberException.class);
@@ -81,7 +81,6 @@ public class ControllerExceptionUnitTest {
         mockMvc.perform(post(Endpoint.Member.회원가입)
                         .content(om.writeValueAsString(mockDto))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(res -> status().isConflict())
                 .andExpect(jsonPath(ERROR_RESPONSE_FIELD_NAME).value(ErrorMessage.CLIENT_ERROR.message))
                 .andDo(MemberDocsResultFactory.memberErrorDocs());
@@ -99,7 +98,6 @@ public class ControllerExceptionUnitTest {
         mockMvc.perform(post(Endpoint.CONCERT.콘서트_등록)
                         .content(om.writeValueAsString(List.of(ConcertHelper.normalDto())))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(res -> status().isConflict())
                 .andExpect(jsonPath(ERROR_RESPONSE_FIELD_NAME).value(ErrorMessage.CLIENT_ERROR.message))
                 .andDo(ConcertDocsResultFactory.concertErrorDocs());
@@ -117,7 +115,6 @@ public class ControllerExceptionUnitTest {
         mockMvc.perform(post(Endpoint.TICKET.티켓_예매)
                         .content(om.writeValueAsString(TicketOrderTestHelper.createTicketOrderRequestDto(List.of(1L))))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(res -> status().isBadRequest())
                 .andExpect(jsonPath(ERROR_RESPONSE_FIELD_NAME).value(ErrorMessage.CLIENT_ERROR.message))
                 .andDo(TicketDocsResultFactory.ticketOrderErrorDocs());
@@ -135,7 +132,6 @@ public class ControllerExceptionUnitTest {
         mockMvc.perform(get(Endpoint.TICKET.잔여_티켓_집계)
                         .content(om.writeValueAsString(new TicketRemainsDto(1L)))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(res -> status().isBadRequest())
                 .andExpect(jsonPath(ERROR_RESPONSE_FIELD_NAME).value(ErrorMessage.CLIENT_ERROR.message))
                 .andDo(TicketDocsResultFactory.tickerRemainsErrorDocs());
@@ -152,7 +148,6 @@ public class ControllerExceptionUnitTest {
         mockMvc.perform(get(Endpoint.TICKET.잔여_티켓_집계)
                         .content(om.writeValueAsString(new TicketRemainsDto(1L)))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(res -> status().isBadRequest())
                 .andExpect(jsonPath(ERROR_RESPONSE_FIELD_NAME).value(ErrorMessage.UNDEFINED_ERROR.message));
     }

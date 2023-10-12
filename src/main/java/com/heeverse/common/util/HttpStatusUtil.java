@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
  * @author gutenlee
  * @since 2023/10/10
  */
-//@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @UtilityClass
 public class HttpStatusUtil {
 
