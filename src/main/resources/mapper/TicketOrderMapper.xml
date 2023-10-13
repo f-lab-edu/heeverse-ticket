@@ -56,4 +56,23 @@
         WHERE seq = ${ticketOrderSeq}
     </update>
 
+
+    <insert id="insertTicketOrderLog" parameterType="java.util.List">
+        INSERT INTO ticket_order_log(
+            ticket_seq,
+            member_seq,
+            ticket_order_seq,
+            create_datetime
+        )
+        VALUES
+        <foreach item="ticketOrderLog" collection="list" separator=",">
+            (
+            #{ticketOrderLog.ticketSeq},
+            #{ticketOrderLog.memberSeq},
+            #{ticketOrderLog.ticketOrderSeq},
+            #{ticketOrderLog.createDateTime}
+            )
+        </foreach>
+    </insert>
+
 </mapper>

@@ -29,8 +29,8 @@ public class TicketOrderFacade {
     public List<TicketOrderResponseDto> startTicketOrderJob(TicketOrderRequestDto dto, Long memberSeq) {
         try {
             Long ticketOrderSeq = orderTicket(dto, memberSeq);
+            saveOrderLog(dto, memberSeq, ticketOrderSeq);
             return ticketOrderService.getOrderTicket(ticketOrderSeq);
-
         } catch (Exception e) {
             log.error("티켓 예매가 실패했습니다. : {} ", e.getMessage());
             throw new TicketingFailException(e);
@@ -52,5 +52,9 @@ public class TicketOrderFacade {
         } catch (IllegalArgumentException e) {
             throw  new TicketAggregationFailException(e);
         }
+    }
+
+    private void saveOrderLog(TicketOrderRequestDto dto, Long memberSeq, Long ticketOrderSeq) {
+        ticketOrderService.saveTicketOrderLog(dto, memberSeq, ticketOrderSeq);
     }
 }
