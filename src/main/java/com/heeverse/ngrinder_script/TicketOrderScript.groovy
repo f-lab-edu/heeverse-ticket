@@ -1,4 +1,5 @@
 package com.heeverse.ngrinder_script
+
 import HTTPClient.NVPair
 import net.grinder.script.GTest
 import net.grinder.scriptengine.groovy.junit.GrinderRunner
@@ -17,11 +18,11 @@ import static net.grinder.script.Grinder.grinder
 import static org.hamcrest.Matchers.isOneOf
 import static org.junit.Assert.assertThat
 
-@RunWith(GrinderRunner)
 /**
  * @author jeongheekim
  * @date 10/13/23
  */
+@RunWith(GrinderRunner)
 class TicketOrderScript {
     public static String url = "http://118.67.142.206"
     public static GTest test
@@ -86,7 +87,7 @@ class TicketOrderScript {
         if (response.statusCode == 301 || response.statusCode == 302) {
             grinder.logger.warn("Warning. The response may not be correct. The response code was {}.", response.statusCode)
         } else {
-            assertThat(response.statusCode, isOneOf(200,201))
+            assertThat(response.statusCode, isOneOf(200, 201))
         }
     }
 
