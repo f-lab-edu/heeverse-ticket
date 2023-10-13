@@ -4,6 +4,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.0'
     id 'jacoco'
     id "org.asciidoctor.jvm.convert" version "3.3.2"
+    id 'groovy'
 }
 
 group 'com.heeverse'
@@ -36,6 +37,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-jdbc:3.1.1'
     implementation 'org.springframework.vault:spring-vault-core:3.0.2'
     implementation group: 'com.github.javafaker', name: 'javafaker', version: '0.16'
+    implementation 'org.apache.groovy:groovy:4.0.14'
+    implementation 'org.ngrinder:ngrinder-groovy:3.5.8'
 
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
