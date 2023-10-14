@@ -5,7 +5,7 @@ import com.heeverse.ticket_order.domain.dto.persistence.AggregateInsertMapperDto
 import com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto;
 import com.heeverse.ticket_order.service.reader.QueryAggregationReader;
 import com.heeverse.ticket_order.service.transfer.ResultTransfer;
-import com.heeverse.ticket_order.service.transfer.ResultDBTransfer;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,19 +18,11 @@ import java.util.stream.Stream;
  * @since 2023/10/12
  */
 @Service
+@RequiredArgsConstructor
 public class QueryAggregationService implements AggregationService {
 
     private final QueryAggregationReader reader;
     private final ResultTransfer<AggregateInsertMapperDto> transfer;
-
-    public QueryAggregationService(
-            QueryAggregationReader reader,
-            ResultDBTransfer transfer
-    ) {
-        this.reader = reader;
-        this.transfer = transfer;
-    }
-
 
     @Transactional(readOnly = true)
     @Override

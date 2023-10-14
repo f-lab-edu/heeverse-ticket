@@ -10,10 +10,10 @@ import lombok.Getter;
 @Getter
 public class AggregateInsertMapperDto {
 
-    private final Long concertSeq;
+    private final long concertSeq;
     private final String gradeName;
-    private final Integer totalTickets;
-    private final Integer orderTry;
+    private final int totalTickets;
+    private final int orderTry;
 
     public AggregateInsertMapperDto(AggregateDto.Response dto) {
         this.concertSeq = dto.getConcertSeq();

@@ -1,4 +1,4 @@
-package com.heeverse.ticket_order.service;
+package com.heeverse.ticket_order.service.event;
 
 import com.heeverse.ticket.domain.entity.Ticket;
 import com.heeverse.ticket.domain.mapper.TicketMapper;

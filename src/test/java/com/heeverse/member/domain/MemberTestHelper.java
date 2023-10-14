@@ -20,7 +20,7 @@ public class MemberTestHelper {
 
     public static Member getMockMember() {
         Faker faker = fakerLocale(Locale.US);
-        String fakeName = faker.name().name();
+        String fakeName = fakerLocale(Locale.KOREA).name().name();
         return new Member(MEMBER_ID + fakeName, PASSWORD, fakeName, faker.internet().emailAddress());
     }
 

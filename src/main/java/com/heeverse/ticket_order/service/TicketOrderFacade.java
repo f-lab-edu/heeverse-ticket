@@ -7,6 +7,8 @@ import com.heeverse.ticket_order.domain.dto.TicketRemainsDto;
 import com.heeverse.ticket_order.domain.dto.TicketRemainsResponseDto;
 import com.heeverse.ticket_order.domain.exception.TicketAggregationFailException;
 import com.heeverse.ticket_order.domain.exception.TicketingFailException;
+import com.heeverse.ticket_order.service.event.TicketOrderEvent;
+import com.heeverse.ticket_order.service.event.TicketOrderEventHandler;
 import io.jsonwebtoken.lang.Assert;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

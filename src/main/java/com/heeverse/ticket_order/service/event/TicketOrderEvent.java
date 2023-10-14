@@ -1,4 +1,4 @@
-package com.heeverse.ticket_order.service;
+package com.heeverse.ticket_order.service.event;
 
 import com.heeverse.ticket_order.domain.dto.TicketOrderRequestDto;
 import lombok.Getter;
