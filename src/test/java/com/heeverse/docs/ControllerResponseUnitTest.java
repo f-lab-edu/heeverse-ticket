@@ -19,6 +19,7 @@ import com.heeverse.ticket_order.domain.dto.TicketRemainsDto;
 import com.heeverse.ticket_order.domain.dto.TicketRemainsResponseDto;
 import com.heeverse.ticket_order.domain.dto.persistence.TicketOrderRequestMapperDto;
 import com.heeverse.ticket_order.domain.dto.persistence.TicketRemainsResponseMapperDto;
+import com.heeverse.ticket_order.service.QueryAggregationService;
 import com.heeverse.ticket_order.service.TicketOrderFacade;
 import com.heeverse.ticket_order.service.TicketOrderTestHelper;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,6 +61,8 @@ public class ControllerResponseUnitTest {
     private ConcertService concertService;
     @MockBean
     private TicketOrderFacade ticketOrderFacade;
+    @MockBean
+    private QueryAggregationService aggregationService;
 
     @Autowired
     private ObjectMapper om;
