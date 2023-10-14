@@ -37,7 +37,7 @@ public class QueryAggregationService implements AggregationService {
     public List<AggregateDto.Response> aggregate(AggregateDto.Request aggrDto) {
 
         List<AggregateSelectMapperDto.Response> responseList
-                = reader.getResultGroupByGrade(new AggregateSelectMapperDto.Request(aggrDto.getConcertSeq()));
+                = getResultGroupByGrade(aggrDto);
 
         return responseList.stream()
                 .map(AggregateDto.Response::new)
@@ -51,5 +51,12 @@ public class QueryAggregationService implements AggregationService {
         transfer.transferAll(mapStream.collect(Collectors.toList()));
 
         return responses;
+    }
+
+    private List<AggregateSelectMapperDto.Response> getResultGroupByGrade(AggregateDto.Request aggrDto) {
+        if (aggrDto.isNormalization()) {
+            return reader.getResultGroupByGrade(new AggregateSelectMapperDto.Request(aggrDto.getConcertSeq()));
+        }
+        return reader.getResultDeNormalization(new AggregateSelectMapperDto.Request(aggrDto.getConcertSeq()));
     }
 }

@@ -91,13 +91,4 @@ public class TicketOrderService {
     }
 
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void saveTicketOrderLog(TicketOrderRequestDto dto, Long memberSeq, Long ticketOrderSeq) {
-        List<TicketOrderLog> ticketOrderLogList = dto.ticketSetList()
-                .stream()
-                .map(ticketSeq -> new TicketOrderLog(ticketSeq, memberSeq, ticketOrderSeq))
-                .collect(Collectors.toList());
-
-        ticketOrderMapper.insertTicketOrderLog(ticketOrderLogList);
-    }
 }

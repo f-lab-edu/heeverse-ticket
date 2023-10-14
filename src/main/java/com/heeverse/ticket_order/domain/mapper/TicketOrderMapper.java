@@ -21,6 +21,4 @@ public interface TicketOrderMapper {
     List<TicketOrder> selectTicketOrderListByMemberSeq(Long memberSeq);
 
     void updateTicketOrderStatus(TicketOrderUpdateMapperDto dto);
-
-    void insertTicketOrderLog(List<TicketOrderLog> ticketOrderLogList);
 }

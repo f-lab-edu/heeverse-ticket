@@ -9,9 +9,8 @@ public class AggregateSelectMapperDto {
             Long concertSeq
     ) { }
 
-    public record Response(
+    public record Response (
             Long concertSeq,
-            Long ticketSeq,
             String gradeName,
             Integer totalTickets,
             Integer orderTry

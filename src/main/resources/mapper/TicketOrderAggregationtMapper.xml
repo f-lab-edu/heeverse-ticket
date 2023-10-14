@@ -11,18 +11,30 @@
             t.concert_seq,
             IF(GROUPING(t.grade_name), 'ALL', grade_name) AS grade_name,
             count(distinct t.seq, grade_name) AS total_tickets,
-            count(grade_name) AS order_try
+            count(order_seq) AS order_try
         FROM ticket t
-             LEFT JOIN ticket_order_log t_log
-                       ON t.seq = t_log.ticket_seq
-             LEFT JOIN ticket_order t_order
-                       ON t.order_seq = t_order.seq
-        WHERE t.concert_seq = #{concertSeq}
+                 LEFT JOIN ticket_order_log t_log
+                           ON t.seq = t_log.ticket_seq
+                 LEFT JOIN ticket_order t_order
+                           ON t.order_seq = t_order.seq
+        WHERE concert_seq =  #{concertSeq}
         GROUP BY grade_name
         WITH ROLLUP
-
     </select>
 
+    <!--티켓 등급별 예매 시도 집계-->
+    <select id="selectGroupByGradeName2" parameterType="java.lang.Long"
+            resultType="com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto$Response">
+        SELECT
+            t.concert_seq,
+            IF(GROUPING(t.grade_name), 'ALL', grade_name) AS grade_name,
+            0  AS total_tickets,
+            count(t.grade_name) AS order_try
+        FROM ticket_order_log_denormalization t
+        WHERE concert_seq = #{concertSeq}
+        GROUP BY grade_name
+        WITH ROLLUP
+    </select>
 
     <insert id="insertAggregationResult" parameterType="java.util.List">
         INSERT INTO ticket_order_result (

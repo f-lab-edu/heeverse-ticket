@@ -11,14 +11,12 @@ import lombok.Getter;
 public class AggregateInsertMapperDto {
 
     private final Long concertSeq;
-    private final Long ticketSeq;
     private final String gradeName;
     private final Integer totalTickets;
     private final Integer orderTry;
 
     public AggregateInsertMapperDto(AggregateDto.Response dto) {
         this.concertSeq = dto.getConcertSeq();
-        this.ticketSeq = dto.getTicketSeq();
         this.gradeName = dto.getGradeName();
         this.totalTickets = dto.getTotalTickets();
         this.orderTry = dto.getOrderTry();

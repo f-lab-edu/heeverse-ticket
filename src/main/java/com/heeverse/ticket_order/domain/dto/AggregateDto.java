@@ -10,12 +10,17 @@ import lombok.Getter;
 public class AggregateDto {
 
 
-    public static class Request{
-        @Getter
-        private final Long concertSeq;
+    @Getter
+    public static class Request {
 
-        public Request(Long concertSeq) {
+        private Long concertSeq;
+        private boolean normalization;
+
+        protected Request() {
+        }
+        public Request(Long concertSeq, boolean normalization) {
             this.concertSeq = concertSeq;
+            this.normalization = normalization;
         }
     }
 
@@ -24,7 +29,6 @@ public class AggregateDto {
     public static class Response {
 
         private final Long concertSeq;
-        private final Long ticketSeq;
         private final String gradeName;
         private final Integer totalTickets;
         private final Integer orderTry;
@@ -33,7 +37,6 @@ public class AggregateDto {
                 AggregateSelectMapperDto.Response mapperResponse
         ) {
             this.concertSeq = mapperResponse.concertSeq();
-            this.ticketSeq = mapperResponse.ticketSeq();
             this.gradeName = mapperResponse.gradeName();
             this.totalTickets = mapperResponse.totalTickets();
             this.orderTry = mapperResponse.orderTry();
