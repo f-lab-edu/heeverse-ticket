@@ -1,5 +1,6 @@
 package com.heeverse.concert.dto;
 
+import com.heeverse.concert.domain.entity.ConcertHelper;
 import com.heeverse.concert.dto.presentation.ConcertRequestDto;
 import com.heeverse.ticket.dto.TicketGradeDto;
 import jakarta.validation.ConstraintViolation;
@@ -35,20 +36,8 @@ class ConcertRequestDtoTest {
     @DisplayName("concertDate, ticketOpenTime,ticketEndTime은 요창하는 시간보다 미래여야한다.")
     @Test
     void requestDtoValidationSuccessTest() {
-
-        LocalDateTime concertDate = LocalDateTime.parse("2023-12-15T10:00:00");
-        LocalDateTime ticketOpenTime = LocalDateTime.parse("2023-10-15T10:00:00");
-        LocalDateTime ticketEndTime = LocalDateTime.parse("2023-10-17T10:00:00");
-
-        List<TicketGradeDto> ticketGradeDtoList = new ArrayList<>();
-        TicketGradeDto ticketGradeDto = new TicketGradeDto("VIP", 100);
-        ticketGradeDtoList.add(ticketGradeDto);
-
-        ConcertRequestDto dto = new ConcertRequestDto("BTS 콘서트", concertDate,
-            ticketOpenTime, ticketEndTime, 1L, 1L, null);
-
-
-        Set<ConstraintViolation<ConcertRequestDto>> violationSet = validator.validate(dto);
+        ConcertRequestDto concertRequestDto = ConcertHelper.normalDto();
+        Set<ConstraintViolation<ConcertRequestDto>> violationSet = validator.validate(concertRequestDto);
         assertThat(violationSet.size()).isZero();
     }
 }
