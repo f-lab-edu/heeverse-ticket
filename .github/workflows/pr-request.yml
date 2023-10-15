@@ -5,7 +5,7 @@ on:
     branches: [ dev ]
     paths: [ '**.java', '.github/workflows/pr-request.yml', 'build.gradle' ]
     paths-ignore:
-      - 'com/heeverse/ngrinder_script/**'
+      - '**.groovy'
   workflow_dispatch:
 
 env:

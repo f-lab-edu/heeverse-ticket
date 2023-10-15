@@ -5,7 +5,7 @@ on:
     branches: [ dev ]
     paths: [ '**.java', '.github/workflows/image-deploy.yml', 'build.gradle' ]
     paths-ignore:
-      - 'com/heeverse/ngrinder_script/**'
+      - '**.groovy'
 
 env:
   # aws
