@@ -41,5 +41,15 @@ public class AggregateDto {
             this.totalTickets = mapperResponse.totalTickets();
             this.orderTry = mapperResponse.orderTry();
         }
+
+        @Override
+        public String toString() {
+            return "Response{" +
+                    "concertSeq=" + concertSeq +
+                    ", gradeName='" + gradeName + '\'' +
+                    ", totalTickets=" + totalTickets +
+                    ", orderTry=" + orderTry +
+                    '}';
+        }
     }
 }

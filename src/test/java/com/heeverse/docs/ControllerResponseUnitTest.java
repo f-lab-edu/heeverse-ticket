@@ -82,7 +82,7 @@ public class ControllerResponseUnitTest {
     @DisplayName("/member POST, 정상 응답 Body 테스트")
     void memberResponseTest() throws Exception {
 
-        final MemberRequestDto mockDto = MemberTestHelper.mockingMemberRequestDto();
+        final MemberRequestDto mockDto = MemberTestHelper.getMockMemberRequestDto();
 
         when(memberService.signup(Mockito.any())).thenReturn(1L);
 

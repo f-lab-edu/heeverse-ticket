@@ -23,7 +23,7 @@
     </select>
 
     <!--티켓 등급별 예매 시도 집계-->
-    <select id="selectGroupByGradeName2" parameterType="java.lang.Long"
+    <select id="selectGroupByGradeNameDeNormalization" parameterType="java.lang.Long"
             resultType="com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto$Response">
         SELECT
             t.concert_seq,

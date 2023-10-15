@@ -29,4 +29,15 @@ public class TicketOrderLog extends BaseEntity {
         this.gradeName = ticket.getGradeName();
         this.concertSeq = ticket.getConcertSeq();
     }
+
+    @Override
+    public String toString() {
+        return "TicketOrderLog{" +
+                "ticketSeq=" + ticketSeq +
+                ", memberSeq=" + memberSeq +
+                ", ticketOrderSeq=" + ticketOrderSeq +
+                ", concertSeq=" + concertSeq +
+                ", gradeName='" + gradeName + '\'' +
+                '}';
+    }
 }

@@ -75,7 +75,7 @@ public class ControllerExceptionUnitTest {
     @DisplayName("/member POST, 예외 응답 Body 테스트")
     void memberException() throws Exception {
 
-        final MemberRequestDto mockDto = MemberTestHelper.mockingMemberRequestDto();
+        final MemberRequestDto mockDto = MemberTestHelper.getMockMemberRequestDto();
 
         when(memberService.signup(Mockito.any())).
                 thenThrow(DuplicatedMemberException.class);
