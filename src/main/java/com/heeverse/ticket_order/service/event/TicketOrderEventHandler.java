@@ -38,7 +38,6 @@ public class TicketOrderEventHandler {
         log.info("======= {} =======", ticketSetList);
 
         List<TicketOrderLog> ticketOrderLogs = getTickets(ticketSetList).stream()
-                .peek(t -> log.info(t.toString()))
                 .map(ticket -> new TicketOrderLog(ticket, event.memberSeq(), event.ticketOrderSeq()))
                 .collect(Collectors.toList());
 
