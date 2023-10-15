@@ -3,6 +3,8 @@ name: heeverse-release-002
 on:
   workflow_run:
     paths: [ '**.java', '.github/workflows/release-server-2.yml', 'build.gradle' ]
+    paths-ignore:
+      - 'com/heeverse/ngrinder_script/**'
     workflows: [ heeverse-release-001 ]
     types:
       - completed

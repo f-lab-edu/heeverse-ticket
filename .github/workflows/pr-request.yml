@@ -4,6 +4,8 @@ on:
   pull_request:
     branches: [ dev ]
     paths: [ '**.java', '.github/workflows/pr-request.yml', 'build.gradle' ]
+    paths-ignore:
+      - 'com/heeverse/ngrinder_script/**'
   workflow_dispatch:
 
 env:
