@@ -1,12 +1,17 @@
 package com.heeverse.common;
 
 import com.zaxxer.hikari.HikariDataSource;
+import com.zaxxer.hikari.HikariPoolMXBean;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
+import javax.management.JMX;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
 
@@ -37,13 +42,10 @@ public class DataSourceMonitoring implements DataSourceMonitoringMBean {
         return dataSource.getHikariConfigMXBean().getMaximumPoolSize();
     }
 
-    @PostConstruct
-    public void init() {
-        try {
-            // type 이 DataSource 이어야 한다. name 은 아무거나 원하는 것 셋팅
-            ManagementFactory.getPlatformMBeanServer().registerMBean(this, new ObjectName("com.heeverse:type=DataSource,name=hikari-pool,context=/"));
-        } catch (Exception e) {
-            log.error("MBean Register Error", e);
-        }
+    @Bean
+    public HikariPoolMXBean poolProxy() throws MalformedObjectNameException {
+        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        ObjectName objectName = new ObjectName("com.heeverse.hikari:type=Pool (hikari)");
+        return JMX.newMBeanProxy(mBeanServer, objectName, HikariPoolMXBean.class);
     }
 }
