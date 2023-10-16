@@ -41,7 +41,7 @@ public class DataSourceMonitoring implements DataSourceMonitoringMBean {
     public void init() {
         try {
             // type 이 DataSource 이어야 한다. name 은 아무거나 원하는 것 셋팅
-            ManagementFactory.getPlatformMBeanServer().registerMBean(this, new ObjectName("com.xxx:type=DataSource,name=rds1"));
+            ManagementFactory.getPlatformMBeanServer().registerMBean(this, new ObjectName("com.heeverse:type=DataSource,name=hikari-pool,context=/"));
         } catch (Exception e) {
             log.error("MBean Register Error", e);
         }
