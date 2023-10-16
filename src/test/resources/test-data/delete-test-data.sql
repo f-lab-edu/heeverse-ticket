@@ -9,5 +9,7 @@ DELETE FROM artist where seq = @max_artist_seq;
 DELETE FROM concert where seq = @max_concert_seq;
 DELETE FROM ticket where concert_seq = @max_concert_seq;
 DELETE FROM member where seq = @max_member_seq;
+DELETE FROM ticket_order_log_denormalization where concert_seq = @max_concert_seq;
+
 COMMIT;
 

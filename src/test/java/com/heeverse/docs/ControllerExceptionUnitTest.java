@@ -13,6 +13,7 @@ import com.heeverse.ticket.exception.DuplicatedTicketException;
 import com.heeverse.ticket_order.domain.dto.TicketRemainsDto;
 import com.heeverse.ticket_order.domain.exception.TicketAggregationFailException;
 import com.heeverse.ticket_order.domain.exception.TicketingFailException;
+import com.heeverse.ticket_order.service.QueryAggregationService;
 import com.heeverse.ticket_order.service.TicketOrderFacade;
 import com.heeverse.ticket_order.service.TicketOrderTestHelper;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,6 +53,8 @@ public class ControllerExceptionUnitTest {
     private ConcertService concertService;
     @MockBean
     private TicketOrderFacade ticketOrderFacade;
+    @MockBean
+    private QueryAggregationService aggregationService;
 
     @Autowired
     private ObjectMapper om;
@@ -72,7 +75,7 @@ public class ControllerExceptionUnitTest {
     @DisplayName("/member POST, 예외 응답 Body 테스트")
     void memberException() throws Exception {
 
-        final MemberRequestDto mockDto = MemberTestHelper.mockingMemberRequestDto();
+        final MemberRequestDto mockDto = MemberTestHelper.getMockMemberRequestDto();
 
         when(memberService.signup(Mockito.any())).
                 thenThrow(DuplicatedMemberException.class);

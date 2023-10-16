@@ -28,6 +28,26 @@
             </encoder>
         </appender>
 
+        <logger name="com.heeverse" level="DEBUG"  />
+        <logger name="jdbc.sqlonly" level="INFO"  />
+        <logger name="jdbc.resultsettable" level="INFO"  />
+
+        <root level="INFO">
+            <appender-ref ref="CONSOLE" />
+            <appender-ref ref="FILE" />
+        </root>
+        <root level="ERROR">
+            <appender-ref ref="ERROR_FILE" />
+        </root>
+    </springProfile>
+
+    <springProfile name="prod">
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+                <charset>${CONSOLE_LOG_CHARSET}</charset>
+            </encoder>
+        </appender>
         <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
             <file>${LOG_DIR}/${spring.profiles.active}/${LOG_FILE}.log</file>
             <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -60,32 +80,11 @@
             </encoder>
         </appender>
 
-        <logger name="com.heeverse" level="DEBUG"  />
-        <logger name="jdbc.sqlonly" level="INFO"  />
-        <logger name="jdbc.resultsettable" level="INFO"  />
-
-        <root level="INFO">
-            <appender-ref ref="CONSOLE" />
-            <appender-ref ref="FILE" />
-        </root>
-        <root level="ERROR">
-            <appender-ref ref="ERROR_FILE" />
-        </root>
-    </springProfile>
-
-    <springProfile name="prod">
-        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-            <encoder>
-                <pattern>${CONSOLE_LOG_PATTERN}</pattern>
-                <charset>${CONSOLE_LOG_CHARSET}</charset>
-            </encoder>
-        </appender>
-
-
         <logger name="com.heeverse" level="INFO"  />
 
         <root level="INFO">
             <appender-ref ref="CONSOLE" />
+            <appender-ref ref="FILE" />
         </root>
     </springProfile>
 </configuration>

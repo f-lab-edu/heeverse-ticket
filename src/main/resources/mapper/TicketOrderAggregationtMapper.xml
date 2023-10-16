@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.heeverse.ticket_order.domain.mapper.TicketOrderAggregationMapper">
+
+    <!--티켓 등급별 예매 시도 집계-->
+    <select id="selectGroupByGradeName" parameterType="java.lang.Long"
+                                    resultType="com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto$Response">
+        SELECT
+            t.concert_seq,
+            IF(GROUPING(t.grade_name), 'ALL', grade_name) AS grade_name,
+            count(distinct t.seq, grade_name) AS total_tickets,
+            count(order_seq) AS order_try
+        FROM ticket t
+                 LEFT JOIN ticket_order_log t_log
+                           ON t.seq = t_log.ticket_seq
+                 LEFT JOIN ticket_order t_order
+                           ON t.order_seq = t_order.seq
+        WHERE concert_seq =  #{concertSeq}
+        GROUP BY grade_name
+        WITH ROLLUP
+    </select>
+
+    <!--티켓 등급별 예매 시도 집계-->
+    <select id="selectGroupByGradeNameDeNormalization" parameterType="java.lang.Long"
+            resultType="com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto$Response">
+        SELECT
+            t.concert_seq,
+            IF(GROUPING(t.grade_name), 'ALL', grade_name) AS grade_name,
+            0  AS total_tickets,
+            count(t.grade_name) AS order_try
+        FROM ticket_order_log_denormalization t
+        WHERE concert_seq = #{concertSeq}
+        GROUP BY grade_name
+        WITH ROLLUP
+    </select>
+
+    <insert id="insertAggregationResult" parameterType="java.util.List">
+        INSERT INTO ticket_order_result (
+            concert_seq,
+             ticket_seq,
+             grade_name,
+             total_tickets,
+             order_try
+        ) VALUES
+            <foreach item="result" collection="list" separator=",">
+                (
+                    #{result.concertSeq},
+                    #{result.ticketSeq},
+                    #{result.gradeName},
+                    #{result.totalTickets},
+                    #{result.orderTry}
+                )
+            </foreach>
+
+    </insert>
+
+</mapper>

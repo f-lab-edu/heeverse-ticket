@@ -66,3 +66,12 @@ include::{snippets}/ticket-order/remains/http-request.adoc[]
 === 응답
 include::{snippets}/ticket-order/remains/response-fields.adoc[]
 include::{snippets}/ticket-order/remains/http-response.adoc[]
+
+=== [티켓예매 집계 조회 요청 Body]
+include::{snippets}/ticket-order/log/request-fields.adoc[]
+=== [티켓예매 집계 조회 HTTP Example]
+include::{snippets}/ticket-order/log/http-request.adoc[]
+
+=== 응답
+include::{snippets}/ticket-order/log/response-fields.adoc[]
+include::{snippets}/ticket-order/log/http-response.adoc[]

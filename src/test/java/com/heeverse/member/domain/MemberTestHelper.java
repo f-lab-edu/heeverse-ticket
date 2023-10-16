@@ -11,30 +11,23 @@ import java.util.Locale;
  * @date 2023/09/23
  */
 public class MemberTestHelper {
-    public static final String MEMBER_ID = "guestzzang";
 
+    public static final String MEMBER_ID = "guestzzang";
     public static final String PASSWORD = "Helloworld!123";
+    public static final Faker usFaker = new Faker(Locale.US);
+    public static final Faker korFaker = new Faker(Locale.KOREA);
 
     private MemberTestHelper() {
     }
 
     public static Member getMockMember() {
-        Faker faker = fakerLocale(Locale.US);
-        String fakeName = faker.name().name();
-        return new Member(MEMBER_ID + fakeName, PASSWORD, fakeName, faker.internet().emailAddress());
+        String fakeName = usFaker.name().name();
+        String koreanName = korFaker.name().name();
+        return new Member(MEMBER_ID + fakeName, PASSWORD, koreanName, usFaker.internet().emailAddress());
     }
 
-    public static MemberRequestDto mockingMemberRequestDto() {
-        Faker kor = fakerLocale(Locale.KOREA);
-        String fakeName = kor.name().name();
-
-        Faker us = fakerLocale(Locale.US);
-        return new MemberRequestDto(MEMBER_ID, PASSWORD, fakeName, us.internet().emailAddress());
-
+    public static MemberRequestDto getMockMemberRequestDto() {
+        String fakeName = korFaker.name().name();
+        return new MemberRequestDto(MEMBER_ID, PASSWORD, fakeName, usFaker.internet().emailAddress());
     }
-
-    public static Faker fakerLocale(Locale locale) {
-        return new Faker(locale);
-    }
-
 }

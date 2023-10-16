@@ -47,6 +47,7 @@ public class ControllerTestHelper {
         public static class TICKET {
             public final static String 티켓_예매 = "/ticket-order";
             public final static String 잔여_티켓_집계 = "/ticket-order/remains";
+            public final static String 티켓_예매_집계 = "/ticket-order/log";
         }
     }
 }
