@@ -7,6 +7,8 @@ import com.heeverse.ticket_order.domain.dto.TicketRemainsDto;
 import com.heeverse.ticket_order.domain.dto.TicketRemainsResponseDto;
 import com.heeverse.ticket_order.domain.exception.TicketAggregationFailException;
 import com.heeverse.ticket_order.domain.exception.TicketingFailException;
+import com.heeverse.ticket_order.service.event.TicketOrderEvent;
+import com.heeverse.ticket_order.service.event.TicketOrderEventHandler;
 import io.jsonwebtoken.lang.Assert;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,12 +27,12 @@ public class TicketOrderFacade {
 
     private final TicketService ticketService;
     private final TicketOrderService ticketOrderService;
+    private final TicketOrderEventHandler ticketOrderEventHandler;
 
     public List<TicketOrderResponseDto> startTicketOrderJob(TicketOrderRequestDto dto, Long memberSeq) {
         try {
             Long ticketOrderSeq = orderTicket(dto, memberSeq);
             return ticketOrderService.getOrderTicket(ticketOrderSeq);
-
         } catch (Exception e) {
             log.error("티켓 예매가 실패했습니다. : {} ", e.getMessage());
             throw new TicketingFailException(e);
@@ -39,6 +41,7 @@ public class TicketOrderFacade {
 
     protected Long orderTicket(TicketOrderRequestDto dto, Long memberSeq) throws Exception {
         Long ticketOrderSeq = ticketOrderService.createTicketOrder(memberSeq);
+        ticketOrderEventHandler.saveTicketOrderLog(new TicketOrderEvent(dto, memberSeq, ticketOrderSeq));
         ticketService.getTicketLock(dto.ticketSetList());
         Assert.notNull(ticketOrderSeq);
         ticketOrderService.orderTicket(dto, ticketOrderSeq);

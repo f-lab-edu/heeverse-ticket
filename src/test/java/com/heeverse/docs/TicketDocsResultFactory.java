@@ -61,6 +61,23 @@ public class TicketDocsResultFactory {
         );
     }
 
+    public static ResultHandler ticketOrderLogDocs() {
+        return document("ticket-order/log",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                requestFields(
+                        fieldWithPath("concertSeq").type(JsonFieldType.NUMBER).description("공연 시퀀스"),
+                        fieldWithPath("normalization").type(JsonFieldType.BOOLEAN).description("정규화된 테이블에서 조회 여부")
+                ),
+                responseFields(
+                        fieldWithPath("[]concertSeq").type(JsonFieldType.NUMBER).description("공연 시퀀스"),
+                        fieldWithPath("[]gradeName").type(JsonFieldType.STRING).description("티켓 등급"),
+                        fieldWithPath("[]totalTickets").type(JsonFieldType.NUMBER).description("전체 티켓 수"),
+                        fieldWithPath("[]orderTry").type(JsonFieldType.NUMBER).description("예매 시도 수")
+                )
+        );
+    }
+
 
     public static ResultHandler tickerRemainsErrorDocs() {
         return document("error/ticket-order/remains",

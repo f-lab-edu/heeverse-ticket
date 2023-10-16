@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS grade_ticket cascade;
 DROP TABLE IF EXISTS concert cascade;
 DROP TABLE IF EXISTS venue cascade;
 DROP TABLE IF EXISTS artist cascade;
+DROP TABLE IF EXISTS ticket_order_log cascade;
 
 
 CREATE TABLE member
@@ -84,5 +85,14 @@ CREATE TABLE venue
     venue_name      varchar(50)           NOT NULL COMMENT '공연장 이름',
     address         varchar(255)          NOT NULL COMMENT '주소',
     seat_cnt        bigint                NOT NULL COMMENT '공연장 좌석수',
+    create_datetime datetime              NOT NULL COMMENT '데이터 생성일'
+);
+
+CREATE TABLE ticket_order_log
+(
+    seq             bigint AUTO_INCREMENT NOT NULL PRIMARY KEY COMMENT 'ticket 예매 시도 seq',
+    member_seq      bigint           NOT NULL COMMENT '멤버 시퀀스',
+    ticket_seq      bigint          NOT NULL COMMENT '티켓 시퀀스',
+    ticket_order_Seq        bigint        NOT NULL COMMENT 'ticker order 시퀀스',
     create_datetime datetime              NOT NULL COMMENT '데이터 생성일'
 );

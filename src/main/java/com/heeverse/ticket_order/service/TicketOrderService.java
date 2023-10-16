@@ -8,6 +8,7 @@ import com.heeverse.ticket_order.domain.dto.TicketOrderResponseDto;
 import com.heeverse.ticket_order.domain.dto.persistence.TicketOrderRequestMapperDto;
 import com.heeverse.ticket_order.domain.dto.persistence.TicketOrderUpdateMapperDto;
 import com.heeverse.ticket_order.domain.entity.TicketOrder;
+import com.heeverse.ticket_order.domain.entity.TicketOrderLog;
 import com.heeverse.ticket_order.domain.exception.AlreadyBookedTicketException;
 import com.heeverse.ticket_order.domain.exception.TicketNotNormallyUpdatedException;
 import com.heeverse.ticket_order.domain.mapper.TicketOrderMapper;
@@ -15,8 +16,8 @@ import io.jsonwebtoken.lang.Assert;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDateTime;
@@ -88,4 +89,6 @@ public class TicketOrderService {
         log.info("createTicketOrder - ticket order seq : {}", ticketOrderSeq);
         return Optional.ofNullable(ticketOrderSeq).orElseThrow(IllegalArgumentException::new);
     }
+
+
 }

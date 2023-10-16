@@ -13,12 +13,11 @@ import com.heeverse.ticket.domain.entity.GradeTicket;
 import com.heeverse.ticket.domain.entity.Ticket;
 import com.heeverse.ticket.domain.enums.BookingStatus;
 import com.heeverse.ticket.domain.mapper.TicketTestHelper;
-import com.heeverse.ticket_order.domain.dto.TicketOrderRequestDto;
-import com.heeverse.ticket_order.domain.dto.TicketOrderResponseDto;
-import com.heeverse.ticket_order.domain.dto.TicketRemainsDto;
-import com.heeverse.ticket_order.domain.dto.TicketRemainsResponseDto;
+import com.heeverse.ticket_order.domain.dto.*;
+import com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto;
 import com.heeverse.ticket_order.domain.dto.persistence.TicketOrderRequestMapperDto;
 import com.heeverse.ticket_order.domain.dto.persistence.TicketRemainsResponseMapperDto;
+import com.heeverse.ticket_order.service.QueryAggregationService;
 import com.heeverse.ticket_order.service.TicketOrderFacade;
 import com.heeverse.ticket_order.service.TicketOrderTestHelper;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,6 +39,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 import static com.heeverse.ControllerTestHelper.getRestDocsMockMvc;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -60,6 +60,8 @@ public class ControllerResponseUnitTest {
     private ConcertService concertService;
     @MockBean
     private TicketOrderFacade ticketOrderFacade;
+    @MockBean
+    private QueryAggregationService aggregationService;
 
     @Autowired
     private ObjectMapper om;
@@ -79,7 +81,7 @@ public class ControllerResponseUnitTest {
     @DisplayName("/member POST, 정상 응답 Body 테스트")
     void memberResponseTest() throws Exception {
 
-        final MemberRequestDto mockDto = MemberTestHelper.mockingMemberRequestDto();
+        final MemberRequestDto mockDto = MemberTestHelper.getMockMemberRequestDto();
 
         when(memberService.signup(Mockito.any())).thenReturn(1L);
 
@@ -159,6 +161,28 @@ public class ControllerResponseUnitTest {
                 .andExpect(res -> status().is2xxSuccessful().match(res))
                 .andDo(TicketDocsResultFactory.tickerRemainsResponseDocs());
     }
+
+
+    @Test
+    void ticketOrderAggregationTest() throws Exception {
+        final long concertSeq = 1;
+        AggregateDto.Response response = new AggregateDto.Response(new AggregateSelectMapperDto.Response(
+                concertSeq,
+                "VIP",
+                100,
+                122_342
+        ));
+
+        when(aggregationService.aggregate(any()))
+                .thenReturn(List.of(response));
+
+        mockMvc.perform(get(ControllerTestHelper.Endpoint.TICKET.티켓_예매_집계)
+                        .content(om.writeValueAsString(new AggregateDto.Request(1L, true)))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(res -> status().is2xxSuccessful().match(res))
+                .andDo(TicketDocsResultFactory.ticketOrderLogDocs());
+    }
+
 
 
     private static List<Ticket> givenTickets(long concertSeq) {

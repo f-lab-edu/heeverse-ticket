@@ -1,6 +1,7 @@
 package com.heeverse.concert.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.heeverse.concert.domain.entity.ConcertHelper;
 import com.heeverse.concert.dto.presentation.ConcertRequestDto;
 import com.heeverse.concert.service.ConcertService;
 import com.heeverse.ticket.dto.TicketGradeDto;
@@ -41,16 +42,12 @@ class ConcertControllerTest {
     @Test
     @WithMockUser
     void create() throws Exception {
-        LocalDateTime concertDate = LocalDateTime.parse("2023-12-15T10:00:00");
-        LocalDateTime ticketOpenTime = LocalDateTime.parse("2023-10-15T10:00:00");
-        LocalDateTime ticketEndTime = LocalDateTime.parse("2023-10-17T10:00:00");
 
         List<TicketGradeDto> ticketGradeDtoList = new ArrayList<>();
         TicketGradeDto ticketGradeDto = new TicketGradeDto("VIP", 100);
         ticketGradeDtoList.add(ticketGradeDto);
 
-        ConcertRequestDto dto = new ConcertRequestDto("BTS 콘서트", concertDate,
-            ticketOpenTime, ticketEndTime, 1L, 1L, ticketGradeDtoList);
+        ConcertRequestDto dto = ConcertHelper.normalDto();
 
         List<ConcertRequestDto> concertRequestDtoList = new ArrayList<>();
         concertRequestDtoList.add(dto);
