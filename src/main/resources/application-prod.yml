@@ -1,9 +1,8 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    hikari:
-      register-mbeans: true
-      pool-name: hikari
+  jmx:
+    enabled: false
 
 
 mybatis:
