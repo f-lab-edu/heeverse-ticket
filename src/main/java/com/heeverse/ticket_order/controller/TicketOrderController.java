@@ -52,6 +52,7 @@ public class TicketOrderController {
     public ResponseEntity<List<AggregateDto.Response>> aggregate(
             @RequestBody AggregateDto.Request request
     ) {
+        log.info("OK");
         return ResponseEntity.ok(queryAggregationService.aggregate(request));
     }
 }
