@@ -3,7 +3,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       register-mbeans: true
-      maximum-pool-size: 100
+      maximum-pool-size: 20
   jmx:
     enabled: false
 

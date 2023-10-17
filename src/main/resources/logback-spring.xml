@@ -86,5 +86,8 @@
             <appender-ref ref="CONSOLE" />
             <appender-ref ref="FILE" />
         </root>
+        <root level="ERROR">
+            <appender-ref ref="ERROR_FILE" />
+        </root>
     </springProfile>
 </configuration>
