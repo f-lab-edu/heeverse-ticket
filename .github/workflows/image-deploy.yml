@@ -4,8 +4,6 @@ on:
   push:
     branches: [ dev ]
     paths: [ '**.java', '.github/workflows/image-deploy.yml', 'build.gradle' ]
-    paths-ignore:
-      - '**.groovy'
 
 env:
   # aws

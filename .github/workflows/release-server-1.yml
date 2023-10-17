@@ -3,8 +3,6 @@ name: heeverse-release-001
 on:
   push:
     paths: [ '**.java', '.github/workflows/release-server-1.yml', 'build.gradle' ]
-    paths-ignore:
-      - '**.groovy'
     branches: [ main ]
 
 env:

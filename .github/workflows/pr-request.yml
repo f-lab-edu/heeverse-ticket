@@ -4,8 +4,6 @@ on:
   pull_request:
     branches: [ dev ]
     paths: [ '**.java', '.github/workflows/pr-request.yml', 'build.gradle' ]
-    paths-ignore:
-      - '**.groovy'
   workflow_dispatch:
 
 env:
@@ -44,7 +42,7 @@ jobs:
       - name: Test
         run: |
           chmod +x gradlew
-          SPRING_PROFILES_ACTIVE=dev-test ./gradlew test 
+          SPRING_PROFILES_ACTIVE=dev-test ./gradlew --exclude '**.groovy' test 
 
       - name: Remove Github Actions IP from security group
         run: |

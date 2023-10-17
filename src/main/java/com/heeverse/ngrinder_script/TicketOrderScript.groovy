@@ -15,15 +15,14 @@ import org.ngrinder.http.cookie.Cookie
 import org.ngrinder.http.cookie.CookieManager
 
 import static net.grinder.script.Grinder.grinder
-import static org.hamcrest.Matchers.isOneOf
-import static org.junit.Assert.assertThat
 
 /**
  * @author jeongheekim
  * @date 10/13/23
  */
 @RunWith(GrinderRunner)
-class TicketOrderScript {
+class TestRunner {
+
     public static String url = "http://118.67.142.206"
     public static GTest test
     public static HTTPRequest request
@@ -84,10 +83,13 @@ class TicketOrderScript {
         params.put("ticketSetList", ticketSetList)
         HTTPResponse response = request.POST(url + "/ticket-order", params)
 
-        if (response.statusCode == 301 || response.statusCode == 302) {
-            grinder.logger.warn("Warning. The response may not be correct. The response code was {}.", response.statusCode)
+        def statusCode = response.statusCode.toString()
+        if (statusCode.startsWith('2')) {
+            grinder.logger.warn("Ticketing Success : {}, {}.", response.statusCode, ticketSetList)
+        } else if (statusCode.startsWith('5')) {
+            grinder.logger.warn("Ticketing Fail : {}, {}.", response.statusCode, ticketSetList)
         } else {
-            assertThat(response.statusCode, isOneOf(200, 201))
+            grinder.logger.warn("other status code {}.", response.statusCode)
         }
     }
 
@@ -124,4 +126,5 @@ class TicketOrderScript {
         }
         return selectedNumbers
     }
+
 }
