@@ -6,7 +6,7 @@ spring:
   jmx:
     enabled: false
   hikari:
-    maximum-pool-size: 20
+    maximum-pool-size: 100
 
 
 mybatis:
