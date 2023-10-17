@@ -37,7 +37,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-jdbc:3.1.1'
     implementation 'org.springframework.vault:spring-vault-core:3.0.2'
     implementation group: 'com.github.javafaker', name: 'javafaker', version: '0.16'
-    implementation 'org.apache.groovy:groovy:4.0.14'
     implementation 'org.ngrinder:ngrinder-groovy:3.5.8'
 
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
