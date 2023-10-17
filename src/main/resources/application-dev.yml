@@ -1,11 +1,11 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 100
   sql:
     init:
       mode: never
-  hikari:
-    maximum-pool-size: 20
 
 
 mybatis:
