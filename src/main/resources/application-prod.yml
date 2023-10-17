@@ -5,6 +5,8 @@ spring:
       register-mbeans: true
   jmx:
     enabled: false
+  hikari:
+    maximum-pool-size: 20
 
 
 mybatis:

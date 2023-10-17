@@ -4,6 +4,9 @@ spring:
   sql:
     init:
       mode: never
+  hikari:
+    maximum-pool-size: 20
+
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml

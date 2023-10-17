@@ -6,6 +6,9 @@ spring:
     url: jdbc:h2:mem:testdb
     driver-class-name: org.h2.Driver
     username: sa
+    hikari:
+      maximum-pool-size: 20
+
 
   sql:
     init:
@@ -29,6 +32,6 @@ logging:
 
 vault:
   scheme: http
-  uri: 3.22.218.43
+  uri: 3.22.218.43ㅠ
   token: hvs.frFvDB3V7L4UYrBlQ6fFvBtD
   port: 8200
