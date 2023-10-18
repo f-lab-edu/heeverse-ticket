@@ -15,4 +15,9 @@ public class AggregateSelectMapperDto {
             Integer totalTickets,
             Integer orderTry
     ) { }
+
+
+    public record SimpleResponse (
+        long ticket_seq
+    ) {}
 }

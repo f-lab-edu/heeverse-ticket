@@ -15,12 +15,14 @@ public class AggregateDto {
 
         private Long concertSeq;
         private boolean normalization;
+        private boolean multithreading;
 
         protected Request() {
         }
-        public Request(Long concertSeq, boolean normalization) {
+        public Request(Long concertSeq, boolean normalization, boolean multithreading) {
             this.concertSeq = concertSeq;
             this.normalization = normalization;
+            this.multithreading = multithreading;
         }
     }
 

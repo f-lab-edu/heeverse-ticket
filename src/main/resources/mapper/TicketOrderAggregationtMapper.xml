@@ -17,7 +17,7 @@
                            ON t.seq = t_log.ticket_seq
                  LEFT JOIN ticket_order t_order
                            ON t.order_seq = t_order.seq
-        WHERE concert_seq =  #{concertSeq}
+        WHERE t.concert_seq =  #{concertSeq}
         GROUP BY grade_name
         WITH ROLLUP
     </select>
@@ -53,7 +53,20 @@
                     #{result.orderTry}
                 )
             </foreach>
-
     </insert>
+
+
+    <!--티켓 등급별 예매 시도 조회-->
+    <select id="selectByTicketSeqList" parameterType="java.lang.Long"
+            resultType="com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto$SimpleResponse">
+        SELECT
+            t.ticket_seq
+        FROM
+            ticket_order_log t
+        WHERE ticket_seq IN
+            <foreach collection="list" item="ticketSeq" separator="," open="(" close=")">
+                #{ticketSeq}
+            </foreach>
+    </select>
 
 </mapper>

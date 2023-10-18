@@ -10,6 +10,6 @@ import java.util.List;
 public interface TicketOrderAggregationMapper {
     List<AggregateSelectMapperDto.Response> selectGroupByGradeName(Long concertSeq);
     List<AggregateSelectMapperDto.Response> selectGroupByGradeNameDeNormalization(Long concertSeq);
-
+    List<AggregateSelectMapperDto.Response> selectByTicketSeqList(List<Long> ticketSeqList);
     void insertAggregationResult(List<AggregateInsertMapperDto> request);
 }

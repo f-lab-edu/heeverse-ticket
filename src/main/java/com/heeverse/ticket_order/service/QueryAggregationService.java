@@ -28,8 +28,7 @@ public class QueryAggregationService implements AggregationService {
     @Override
     public List<AggregateDto.Response> aggregate(AggregateDto.Request aggrDto) {
 
-        List<AggregateSelectMapperDto.Response> responseList
-                = getResultGroupByGrade(aggrDto);
+        List<AggregateSelectMapperDto.Response> responseList = getResultGroupByGrade(aggrDto);
 
         return responseList.stream()
                 .map(AggregateDto.Response::new)

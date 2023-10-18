@@ -41,7 +41,7 @@
         </root>
     </springProfile>
 
-    <springProfile name="prod">
+    <springProfile name="prod | dev-test">
         <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
             <encoder>
                 <pattern>${CONSOLE_LOG_PATTERN}</pattern>

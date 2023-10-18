@@ -177,7 +177,7 @@ public class ControllerResponseUnitTest {
                 .thenReturn(List.of(response));
 
         mockMvc.perform(get(ControllerTestHelper.Endpoint.TICKET.티켓_예매_집계)
-                        .content(om.writeValueAsString(new AggregateDto.Request(1L, true)))
+                        .content(om.writeValueAsString(new AggregateDto.Request(1L, true, false)))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(res -> status().is2xxSuccessful().match(res))
                 .andDo(TicketDocsResultFactory.ticketOrderLogDocs());
