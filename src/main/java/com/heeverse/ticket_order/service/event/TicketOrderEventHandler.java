@@ -42,6 +42,7 @@ public class TicketOrderEventHandler {
                 .collect(Collectors.toList());
 
         logMapper.insertTicketOrderLogDeNormalization(ticketOrderLogs);
+        logMapper.insertTicketOrderLog(ticketOrderLogs);
     }
 
 
