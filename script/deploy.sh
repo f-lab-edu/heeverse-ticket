@@ -13,9 +13,9 @@ JAR_NAME=$(basename $BUILD_JAR)
 SCOUTER_BASE_PATH=./scouter
 mkdir -p $SCOUTER_BASE_PATH
 
-DEPLOY_JAR=$JAR_NAME
-echo ">>> DEPLOY_JAR 배포 시작"    >> $LOG_PATH/deploy.log
-echo ">>> DEPLOY_JAR :: $DEPLOY_JAR "  >> $LOG_PATH/deploy.log
+#DEPLOY_JAR=$JAR_NAME
+#echo ">>> DEPLOY_JAR 배포 시작"    >> $LOG_PATH/deploy.log
+#echo ">>> DEPLOY_JAR :: $DEPLOY_JAR "  >> $LOG_PATH/deploy.log
 
 nohup java -jar \
         -Dspring.profiles.active=${PROFILE} \
