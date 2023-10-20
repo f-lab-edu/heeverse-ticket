@@ -25,6 +25,10 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.util.Assert;
+
+import static com.heeverse.common.Constants.VAULT_PATH;
+import static com.heeverse.common.Constants.VAULT_URL_SECRETES;
 
 /**
  * @author gutenlee
@@ -38,6 +42,12 @@ public class SecurityConfig {
     private final ObjectMapper objectMapper;
     private final JwtTokenProvider jwtTokenProvider;
     private final VaultOperationService vaultOperationService;
+
+    @Bean
+    public UrlProps urlProps() {
+        return vaultOperationService.getProps(VAULT_PATH, VAULT_URL_SECRETES, UrlProps.class);
+    }
+
 
     @Bean
     public static PasswordEncoder passwordEncoder() {
@@ -61,7 +71,7 @@ public class SecurityConfig {
                     securityContext.securityContextRepository(
                             new HttpSessionSecurityContextRepository());
                 })
-                .addFilterAt(new JwtAuthenticationFilter(jwtTokenProvider, vaultOperationService),
+                .addFilterAt(new JwtAuthenticationFilter(jwtTokenProvider, urlProps()),
                         BasicAuthenticationFilter.class)
                 .addFilterAt(new JsonAuthenticationFilter(
                         authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)),
@@ -85,4 +95,10 @@ public class SecurityConfig {
             throws Exception {
         return authConfig.getAuthenticationManager();
     }
+    public record UrlProps(String url) {
+        public UrlProps {
+            Assert.notNull(url, "url must not null");
+        }
+    }
+
 }
