@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,6 +24,7 @@ import static com.heeverse.common.Constants.VAULT_URL_SECRETES;
  * @author jeongheekim
  * @date 2023/08/02
  */
+@Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -44,6 +46,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         String ip = (null != request.getHeader("X-FORWARDED-FOR")) ? request.getHeader("X-FORWARDED-FOR") : request.getRemoteAddr();
         System.out.println("!!!!!!!!!!!!!! ip 확인 :"+ ip);
+
+        String requestURI = request.getRequestURI();
+        StringBuffer requestURL = request.getRequestURL();
+        log.info("requestURL {}",  requestURL);
+        log.info("requestURI {}",requestURI);
+
         Authentication auth = jwtTokenProvider.parsing(request.getHeader(HttpHeaders.AUTHORIZATION));
         SecurityContextHolder.getContext().setAuthentication(auth);
         filterChain.doFilter(request, response);
