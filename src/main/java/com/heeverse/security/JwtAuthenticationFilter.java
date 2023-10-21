@@ -1,6 +1,6 @@
 package com.heeverse.security;
 
-import com.heeverse.config.VaultOperationService;
+import com.heeverse.config.SecurityConfig;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,14 +11,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.AntPathMatcher;
-import org.springframework.util.Assert;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Arrays;
-
-import static com.heeverse.common.Constants.VAULT_PATH;
-import static com.heeverse.common.Constants.VAULT_URL_SECRETES;
 
 /**
  * @author jeongheekim
@@ -29,14 +25,12 @@ import static com.heeverse.common.Constants.VAULT_URL_SECRETES;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final VaultOperationService vaultOperationService;
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
-
+    private final SecurityConfig.UrlProps urlProps;
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
-        UrlProps urlProps = vaultOperationService.getProps(VAULT_PATH, VAULT_URL_SECRETES, UrlProps.class);
         String[] urlArr = urlProps.url().split(",");
         return Arrays.stream(urlArr).anyMatch(pattern -> pathMatcher.match(pattern, path));
     }
@@ -57,9 +51,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private record UrlProps(String url) {
-        UrlProps {
-            Assert.notNull(url, "url must not null");
-        }
-    }
+
 }
