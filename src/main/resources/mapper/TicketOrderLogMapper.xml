@@ -25,7 +25,7 @@
     </insert>
 
     <insert id="insertTicketOrderLogDeNormalization" parameterType="java.util.List">
-        INSERT INTO ticket_order_log_denormalization(
+        INSERT INTO ticket_order_log_denormalization_copy(
             concert_seq,
             ticket_seq,
             member_seq,

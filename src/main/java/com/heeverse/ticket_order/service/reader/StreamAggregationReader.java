@@ -1,6 +1,7 @@
 package com.heeverse.ticket_order.service.reader;
 
 import com.heeverse.ticket.domain.entity.Ticket;
+import com.heeverse.ticket.domain.mapper.TicketMapper;
 import com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto;
 import com.heeverse.ticket_order.domain.mapper.TicketOrderAggregationMapper;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -21,22 +21,26 @@ import static java.util.stream.Collectors.groupingBy;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class FirstMultithreadingStrategy implements MultithreadingStrategy {
+public class StreamAggregationReader {
 
+    private final TicketMapper ticketMapper;
     private final TicketOrderAggregationMapper aggregationMapper;
-    @Override
-    public void execute(ExecutorService es, List<Ticket> tickets) {
+
+    public List<AggregateSelectMapperDto.Response> getResultGroupByGrade(AggregateSelectMapperDto.Request request) {
+
+        List<Ticket> tickets = ticketMapper.findTickets(request.concertSeq());
 
         Map<String, List<Ticket>> collected
                 = tickets.stream()
-                    .collect(groupingBy(Ticket::getGradeName));
+                .collect(groupingBy(Ticket::getGradeName));
 
-        collected.entrySet()
-                .parallelStream()
-                .forEach(entry -> {
+
+        return collected.entrySet().parallelStream()
+                .map(entry -> {
                     List<Long> seqList = entry.getValue().stream().map(Ticket::getSeq).collect(Collectors.toList());
                     List<AggregateSelectMapperDto.Response> responses = aggregationMapper.selectByTicketSeqList(seqList);
-                    log.info("order Try {}", responses.size());
-                });
+                    log.info("{} : order Try {}", entry.getKey(), responses.size());
+                    return new AggregateSelectMapperDto.Response(request.concertSeq(), entry.getKey(), seqList.size(), responses.size());
+                }).collect(Collectors.toList());
     }
 }

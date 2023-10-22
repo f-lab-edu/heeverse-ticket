@@ -18,6 +18,6 @@ public class AggregateSelectMapperDto {
 
 
     public record SimpleResponse (
-        long ticket_seq
+        long ticketSeq
     ) {}
 }

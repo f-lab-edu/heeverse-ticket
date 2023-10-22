@@ -3,10 +3,10 @@ package com.heeverse.ticket_order.service;
 import com.heeverse.ticket_order.domain.dto.AggregateDto;
 import com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto;
 import com.heeverse.ticket_order.domain.mapper.TicketOrderAggregationMapper;
-import com.heeverse.ticket_order.service.reader.FirstMultithreadingStrategy;
-import com.heeverse.ticket_order.service.reader.MultithreadingStrategy;
-import com.heeverse.ticket_order.service.reader.NonMultithreadingStrategy;
-import com.heeverse.ticket_order.service.reader.SimpleAggregationReader;
+import com.heeverse.ticket_order.service.reader.strategy.MultithreadingStrategy;
+import com.heeverse.ticket_order.service.reader.strategy.AggregationStrategy;
+import com.heeverse.ticket_order.service.reader.strategy.SingleThreadingStrategy;
+import com.heeverse.ticket_order.service.reader.MultiAggregationReader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,18 +22,19 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MultithreadingAggregationService implements AggregationService {
 
-    private final SimpleAggregationReader reader;
+    private final MultiAggregationReader reader;
     private final TicketOrderAggregationMapper aggregationMapper;
 
     @Override
     public List<AggregateDto.Response> aggregate(AggregateDto.Request request) {
         // ticket
 
-        reader.setStrategy(getStrategy(request.isMultithreading()));
-
         try {
             List<AggregateSelectMapperDto.Response> responseList
-                    = reader.getResultGroupByGrade(new AggregateSelectMapperDto.Request(request.getConcertSeq()));
+                    = reader.getResultGroupByGrade(
+                            new AggregateSelectMapperDto.Request(request.getConcertSeq()),
+                            getStrategy(request.isMultithreading())
+                        );
 
             return responseList.stream()
                     .map(AggregateDto.Response::new)
@@ -45,10 +46,10 @@ public class MultithreadingAggregationService implements AggregationService {
 
     }
 
-    private MultithreadingStrategy getStrategy(boolean multithreading) {
+    private AggregationStrategy getStrategy(boolean multithreading) {
         if (multithreading){
-            return new FirstMultithreadingStrategy(aggregationMapper);
+            return new MultithreadingStrategy(aggregationMapper);
         }
-        return new NonMultithreadingStrategy(aggregationMapper);
+        return new SingleThreadingStrategy(aggregationMapper);
     }
 }
