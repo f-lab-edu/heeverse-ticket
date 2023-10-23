@@ -33,9 +33,8 @@ public class TicketOrderEventHandler {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void saveTicketOrderLog(TicketOrderEvent event) {
 
-        log.info("======= [Ticket Order Log] =======");
         List<Long> ticketSetList = event.dto().ticketSetList();
-        log.info("======= {} =======", ticketSetList);
+        log.info("======= [Ticket Order Log >> {} ]=======", ticketSetList);
 
         List<TicketOrderLog> ticketOrderLogs = getTickets(ticketSetList).stream()
                 .map(ticket -> new TicketOrderLog(ticket, event.memberSeq(), event.ticketOrderSeq()))
