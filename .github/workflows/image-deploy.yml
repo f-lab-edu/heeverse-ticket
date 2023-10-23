@@ -50,6 +50,16 @@ jobs:
         run: |
           aws ec2 authorize-security-group-ingress --group-id ${{ env.AWS_SG_ID }} --protocol tcp --port 8200 --cidr ${{ steps.ip.outputs.ipv4 }}/32 
 
+      - name: Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
       - name: Run build with Gradle Wrapper
         run: SPRING_PROFILES_ACTIVE=dev-test ./gradlew build
 
