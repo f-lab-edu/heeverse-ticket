@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -26,17 +27,19 @@ public class SingleThreadingStrategy implements AggregationStrategy {
     private final TicketOrderAggregationMapper aggregationMapper;
 
     @Override
-    public void execute(ExecutorService es, List<Ticket> ticketList) {
+    public List<AggregateSelectMapperDto.Response> execute(ExecutorService es, List<Ticket> ticketList) {
 
         Map<String, List<Ticket>> collected = ticketList.stream()
                 .collect(groupingBy(Ticket::getGradeName));
 
 
+        ArrayList<AggregateSelectMapperDto.Response> result = new ArrayList<>();
         for (Map.Entry<String, List<Ticket>> entry : collected.entrySet()) {
             List<Ticket> list = entry.getValue();
             List<AggregateSelectMapperDto.Response> responseList
                     = aggregationMapper.selectByTicketSeqList(list.stream().map(Ticket::getSeq).collect(Collectors.toList()));
             log.info("{} orderTry {}", entry.getKey(), responseList.size());
         }
+        return null;
     }
 }

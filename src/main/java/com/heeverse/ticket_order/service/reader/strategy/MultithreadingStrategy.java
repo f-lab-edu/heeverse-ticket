@@ -7,13 +7,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -29,7 +26,7 @@ public class MultithreadingStrategy implements AggregationStrategy {
 
     private final TicketOrderAggregationMapper aggregationMapper;
     @Override
-    public void execute(ExecutorService es, List<Ticket> tickets) {
+    public List<AggregateSelectMapperDto.Response> execute(ExecutorService es, List<Ticket> tickets) {
 
         Map<String, List<Ticket>> collected
                 = tickets.stream()

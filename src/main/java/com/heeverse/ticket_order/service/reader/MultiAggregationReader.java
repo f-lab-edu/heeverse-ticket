@@ -3,12 +3,11 @@ package com.heeverse.ticket_order.service.reader;
 import com.heeverse.ticket.domain.entity.Ticket;
 import com.heeverse.ticket.domain.mapper.TicketMapper;
 import com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto;
-import com.heeverse.ticket_order.service.reader.strategy.AggregationStrategy;
+import com.heeverse.ticket_order.service.reader.strategy.MultithreadingStrategy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -17,24 +16,25 @@ import java.util.concurrent.ExecutorService;
  */
 @Component
 @Slf4j
-public class MultiAggregationReader {
+public class MultiAggregationReader implements AggregationReader {
 
     private final TicketMapper ticketMapper;
     private final ExecutorService es;
+    private final MultithreadingStrategy strategy;
 
-    public MultiAggregationReader(TicketMapper ticketMapper, ExecutorService fixedPool) {
+    public MultiAggregationReader(TicketMapper ticketMapper,
+                                  ExecutorService fixedPool,
+                                  MultithreadingStrategy strategy
+    ) {
         this.ticketMapper = ticketMapper;
         this.es = fixedPool;
+        this.strategy = strategy;
     }
 
-    public List<AggregateSelectMapperDto.Response> getResultGroupByGrade(
-            AggregateSelectMapperDto.Request request,
-            AggregationStrategy strategy
-    )
-            throws ExecutionException, InterruptedException {
+    @Override
+    public List<AggregateSelectMapperDto.Response> getResultGroupByGrade(AggregateSelectMapperDto.Request request) {
 
         List<Ticket> tickets = ticketMapper.findTickets(request.concertSeq());
-        strategy.execute(es, tickets);
-        return null;
+        return strategy.execute(es, tickets);
     }
 }

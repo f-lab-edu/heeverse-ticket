@@ -3,6 +3,7 @@ package com.heeverse.ticket_order.service;
 import com.heeverse.common.factory.TicketLogFactory;
 import com.heeverse.common.factory.TicketOrderingDto;
 import com.heeverse.ticket_order.domain.dto.AggregateDto;
+import com.heeverse.ticket_order.domain.dto.enums.StrategyType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
+import static com.heeverse.ticket_order.domain.dto.enums.StrategyType.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -43,7 +45,7 @@ public class TicketOrderIntegrationTest_aggregation {
 
         // then
         List<AggregateDto.Response> aggregated
-                = aggregationService.aggregate(new AggregateDto.Request(orderInfo.getConcertSeq(), false, false));
+                = aggregationService.aggregate(new AggregateDto.Request(orderInfo.getConcertSeq(), false, QUERY));
 
         Assertions.assertAll(
                 () -> assertEquals(
@@ -67,7 +69,7 @@ public class TicketOrderIntegrationTest_aggregation {
 
         // then
         List<AggregateDto.Response> aggregated
-                = multithreadingAggregationService.aggregate(new AggregateDto.Request(orderInfo.getConcertSeq(), false, true));
+                = multithreadingAggregationService.aggregate(new AggregateDto.Request(orderInfo.getConcertSeq(), false, QUERY));
 
         Assertions.assertAll(
                 () -> assertEquals(

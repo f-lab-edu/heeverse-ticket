@@ -54,9 +54,10 @@ public class TicketOrderController {
     public ResponseEntity<List<AggregateDto.Response>> aggregate(
             @RequestBody AggregateDto.Request request
     ) {
-        if (request.isMultithreading()) {
-            return ResponseEntity.ok(multithreadingAggregationService.aggregate(request));
+        log.info("전략 타입 {}", request.getStrategyType());
+        if (request.isQuery()) {
+            return ResponseEntity.ok(queryAggregationService.aggregate(request));
         }
-        return ResponseEntity.ok(queryAggregationService.aggregate(request));
+        return ResponseEntity.ok(multithreadingAggregationService.aggregate(request));
     }
 }

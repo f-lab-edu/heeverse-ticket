@@ -1,5 +1,6 @@
 package com.heeverse.ticket_order.domain.dto;
 
+import com.heeverse.ticket_order.domain.dto.enums.StrategyType;
 import com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto;
 import lombok.Getter;
 
@@ -15,14 +16,18 @@ public class AggregateDto {
 
         private Long concertSeq;
         private boolean normalization;
-        private boolean multithreading;
+        private StrategyType strategyType;
 
         protected Request() {
         }
-        public Request(Long concertSeq, boolean normalization, boolean multithreading) {
+        public Request(Long concertSeq, boolean normalization, StrategyType strategyType) {
             this.concertSeq = concertSeq;
             this.normalization = normalization;
-            this.multithreading = multithreading;
+            this.strategyType = strategyType;
+        }
+
+        public boolean isQuery() {
+            return strategyType == StrategyType.QUERY;
         }
     }
 
@@ -43,6 +48,7 @@ public class AggregateDto {
             this.totalTickets = mapperResponse.totalTickets();
             this.orderTry = mapperResponse.orderTry();
         }
+
 
         @Override
         public String toString() {

@@ -38,7 +38,7 @@ class AggregationReaderTest {
     private StreamAggregationReader streamReader;
 
     private Logger log = LoggerFactory.getLogger(AggregationReaderTest.class);
-    private static final int LOOP = 1;
+    private static final int LOOP = 5;
     private static AggregateSelectMapperDto.Request request;
 
     @BeforeEach
@@ -52,7 +52,7 @@ class AggregationReaderTest {
 
         for (int i = 0; i < LOOP; i++) {
             List<AggregateSelectMapperDto.Response> responseList
-                    = reader.getResultGroupByGrade(request, new MultithreadingStrategy(aggregationMapper));
+                    = reader.getResultGroupByGrade(request);
             log.info( "===== {} ====", i);
         }
     }
@@ -75,7 +75,7 @@ class AggregationReaderTest {
         // DB CPU 25%
         for (int i = 0; i < LOOP; i++) {
             List<AggregateSelectMapperDto.Response> responseList
-                    = singleReader.getResultGroupByGrade(request, new SingleThreadingStrategy(aggregationMapper));
+                    = singleReader.getResultGroupByGrade(request);
             log.info( "===== {} ====", i);
         }
     }

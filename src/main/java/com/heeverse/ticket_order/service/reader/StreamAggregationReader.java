@@ -21,10 +21,11 @@ import static java.util.stream.Collectors.groupingBy;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class StreamAggregationReader {
+public class StreamAggregationReader implements AggregationReader {
 
     private final TicketMapper ticketMapper;
     private final TicketOrderAggregationMapper aggregationMapper;
+
 
     public List<AggregateSelectMapperDto.Response> getResultGroupByGrade(AggregateSelectMapperDto.Request request) {
 
