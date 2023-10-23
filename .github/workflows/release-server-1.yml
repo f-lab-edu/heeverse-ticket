@@ -4,7 +4,10 @@ on:
   push:
     paths: [ '**.java', '.github/workflows/release-server-1.yml', 'build.gradle' , 'Dockerfile']
     branches: [ main ]
-
+  workflow_run:
+    workflows: [ heeverse-deploy ]
+    types:
+      - completed
 env:
   # docker hub
   REGISTRY: gutenlee
