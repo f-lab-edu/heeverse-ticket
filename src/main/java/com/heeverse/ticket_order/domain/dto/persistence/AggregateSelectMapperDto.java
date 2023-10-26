@@ -9,6 +9,19 @@ public class AggregateSelectMapperDto {
             Long concertSeq
     ) { }
 
+    public record ZeroOffsetRequest (
+            long concertSeq,
+            long fromTicketSeq,
+            long toTicketSeq,
+            long offset,
+            int size
+    ) {
+
+        public static ZeroOffsetRequest start(long concertSeq, long fromTicketSeq, long toTicketSeq) {
+            return new ZeroOffsetRequest(concertSeq, fromTicketSeq, toTicketSeq, 0, 1);
+        }
+    }
+
     public record Response (
             Long concertSeq,
             String gradeName,
@@ -18,6 +31,7 @@ public class AggregateSelectMapperDto {
 
 
     public record SimpleResponse (
-        long ticketSeq
+            long seq,
+            long ticketSeq
     ) {}
 }

@@ -5,6 +5,7 @@ import com.heeverse.ticket_order.domain.dto.enums.StrategyType;
 import com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto;
 import com.heeverse.ticket_order.service.reader.AggregationReader;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
  * @since 2023/10/17
  */
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class MultithreadingAggregationService implements AggregationService {
 

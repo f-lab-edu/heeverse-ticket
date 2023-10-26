@@ -19,7 +19,7 @@ class MultithreadingAggregationServiceUnitTest {
     static class AppConfig {
         @Bean
         public MultiAggregationReader multiAggregationReader() {
-            return new MultiAggregationReader(any(), any(), any());
+            return new MultiAggregationReader(any(), any());
         }
     }
 

@@ -39,7 +39,7 @@ public class StreamAggregationReader implements AggregationReader {
         return collected.entrySet().parallelStream()
                 .map(entry -> {
                     List<Long> seqList = entry.getValue().stream().map(Ticket::getSeq).collect(Collectors.toList());
-                    List<AggregateSelectMapperDto.Response> responses = aggregationMapper.selectByTicketSeqList(seqList);
+                    List<AggregateSelectMapperDto.SimpleResponse> responses = aggregationMapper.selectByTicketSeqList(seqList);
                     log.info("{} : order Try {}", entry.getKey(), responses.size());
                     return new AggregateSelectMapperDto.Response(request.concertSeq(), entry.getKey(), seqList.size(), responses.size());
                 }).collect(Collectors.toList());

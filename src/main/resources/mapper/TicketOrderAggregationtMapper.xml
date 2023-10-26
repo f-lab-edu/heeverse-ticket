@@ -60,6 +60,7 @@
     <select id="selectByTicketSeqList" parameterType="java.lang.Long"
             resultType="com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto$SimpleResponse">
         SELECT
+            t.seq,
             t.ticket_seq
         FROM
             ticket_order_log_copy t
@@ -67,6 +68,23 @@
             <foreach collection="list" item="ticketSeq" separator="," open="(" close=")">
                 #{ticketSeq}
             </foreach>
+    </select>
+
+    <!--티켓 등급별 예매 시도 조회-->
+    <select id="selectByTicketSeqBetween" parameterType="com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto$ZeroOffsetRequest"
+            resultType="com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto$SimpleResponse">
+        SELECT
+            t.seq,
+            t.ticket_seq
+        FROM ticket_order_log_copy t
+            WHERE
+                concert_seq = #{concertSeq}
+              AND
+                ticket_seq BETWEEN #{fromTicketSeq} AND #{toTicketSeq}
+              AND
+                seq > #{offset}
+            ORDER BY seq
+                LIMIT 0, #{size}
     </select>
 
 </mapper>

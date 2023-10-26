@@ -4,8 +4,6 @@ import com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto
 import com.heeverse.ticket_order.domain.entity.TicketOrderLog;
 import com.heeverse.ticket_order.domain.mapper.TicketOrderAggregationMapper;
 import com.heeverse.ticket_order.domain.mapper.TicketOrderLogMapper;
-import com.heeverse.ticket_order.service.reader.strategy.MultithreadingStrategy;
-import com.heeverse.ticket_order.service.reader.strategy.SingleThreadingStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,7 +36,7 @@ class AggregationReaderTest {
     private StreamAggregationReader streamReader;
 
     private Logger log = LoggerFactory.getLogger(AggregationReaderTest.class);
-    private static final int LOOP = 5;
+    private static final int LOOP = 1;
     private static AggregateSelectMapperDto.Request request;
 
     @BeforeEach
@@ -54,6 +52,7 @@ class AggregationReaderTest {
             List<AggregateSelectMapperDto.Response> responseList
                     = reader.getResultGroupByGrade(request);
             log.info( "===== {} ====", i);
+            log.info("{}", responseList);
         }
     }
 
