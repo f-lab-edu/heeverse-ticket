@@ -40,15 +40,18 @@ public class AggregateDto {
         private final Integer totalTickets;
         private final Integer orderTry;
 
+        public Response(Long concertSeq, String gradeName, Integer totalTickets, Integer orderTry) {
+            this.concertSeq = concertSeq;
+            this.gradeName = gradeName;
+            this.totalTickets = totalTickets;
+            this.orderTry = orderTry;
+        }
+
         public Response(
                 AggregateSelectMapperDto.Response mapperResponse
         ) {
-            this.concertSeq = mapperResponse.concertSeq();
-            this.gradeName = mapperResponse.gradeName();
-            this.totalTickets = mapperResponse.totalTickets();
-            this.orderTry = mapperResponse.orderTry();
+            this(mapperResponse.concertSeq(), mapperResponse.gradeName(), mapperResponse.totalTickets(), mapperResponse.orderTry());
         }
-
 
         @Override
         public String toString() {

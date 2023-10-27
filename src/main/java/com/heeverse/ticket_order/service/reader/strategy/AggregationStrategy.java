@@ -1,11 +1,10 @@
 package com.heeverse.ticket_order.service.reader.strategy;
 
 import com.heeverse.ticket.domain.entity.Ticket;
-import com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public interface AggregationStrategy {
-    List<AggregateSelectMapperDto.Response> execute(long concertSeq, List<Ticket> ticketList) throws ExecutionException, InterruptedException;
+    void execute(long concertSeq, List<Ticket> ticketList) throws ExecutionException, InterruptedException;
 }

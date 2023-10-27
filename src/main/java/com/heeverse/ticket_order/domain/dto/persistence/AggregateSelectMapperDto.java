@@ -34,4 +34,9 @@ public class AggregateSelectMapperDto {
             long seq,
             long ticketSeq
     ) {}
+
+    public record MinMaxResponse (
+        long minSeq,
+        long maxSeq
+    ) { }
 }

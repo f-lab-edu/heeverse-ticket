@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -25,7 +26,10 @@ public class MultiAggregationReader implements AggregationReader {
     @Override
     public List<AggregateSelectMapperDto.Response> getResultGroupByGrade(AggregateSelectMapperDto.Request request) {
         log.info("{}", request);
+
         List<Ticket> tickets = ticketMapper.findTickets(request.concertSeq());
-        return strategy.execute(request.concertSeq(), tickets);
+        strategy.execute(request.concertSeq(), tickets);
+
+        return Collections.emptyList();
     }
 }

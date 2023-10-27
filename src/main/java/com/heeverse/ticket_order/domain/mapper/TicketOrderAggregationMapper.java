@@ -13,5 +13,6 @@ public interface TicketOrderAggregationMapper {
     List<Response> selectGroupByGradeNameDeNormalization(Long concertSeq);
     List<SimpleResponse> selectByTicketSeqList(List<Long> ticketSeqList);
     List<SimpleResponse> selectByTicketSeqBetween(ZeroOffsetRequest zeroOffsetRequest);
+    MinMaxResponse selectMinMax(ZeroOffsetRequest zeroOffsetRequest);
     void insertAggregationResult(List<AggregateInsertMapperDto> request);
 }

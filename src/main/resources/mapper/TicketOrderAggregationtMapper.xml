@@ -39,7 +39,6 @@
     <insert id="insertAggregationResult" parameterType="java.util.List">
         INSERT INTO ticket_order_result (
             concert_seq,
-             ticket_seq,
              grade_name,
              total_tickets,
              order_try
@@ -47,7 +46,6 @@
             <foreach item="result" collection="list" separator=",">
                 (
                     #{result.concertSeq},
-                    #{result.ticketSeq},
                     #{result.gradeName},
                     #{result.totalTickets},
                     #{result.orderTry}
@@ -78,13 +76,20 @@
             t.ticket_seq
         FROM ticket_order_log_copy t
             WHERE
-                concert_seq = #{concertSeq}
-              AND
-                ticket_seq BETWEEN #{fromTicketSeq} AND #{toTicketSeq}
-              AND
                 seq > #{offset}
-            ORDER BY seq
-                LIMIT 0, #{size}
+            LIMIT 0, #{size}
+    </select>
+
+    <!--티켓 등급별 예매 시도 조회-->
+    <select id="selectMinMax" parameterType="com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto$ZeroOffsetRequest"
+            resultType="com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto$MinMaxResponse">
+        SELECT
+            min(seq) minSeq,
+            max(seq) maxSeq
+        FROM ticket_order_log_copy t
+        WHERE
+            concert_seq = #{concertSeq}
+        ORDER BY seq
     </select>
 
 </mapper>

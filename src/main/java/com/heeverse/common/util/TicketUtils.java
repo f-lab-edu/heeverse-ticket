@@ -1,4 +1,4 @@
-package com.heeverse.ticket_order.service.reader.strategy;
+package com.heeverse.common.util;
 
 import com.heeverse.ticket.domain.entity.Ticket;
 import lombok.experimental.UtilityClass;

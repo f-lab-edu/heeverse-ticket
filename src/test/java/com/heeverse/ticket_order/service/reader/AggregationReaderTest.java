@@ -17,6 +17,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadLocalRandom;
 
 @ActiveProfiles("dev-test")
@@ -47,6 +48,7 @@ class AggregationReaderTest {
     @Test
     @DisplayName("멀티스레드로 집계")
     void multithreadingAggregationTest() throws Exception {
+        CountDownLatch latch = new CountDownLatch(1);
 
         for (int i = 0; i < LOOP; i++) {
             List<AggregateSelectMapperDto.Response> responseList
@@ -54,6 +56,8 @@ class AggregationReaderTest {
             log.info( "===== {} ====", i);
             log.info("{}", responseList);
         }
+
+        latch.await();
     }
 
     @Test

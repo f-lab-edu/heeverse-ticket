@@ -15,10 +15,15 @@ public class AggregateInsertMapperDto {
     private final int totalTickets;
     private final int orderTry;
 
-    public AggregateInsertMapperDto(AggregateDto.Response dto) {
-        this.concertSeq = dto.getConcertSeq();
-        this.gradeName = dto.getGradeName();
-        this.totalTickets = dto.getTotalTickets();
-        this.orderTry = dto.getOrderTry();
+    public AggregateInsertMapperDto(long concertSeq, String gradeName, int totalTickets, long orderTry) {
+        this.concertSeq = concertSeq;
+        this.gradeName = gradeName;
+        this.totalTickets = totalTickets;
+        this.orderTry = (int) orderTry;
     }
+
+    public AggregateInsertMapperDto(AggregateDto.Response dto) {
+        this(dto.getConcertSeq(), dto.getGradeName(), dto.getTotalTickets(), dto.getOrderTry());
+    }
+
 }
