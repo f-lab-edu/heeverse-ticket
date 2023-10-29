@@ -55,7 +55,7 @@
 
 
     <!--티켓 등급별 예매 시도 조회-->
-    <select id="selectByTicketSeqList" parameterType="java.lang.Long"
+    <select id="selectTicketSeqWhereIn" parameterType="java.lang.Long"
             resultType="com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto$SimpleResponse">
         SELECT
             t.seq,
@@ -66,30 +66,6 @@
             <foreach collection="list" item="ticketSeq" separator="," open="(" close=")">
                 #{ticketSeq}
             </foreach>
-    </select>
-
-    <!--티켓 등급별 예매 시도 조회-->
-    <select id="selectByTicketSeqBetween" parameterType="com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto$ZeroOffsetRequest"
-            resultType="com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto$SimpleResponse">
-        SELECT
-            t.seq,
-            t.ticket_seq
-        FROM ticket_order_log_copy t
-            WHERE
-                seq > #{offset}
-            LIMIT 0, #{size}
-    </select>
-
-    <!--티켓 등급별 예매 시도 조회-->
-    <select id="selectMinMax" parameterType="com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto$ZeroOffsetRequest"
-            resultType="com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto$MinMaxResponse">
-        SELECT
-            min(seq) minSeq,
-            max(seq) maxSeq
-        FROM ticket_order_log_copy t
-        WHERE
-            concert_seq = #{concertSeq}
-        ORDER BY seq
     </select>
 
 </mapper>

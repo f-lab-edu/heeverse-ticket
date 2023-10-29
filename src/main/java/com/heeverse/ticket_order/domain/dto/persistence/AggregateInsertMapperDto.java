@@ -1,6 +1,8 @@
 package com.heeverse.ticket_order.domain.dto.persistence;
 
+import com.heeverse.common.util.PrimitiveUtils;
 import com.heeverse.ticket_order.domain.dto.AggregateDto;
+import lombok.Builder;
 import lombok.Getter;
 
 /**
@@ -15,11 +17,12 @@ public class AggregateInsertMapperDto {
     private final int totalTickets;
     private final int orderTry;
 
+    @Builder
     public AggregateInsertMapperDto(long concertSeq, String gradeName, int totalTickets, long orderTry) {
         this.concertSeq = concertSeq;
         this.gradeName = gradeName;
         this.totalTickets = totalTickets;
-        this.orderTry = (int) orderTry;
+        this.orderTry = PrimitiveUtils.toIntSafely(orderTry);
     }
 
     public AggregateInsertMapperDto(AggregateDto.Response dto) {

@@ -3,21 +3,25 @@ package com.heeverse.ticket_order.service.reader.strategy;
 import com.heeverse.common.util.PaginationProvider;
 import com.heeverse.common.util.TicketUtils;
 import com.heeverse.ticket.domain.entity.Ticket;
+import com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto;
 import com.heeverse.ticket_order.domain.mapper.TicketOrderAggregationMapper;
+import com.heeverse.ticket_order.service.reader.TicketAggrFacade;
 import com.heeverse.ticket_order.service.reader.firstclass.GradeInfo;
 import com.heeverse.ticket_order.service.reader.producer.TaskMessage;
 import com.heeverse.ticket_order.service.reader.producer.TaskPublisher;
+import com.heeverse.ticket_order.service.reader.subscriber.AggregateSubscriber;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto.MinMaxResponse;
-import static com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto.ZeroOffsetRequest;
+import static com.heeverse.common.util.MultiThreadUtils.availableCores;
+import static com.heeverse.common.util.MultiThreadUtils.calculateTaskSizePerCore;
 
 /**
  * @author gutenlee
@@ -28,28 +32,28 @@ import static com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMa
 @Slf4j
 public class MultithreadingStrategy implements AggregationStrategy {
 
-    private final TicketOrderAggregationMapper aggregationMapper;
+    private final TicketAggrFacade ticketAggrFacade;
     private final TaskPublisher publisher;
-    private final ExecutorService es = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-    private final static int SIZE = 50_000;
+    private final ExecutorService ioBoundWorker = Executors.newFixedThreadPool(availableCores() / 2);
+    private final ExecutorService cpuBoundWorker = Executors.newFixedThreadPool(availableCores());
+
+    private final static int CHUNK_SIZE = 100;
 
     @Override
     public void execute(long concertSeq, List<Ticket> tickets) {
 
         GradeInfo gradeInfo = new GradeInfo(tickets);
-        long start = TicketUtils.minSeq(tickets);
-        long to = TicketUtils.maxSeq(tickets);
+        List<Long> collectedTicketSeq = TicketUtils.collectTicketSeq(tickets);
 
-        MinMaxResponse minMax = aggregationMapper.selectMinMax(ZeroOffsetRequest.start(concertSeq, start, to));
+        List<List<Long>> chunk = PaginationProvider.toChunk(collectedTicketSeq, CHUNK_SIZE);
+        log.info("chunk size {}", chunk.size());
 
-        List<Long> offsets = PaginationProvider.getOffset(minMax.minSeq(), minMax.maxSeq(), SIZE);
-        log.info("offset size {}", offsets);
-
-        for (long offset : offsets) {
+        AggregateSubscriber subscriber = new AggregateSubscriber();
+        for (var paging : chunk) {
             String uuid = publisher.generateUuid();
-            CompletableFuture.supplyAsync(() -> {
-                return aggregationMapper.selectByTicketSeqBetween(new ZeroOffsetRequest(concertSeq, start, to, offset, SIZE));
-            }, es).thenAcceptAsync(res -> publisher.publish(new TaskMessage<>(uuid, concertSeq, offsets.size(), res, gradeInfo)), es);
+            CompletableFuture.supplyAsync(() -> ticketAggrFacade.read(paging), ioBoundWorker)
+                    .thenAcceptAsync(res -> publisher.publish(
+                            new TaskMessage<>(uuid, concertSeq, chunk.size(), res, gradeInfo), subscriber), cpuBoundWorker);
         }
     }
 

@@ -1,7 +1,6 @@
 package com.heeverse.ticket_order.service.reader.producer;
 
 import com.heeverse.ticket_order.service.reader.firstclass.GradeInfo;
-import lombok.Getter;
 
 /**
  * @author gutenlee

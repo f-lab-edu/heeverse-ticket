@@ -24,4 +24,11 @@ public class TicketUtils {
                 .orElseThrow(() -> new IllegalArgumentException("최댓값을 구할 수 없습니다"))
                 .getSeq();
     }
+
+
+    public static List<Long> collectTicketSeq(List<Ticket> tickets) {
+        return tickets.stream()
+                .map(Ticket::getSeq)
+                .toList();
+    }
 }

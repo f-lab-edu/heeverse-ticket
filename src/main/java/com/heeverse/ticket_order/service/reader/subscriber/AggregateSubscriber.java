@@ -1,13 +1,12 @@
 package com.heeverse.ticket_order.service.reader.subscriber;
 
-import com.heeverse.ticket_order.service.reader.producer.TaskMessage;
+import com.heeverse.ticket_order.domain.dto.persistence.AggregateInsertMapperDto;
 import com.heeverse.ticket_order.service.reader.firstclass.GradeInfo;
 import com.heeverse.ticket_order.service.reader.firstclass.ResultMap;
-import com.heeverse.ticket_order.service.transfer.ResultDBTransfer;
-import lombok.RequiredArgsConstructor;
+import com.heeverse.ticket_order.service.reader.producer.TaskMessage;
+import com.heeverse.ticket_order.service.transfer.ResultTransfer;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.internal.util.stereotypes.ThreadSafe;
-import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
 import java.util.List;
@@ -21,19 +20,18 @@ import static com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMa
  * @author gutenlee
  * @since 2023/10/26
  */
-@Component
-@RequiredArgsConstructor
 @Slf4j
 public class AggregateSubscriber implements Subscriber<List<SimpleResponse>> {
 
     @ThreadSafe
     private final ResultMap result = new ResultMap();
     private final Set<String> uuidSet = new HashSet<>();
-    private final ResultDBTransfer resultDBTransfer;
-
 
     @Override
-    public void subscribe(TaskMessage<List<SimpleResponse>> taskMessage) {
+    public void subscribe(
+            TaskMessage<List<SimpleResponse>> taskMessage,
+            ResultTransfer<AggregateInsertMapperDto> transfer
+    ) {
         log.info("sub ");
 
         addUuid(taskMessage);
@@ -45,7 +43,7 @@ public class AggregateSubscriber implements Subscriber<List<SimpleResponse>> {
         collect.entrySet().forEach(result::add);
 
         if(doneTask(taskMessage.totalCount())) {
-            resultDBTransfer.transferAll(result.toList(taskMessage));
+            transfer.transferAll(result.toList(taskMessage));
         }
     }
 

@@ -3,7 +3,7 @@ package com.heeverse.common.util;
 import lombok.experimental.UtilityClass;
 
 import java.util.List;
-import java.util.stream.LongStream;
+import java.util.stream.IntStream;
 
 /**
  * Paging Offset 생성
@@ -13,23 +13,10 @@ import java.util.stream.LongStream;
 @UtilityClass
 public class PaginationProvider {
 
-    public static List<Long> getOffset(
-            long start,
-            long to,
-            long size
-    ) {
-        if (isLessThanSize(start, to, size)) {
-            return List.of(start);
-        }
-        return collectOffset(size, start, to);
+    public static List<List<Long>> toChunk(List<Long> origin, int chunkSize) {
+        return IntStream.range(0, (origin.size() + chunkSize - 1) / chunkSize)
+                .mapToObj(i -> origin.subList(i * chunkSize, Math.min(origin.size(), (i + 1) * chunkSize)))
+                .toList();
     }
 
-    private static boolean isLessThanSize(long start, long to, long size) {
-        return (to - start) <= size;
-    }
-
-    private static List<Long> collectOffset(long interval, long start, long to) {
-        return LongStream.iterate(start, i -> i <= to, i -> i + interval)
-                .boxed().toList();
-    }
 }

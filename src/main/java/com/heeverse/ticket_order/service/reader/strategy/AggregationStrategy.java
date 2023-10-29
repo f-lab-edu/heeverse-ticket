@@ -6,5 +6,5 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public interface AggregationStrategy {
-    void execute(long concertSeq, List<Ticket> ticketList) throws ExecutionException, InterruptedException;
+    void execute(long concertSeq, List<Ticket> ticketList);
 }

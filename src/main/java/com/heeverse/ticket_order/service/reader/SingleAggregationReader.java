@@ -41,7 +41,7 @@ public class SingleAggregationReader implements AggregationReader{
         for (Map.Entry<String, List<Ticket>> entry : collected.entrySet()) {
             List<Ticket> list = entry.getValue();
             List<AggregateSelectMapperDto.SimpleResponse> responseList
-                    = aggregationMapper.selectByTicketSeqList(list.stream().map(Ticket::getSeq).collect(Collectors.toList()));
+                    = aggregationMapper.selectTicketSeqWhereIn(list.stream().map(Ticket::getSeq).collect(Collectors.toList()));
 
             result.add(new AggregateSelectMapperDto.Response(request.concertSeq(), entry.getKey(), entry.getValue().size(), responseList.size()));
         }
