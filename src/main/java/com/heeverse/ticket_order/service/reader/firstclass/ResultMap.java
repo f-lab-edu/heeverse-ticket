@@ -30,10 +30,10 @@ public class ResultMap {
     }
 
 
-    public List<AggregateInsertMapperDto> toList(TaskMessage<List<SimpleResponse>> taskMessage) {
+    public List<AggregateInsertMapperDto> toList(long concertSeq) {
         return toEntryStream()
                 .map(entry -> AggregateInsertMapperDto.builder()
-                                .concertSeq(taskMessage.concertSeq())
+                                .concertSeq(concertSeq)
                                 .gradeName(entry.getKey())
                                 .orderTry(entry.getValue().longValue())
                                 .build())

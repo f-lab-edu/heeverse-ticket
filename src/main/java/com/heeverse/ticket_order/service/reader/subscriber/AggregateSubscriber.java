@@ -8,6 +8,7 @@ import com.heeverse.ticket_order.service.transfer.ResultTransfer;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.internal.util.stereotypes.ThreadSafe;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +44,8 @@ public class AggregateSubscriber implements Subscriber<List<SimpleResponse>> {
         collect.entrySet().forEach(result::add);
 
         if(doneTask(taskMessage.totalCount())) {
-            transfer.transferAll(result.toList(taskMessage));
+            log.info("end {}", LocalDateTime.now());
+            transfer.transferAll(result.toList(taskMessage.concertSeq()));
         }
     }
 

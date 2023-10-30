@@ -24,12 +24,10 @@ public class MultiAggregationReader implements AggregationReader {
     private final MultithreadingStrategy strategy;
 
     @Override
-    public List<AggregateSelectMapperDto.Response> getResultGroupByGrade(AggregateSelectMapperDto.Request request) {
+    public void getResultGroupByGrade(AggregateSelectMapperDto.Request request) {
         log.info("{}", request);
 
         List<Ticket> tickets = ticketMapper.findTickets(request.concertSeq());
         strategy.execute(request.concertSeq(), tickets);
-
-        return Collections.emptyList();
     }
 }

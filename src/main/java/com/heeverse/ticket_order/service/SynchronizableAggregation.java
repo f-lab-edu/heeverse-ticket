@@ -4,7 +4,7 @@ import com.heeverse.ticket_order.domain.dto.AggregateDto;
 
 import java.util.List;
 
-public interface AggregationService {
+public interface SynchronizableAggregation {
     List<AggregateDto.Response> aggregate(AggregateDto.Request request);
 
 }

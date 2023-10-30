@@ -19,7 +19,7 @@ import java.util.stream.Stream;
  */
 @Service
 @RequiredArgsConstructor
-public class QueryAggregationService implements AggregationService {
+public class QueryAggregationService implements SynchronizableAggregation {
 
     private final QueryAggregationReader reader;
     private final ResultTransfer<AggregateInsertMapperDto> transfer;

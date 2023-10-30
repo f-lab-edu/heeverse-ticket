@@ -51,10 +51,8 @@ class AggregationReaderTest {
         CountDownLatch latch = new CountDownLatch(1);
 
         for (int i = 0; i < LOOP; i++) {
-            List<AggregateSelectMapperDto.Response> responseList
-                    = reader.getResultGroupByGrade(request);
+            reader.getResultGroupByGrade(request);
             log.info( "===== {} ====", i);
-            log.info("{}", responseList);
         }
 
         latch.await();
@@ -77,8 +75,7 @@ class AggregationReaderTest {
 
         // DB CPU 25%
         for (int i = 0; i < LOOP; i++) {
-            List<AggregateSelectMapperDto.Response> responseList
-                    = singleReader.getResultGroupByGrade(request);
+            singleReader.getResultGroupByGrade(request);
             log.info( "===== {} ====", i);
         }
     }

@@ -9,9 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 
 /**
  * @author gutenlee
@@ -20,24 +18,16 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class MultithreadingAggregationService implements AggregationService {
+public class MultithreadingAggregationService implements AsynchronizableAggregation {
 
     private final BeanFactory beanFactory;
 
     @Override
-    public List<AggregateDto.Response> aggregate(AggregateDto.Request request) {
+    public void aggregate(AggregateDto.Request request) {
 
         try {
-
             AggregationReader readerBean = getReaderBean(request.getStrategyType());
-
-            List<AggregateSelectMapperDto.Response> responseList
-                    = readerBean.getResultGroupByGrade(new AggregateSelectMapperDto.Request(request.getConcertSeq()));
-
-            return responseList.stream()
-                    .map(AggregateDto.Response::new)
-                    .collect(Collectors.toList());
-
+            readerBean.getResultGroupByGrade(new AggregateSelectMapperDto.Request(request.getConcertSeq()));
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException("멀티스레딩 집계중 오류 발생", e);
         }

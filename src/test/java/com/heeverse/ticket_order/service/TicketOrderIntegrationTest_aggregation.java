@@ -56,30 +56,6 @@ public class TicketOrderIntegrationTest_aggregation {
     }
 
 
-    @Test
-    @Disabled
-    @DisplayName("티켓 예매시 예매 시도한 티켓 개수와 저장된 로그 개수는 일치한다 [멀티스레딩 처리]")
-    void ticketOrderEventTestWithMultithreading() throws Exception {
-
-        // given
-        TicketOrderingDto orderInfo = ticketLogFactory.givenTicketOrder();
-
-        // when
-        ticketLogFactory.whenStartTicketOrder(orderInfo.getCreatedTicketSeqList(), orderInfo.getMemberSeq());
-
-        // then
-        List<AggregateDto.Response> aggregated
-                = multithreadingAggregationService.aggregate(new AggregateDto.Request(orderInfo.getConcertSeq(), false, QUERY));
-
-        Assertions.assertAll(
-                () -> assertEquals(
-                        orderInfo.getCreatedTicketSeqList().size(),
-                        getSumOrderTry(aggregated)),
-                () -> ticketLogFactory.afterTestDeleteData(orderInfo)
-        );
-    }
-
-
     private static int getSumOrderTry(List<AggregateDto.Response> aggregated) {
         return aggregated.stream()
                 .filter(r -> "ALL".equals(r.getGradeName()))

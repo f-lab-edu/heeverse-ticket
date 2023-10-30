@@ -4,6 +4,8 @@ import com.heeverse.ticket_order.domain.dto.enums.StrategyType;
 import com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 /**
  * @author gutenlee
  * @since 2023/10/12
@@ -35,10 +37,12 @@ public class AggregateDto {
     @Getter
     public static class Response {
 
-        private final Long concertSeq;
-        private final String gradeName;
-        private final Integer totalTickets;
-        private final Integer orderTry;
+        private Long concertSeq;
+        private String gradeName;
+        private Integer totalTickets;
+        private Integer orderTry;
+        private String message;
+        private final LocalDateTime createdAt = LocalDateTime.now();
 
         public Response(Long concertSeq, String gradeName, Integer totalTickets, Integer orderTry) {
             this.concertSeq = concertSeq;
@@ -51,6 +55,10 @@ public class AggregateDto {
                 AggregateSelectMapperDto.Response mapperResponse
         ) {
             this(mapperResponse.concertSeq(), mapperResponse.gradeName(), mapperResponse.totalTickets(), mapperResponse.orderTry());
+        }
+
+        public Response(String message) {
+            this.message = message;
         }
 
         @Override

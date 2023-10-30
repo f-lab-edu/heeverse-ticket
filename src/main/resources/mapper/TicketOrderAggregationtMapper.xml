@@ -40,14 +40,12 @@
         INSERT INTO ticket_order_result (
             concert_seq,
              grade_name,
-             total_tickets,
              order_try
         ) VALUES
             <foreach item="result" collection="list" separator=",">
                 (
                     #{result.concertSeq},
                     #{result.gradeName},
-                    #{result.totalTickets},
                     #{result.orderTry}
                 )
             </foreach>

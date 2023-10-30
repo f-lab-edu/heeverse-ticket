@@ -26,7 +26,6 @@ public class TaskPublisher implements Publisher<List<SimpleResponse>> {
             TaskMessage<List<SimpleResponse>> task,
             Subscriber<List<SimpleResponse>> subscriber
     ) {
-        log.info("pub!!");
         subscriber.subscribe(task, transfer);
     }
 
