@@ -1,6 +1,7 @@
 spring:
-  jmx:
-    enabled: false
+  sql:
+    init:
+      mode: never
 
 
 mybatis:
