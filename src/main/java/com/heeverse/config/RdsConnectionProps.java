@@ -1,20 +1,13 @@
 package com.heeverse.config;
 
-import com.zaxxer.hikari.HikariPoolMXBean;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.util.Assert;
-
-import javax.management.JMX;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
-
-import java.lang.management.ManagementFactory;
 
 import static com.heeverse.common.Constants.MYSQL_SECRETES;
 import static com.heeverse.common.Constants.VAULT_PATH;
@@ -26,8 +19,8 @@ import static com.heeverse.common.Constants.VAULT_PATH;
  */
 @Primary
 @Configuration
-@Profile(value = {"dev-test", "prod"})
-public class RdsConnectionProps extends DataSourceProperties {
+@Profile(value = {"dev-test", "prod", "dev"})
+public class RdsConnectionProps {
 
     private final VaultOperationService vaultOperationService;
 
@@ -36,16 +29,25 @@ public class RdsConnectionProps extends DataSourceProperties {
         this.vaultOperationService = vaultOperationService;
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
+    private HikariConfig getDataSourceProperties() {
 
         var dbProps = vaultOperationService.getProps(VAULT_PATH, MYSQL_SECRETES, DBProps.class);
+        HikariConfig hikariConfig = new HikariConfig();
+        hikariConfig.setJdbcUrl(dbProps.url());
+        hikariConfig.setUsername(dbProps.username);
+        hikariConfig.setPassword(dbProps.password);
+        return hikariConfig;
+    }
 
-        this.setUsername(dbProps.username());
-        this.setUrl(dbProps.url());
-        this.setPassword(dbProps.password());
+    @Primary
+    @Bean(name = "primaryDataSource")
+    public HikariDataSource primaryDataSource() {
+        return new HikariDataSource(getDataSourceProperties());
+    }
 
-        super.afterPropertiesSet();
+    @Bean(name = "lockDataSource")
+    public HikariDataSource lockDataSource() {
+        return new HikariDataSource(getDataSourceProperties());
     }
 
     private record DBProps(
@@ -61,11 +63,5 @@ public class RdsConnectionProps extends DataSourceProperties {
         }
     }
 
-    @Bean
-    public HikariPoolMXBean poolProxy() throws MalformedObjectNameException {
-        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-        ObjectName objectName = new ObjectName("com.zaxxer.hikari:type=Pool (hikari)");
-        return JMX.newMBeanProxy(mBeanServer, objectName, HikariPoolMXBean.class);
-    }
 
 }
