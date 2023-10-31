@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 import javax.sql.DataSource;
 
@@ -16,6 +17,7 @@ import javax.sql.DataSource;
  * @date 10/28/23
  */
 @Configuration
+@MultiDataSourceProfile
 @MapperScan(value = "com.heeverse.ticket.domain.mapper", sqlSessionFactoryRef = "lockSqlSessionFactory")
 public class LockSqlSessionFactoryConfiguration {
 

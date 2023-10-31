@@ -16,9 +16,9 @@ import javax.sql.DataSource;
  * @date 10/28/23
  */
 @Configuration
+@MultiDataSourceProfile
 @MapperScan(value = "com.heeverse.*.domain.mapper", sqlSessionFactoryRef = "primarySqlSessionFactory")
 public class SqlSessionFactoryConfiguration {
-
 
     @Bean(name = "primarySqlSessionFactory")
     public SqlSessionFactory primarySqlSessionFactory(@Qualifier("primaryDataSource") DataSource primaryDataSource, ApplicationContext applicationContext) throws Exception {
@@ -29,11 +29,9 @@ public class SqlSessionFactoryConfiguration {
     }
 
 
-
     @Bean(name = "primarySqlSessionTemplate")
     public SqlSessionTemplate primarySqlSessionTemplate(@Qualifier("primarySqlSessionFactory") SqlSessionFactory primarySqlSessionFactory) {
         return new SqlSessionTemplate(primarySqlSessionFactory);
     }
-
 
 }

@@ -1,9 +1,12 @@
 package com.heeverse.common;
 
+import com.heeverse.config.MultiDataSourceProfile;
 import com.zaxxer.hikari.HikariDataSource;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import javax.management.ObjectName;
@@ -14,6 +17,7 @@ import java.lang.management.ManagementFactory;
  * @since 2023/10/16
  */
 @Component
+@MultiDataSourceProfile
 @Slf4j
 public class DataSourceMonitoring implements DataSourceMonitoringMBean {
 

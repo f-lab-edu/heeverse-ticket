@@ -1,16 +1,13 @@
 package com.heeverse.config;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.util.Assert;
 
-import static com.heeverse.common.Constants.MYSQL_SECRETES;
-import static com.heeverse.common.Constants.VAULT_PATH;
+import static com.heeverse.common.Constants.*;
 
 
 /**
@@ -19,8 +16,8 @@ import static com.heeverse.common.Constants.VAULT_PATH;
  */
 @Primary
 @Configuration
-@Profile(value = {"dev-test", "prod", "dev"})
-public class RdsConnectionProps {
+@Profile(value = {DEV_TEST, DEV})
+public class RdsConnectionProps extends DataSourceProperties {
 
     private final VaultOperationService vaultOperationService;
 
@@ -29,39 +26,31 @@ public class RdsConnectionProps {
         this.vaultOperationService = vaultOperationService;
     }
 
-    private HikariConfig getDataSourceProperties() {
+    @Override
+    public void afterPropertiesSet() throws Exception {
 
         var dbProps = vaultOperationService.getProps(VAULT_PATH, MYSQL_SECRETES, DBProps.class);
-        HikariConfig hikariConfig = new HikariConfig();
-        hikariConfig.setJdbcUrl(dbProps.url());
-        hikariConfig.setUsername(dbProps.username);
-        hikariConfig.setPassword(dbProps.password);
-        return hikariConfig;
+
+        this.setUsername(dbProps.username());
+        this.setUrl(dbProps.url());
+        this.setPassword(dbProps.password());
+
+        super.afterPropertiesSet();
     }
 
-    @Primary
-    @Bean(name = "primaryDataSource")
-    public HikariDataSource primaryDataSource() {
-        return new HikariDataSource(getDataSourceProperties());
-    }
 
-    @Bean(name = "lockDataSource")
-    public HikariDataSource lockDataSource() {
-        return new HikariDataSource(getDataSourceProperties());
-    }
 
-    private record DBProps(
+    public record DBProps(
             String url,
             String username,
             String password
     ) {
-        DBProps {
+        public DBProps {
             String name = this.getClass().getSimpleName();
             Assert.notNull(url, name + "'s [url] must not null!");
             Assert.notNull(username, name + "'s [username] must not null!");
             Assert.notNull(password, name + "'s [password] must not null!");
         }
     }
-
 
 }
