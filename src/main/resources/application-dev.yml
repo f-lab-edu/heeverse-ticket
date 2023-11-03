@@ -1,18 +1,9 @@
 spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
   sql:
     init:
       mode: never
-
-
-mybatis:
-  mapper-locations:
-    - classpath:mapper/basic/*.xml
-    - classpath:mapper/lock-mapper/*.xml
-  configuration:
-    map-underscore-to-camel-case: true
-    arg-name-based-constructor-auto-mapping: true
+  jmx:
+    enabled: false
 
 logging:
   level:
@@ -23,6 +14,6 @@ logging:
 
 vault:
   scheme: http
-  uri: host.docker.internal
+  uri: 3.22.218.43
   token: hvs.frFvDB3V7L4UYrBlQ6fFvBtD
   port: 8200

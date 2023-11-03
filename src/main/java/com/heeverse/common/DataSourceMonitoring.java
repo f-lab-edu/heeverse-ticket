@@ -1,6 +1,5 @@
 package com.heeverse.common;
 
-import com.heeverse.config.MultiDataSourceProfile;
 import com.zaxxer.hikari.HikariDataSource;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +14,6 @@ import java.lang.management.ManagementFactory;
  * @since 2023/10/16
  */
 @Component
-@MultiDataSourceProfile
 @Slf4j
 public class DataSourceMonitoring implements DataSourceMonitoringMBean {
 

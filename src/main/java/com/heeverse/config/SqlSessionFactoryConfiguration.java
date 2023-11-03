@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 
 import javax.sql.DataSource;
 
@@ -16,7 +17,6 @@ import javax.sql.DataSource;
  * @date 10/28/23
  */
 @Configuration
-@MultiDataSourceProfile
 @MapperScan(value = "com.heeverse.*.domain.mapper", sqlSessionFactoryRef = "primarySqlSessionFactory")
 public class SqlSessionFactoryConfiguration {
 
@@ -24,6 +24,7 @@ public class SqlSessionFactoryConfiguration {
     public SqlSessionFactory primarySqlSessionFactory(@Qualifier("primaryDataSource") DataSource primaryDataSource, ApplicationContext applicationContext) throws Exception {
         SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
         sqlSessionFactoryBean.setDataSource(primaryDataSource);
+        sqlSessionFactoryBean.setConfigLocation(new ClassPathResource("mybatis-config.xml"));
         sqlSessionFactoryBean.setMapperLocations(applicationContext.getResources("classpath:mapper/basic/**.xml"));
         return sqlSessionFactoryBean.getObject();
     }
