@@ -1,63 +1,37 @@
 package com.heeverse.ticket_order.service.reader.firstclass;
 
 import com.heeverse.ticket_order.domain.dto.persistence.AggregateInsertMapperDto;
-import com.heeverse.ticket_order.service.reader.producer.TaskMessage;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.LongAdder;
 import java.util.function.BiFunction;
-import java.util.stream.Stream;
-
-import static com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto.SimpleResponse;
 
 /**
  * @author gutenlee
  * @since 2023/10/28
  */
-public class ResultMap {
+@Slf4j
+public abstract class ResultMap<K, V, E> {
 
-    private final ConcurrentHashMap<String, LongAdder> resultMap;
+    protected final Map<K, V> resultMap;
 
-
-    public ResultMap() {
-        this.resultMap = new ConcurrentHashMap<>();
+    public ResultMap(Map<K, V> map) {
+        this.resultMap = map;
     }
 
-    public void add(Map.Entry<String, Long> entry) {
+    public void add(Map.Entry<K, E> entry) {
         resultMap.compute(entry.getKey(), computeIfAbsentIfPresent(entry));
     }
 
+    abstract BiFunction<K, V, V> computeIfAbsentIfPresent(Map.Entry<K, E> entry);
 
-    public List<AggregateInsertMapperDto> toList(long concertSeq) {
-        return toEntryStream()
-                .map(entry -> AggregateInsertMapperDto.builder()
-                                .concertSeq(concertSeq)
-                                .gradeName(entry.getKey())
-                                .orderTry(entry.getValue().longValue())
-                                .build())
-                .toList();
-    }
+    public abstract List<AggregateInsertMapperDto> toList(Long concertSeq);
 
-    private BiFunction<String, LongAdder, LongAdder> computeIfAbsentIfPresent(Map.Entry<String, Long> entry) {
-        return (k, v) -> {
-            if (v == null) {
-                return getInit();
-            } else {
-                v.add(entry.getValue());
-                return v;
-            }
-        };
-    }
-
-    private LongAdder getInit() {
-        LongAdder longAdder = new LongAdder();
-        longAdder.increment();
-        return longAdder;
-    }
-
-    private Stream<Map.Entry<String, LongAdder>> toEntryStream() {
-        return resultMap.entrySet().stream();
+    @Override
+    public String toString() {
+        return "ResultMap{" +
+                "resultMap=" + resultMap +
+                '}';
     }
 }
