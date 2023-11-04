@@ -4,7 +4,7 @@
 
 <mapper namespace="com.heeverse.ticket_order.domain.mapper.TicketOrderAggregationMapper">
 
-    <!--티켓 등급별 예매 시도 집계-->
+    <!--티켓 등급별 예매 시도 집계 : 정규화된 테이블-->
     <select id="selectGroupByGradeName" parameterType="java.lang.Long"
                                     resultType="com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto$Response">
         SELECT
@@ -22,7 +22,7 @@
         WITH ROLLUP
     </select>
 
-    <!--티켓 등급별 예매 시도 집계-->
+    <!--티켓 등급별 예매 시도 집계 : 역정규화된 테이블-->
     <select id="selectGroupByGradeNameDeNormalization" parameterType="java.lang.Long"
             resultType="com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto$Response">
         SELECT
@@ -52,7 +52,7 @@
     </insert>
 
 
-    <!--티켓 등급별 예매 시도 조회-->
+    <!--티켓 등급별 예매 시도 조회 : WHERE IN-->
     <select id="selectTicketSeqWhereIn" parameterType="java.lang.Long"
             resultType="com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto$SimpleResponse">
         SELECT
