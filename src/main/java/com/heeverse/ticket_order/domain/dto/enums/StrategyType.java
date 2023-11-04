@@ -1,26 +1,26 @@
 package com.heeverse.ticket_order.domain.dto.enums;
 
-import com.heeverse.ticket_order.service.reader.AggregationReader;
-import com.heeverse.ticket_order.service.reader.MultiAggregationReader;
-import com.heeverse.ticket_order.service.reader.SingleAggregationReader;
-import com.heeverse.ticket_order.service.reader.StreamAggregationReader;
+import com.heeverse.ticket_order.service.reader.strategy.AggregationStrategy;
+import com.heeverse.ticket_order.service.reader.strategy.MultithreadingStrategy;
+import com.heeverse.ticket_order.service.reader.strategy.SingleThreadStrategy;
+import com.heeverse.ticket_order.service.reader.strategy.StreamAggregationStrategy;
 
 public enum StrategyType{
 
-    SINGLE_THREAD(SingleAggregationReader.class),
-    MULTI_THREAD(MultiAggregationReader.class),
-    STREAM(StreamAggregationReader.class),
+    SINGLE_THREAD(SingleThreadStrategy.class),
+    MULTI_THREAD(MultithreadingStrategy.class),
+    STREAM(StreamAggregationStrategy.class),
     QUERY(null)
     ;
 
 
-    private final Class<? extends AggregationReader> reader;
+    private final Class<? extends AggregationStrategy> reader;
 
-    StrategyType(Class<? extends AggregationReader> reader) {
+    StrategyType(Class<? extends AggregationStrategy> reader) {
         this.reader = reader;
     }
 
-    public static Class<? extends AggregationReader> getReaderClazz(StrategyType strategyType) {
+    public static Class<? extends AggregationStrategy> getReaderClazz(StrategyType strategyType) {
         return switch (strategyType) {
             case SINGLE_THREAD -> SINGLE_THREAD.reader;
             case MULTI_THREAD -> MULTI_THREAD.reader;

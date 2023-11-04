@@ -1,4 +1,4 @@
-package com.heeverse.ticket_order.service.reader.producer;
+package com.heeverse.ticket_order.service.reader.subscriber;
 
 import com.heeverse.ticket_order.service.reader.firstclass.GradeInfo;
 
@@ -7,19 +7,18 @@ import com.heeverse.ticket_order.service.reader.firstclass.GradeInfo;
  * @since 2023/10/27
  */
 public record TaskMessage<T>(
-        String taskUuid,
         long concertSeq,
-        int totalCount,
         T task,
         GradeInfo gradeInfo
 ) {
 
+
     @Override
     public String toString() {
         return "TaskMessage{" +
-                "taskUuid='" + taskUuid + '\'' +
-                ", totalCount=" + totalCount +
+                "concertSeq=" + concertSeq +
                 ", task=" + task +
+                ", gradeInfo=" + gradeInfo +
                 '}';
     }
 }

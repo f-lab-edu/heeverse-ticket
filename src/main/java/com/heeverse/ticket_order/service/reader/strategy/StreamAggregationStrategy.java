@@ -1,20 +1,24 @@
 package com.heeverse.ticket_order.service.reader.strategy;
 
+import com.heeverse.ticket_order.service.reader.StreamHelper;
 import com.heeverse.common.util.PaginationProvider;
 import com.heeverse.common.util.TicketUtils;
 import com.heeverse.ticket.domain.entity.Ticket;
+import com.heeverse.ticket_order.domain.dto.persistence.AggregateInsertMapperDto;
+import com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto;
 import com.heeverse.ticket_order.service.reader.TicketAggrFacade;
 import com.heeverse.ticket_order.service.reader.firstclass.GradeInfo;
-import com.heeverse.ticket_order.service.reader.firstclass.ResultMap;
+import com.heeverse.ticket_order.service.reader.firstclass.ResultHashMap;
 import com.heeverse.ticket_order.service.transfer.ResultDBTransfer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author gutenlee
@@ -27,26 +31,35 @@ public class StreamAggregationStrategy implements AggregationStrategy {
 
     private final TicketAggrFacade ticketAggrFacade;
     private final ResultDBTransfer resultDBTransfer;
-    private final static int CHUNK_SIZE = 100;
 
     @Override
-    public void execute(long concertSeq, List<Ticket> ticketList){
-        GradeInfo gradeInfo = new GradeInfo(ticketList);
-        List<Long> collectedTicketSeq = TicketUtils.collectTicketSeq(ticketList);
+    public void execute(AggregationJobWrapper jobWrapper){
 
-        List<List<Long>> chunks = PaginationProvider.toChunk(collectedTicketSeq, CHUNK_SIZE);
-        log.info("chunk size {}", chunks.size());
+        GradeInfo gradeInfo = jobWrapper.gradeInfo();
+        List<List<Long>> chunks = jobWrapper.chunks();
 
-        ResultMap resultMap = new ResultMap();
-        Collections.synchronizedList(chunks)
+        Map<String, Long> result = getTicketOrderLog(chunks)
+                .map(list -> getGroupByGrade(gradeInfo, list))
+                .flatMap(StreamHelper::toEntrySetStream)
+                .collect(Collectors.groupingByConcurrent(
+                        Map.Entry::getKey,
+                        Collectors.summingLong(Map.Entry::getValue)
+                ));
+
+        resultDBTransfer.transferAll(new ResultHashMap(result).toList(jobWrapper.concertSeq()));
+    }
+
+
+    private Stream<List<AggregateSelectMapperDto.SimpleResponse>> getTicketOrderLog(List<List<Long>> chunks) {
+        return new CopyOnWriteArrayList<>(chunks)
                 .parallelStream()
-                .map(ticketAggrFacade::read)
-                .flatMap(list -> {
-                    Map<String, Long> map = list.stream().collect(Collectors.groupingBy(res -> gradeInfo.getGrade(res.ticketSeq()), Collectors.counting()));
-                    return map.entrySet().stream();
-                })
-                .forEach(resultMap::add);
+                .map(ticketAggrFacade::read);
+    }
 
-        resultDBTransfer.transferAll(resultMap.toList(concertSeq));
+    private Map<String, Long> getGroupByGrade(
+            GradeInfo gradeInfo,
+            List<AggregateSelectMapperDto.SimpleResponse> list
+    ) {
+        return list.stream().collect(StreamHelper.countGroupingByKey(gradeInfo));
     }
 }

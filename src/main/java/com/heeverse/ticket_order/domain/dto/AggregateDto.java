@@ -3,6 +3,7 @@ package com.heeverse.ticket_order.domain.dto;
 import com.heeverse.ticket_order.domain.dto.enums.StrategyType;
 import com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto;
 import lombok.Getter;
+import org.springframework.lang.Nullable;
 
 import java.time.LocalDateTime;
 
@@ -36,7 +37,6 @@ public class AggregateDto {
 
     @Getter
     public static class Response {
-
         private Long concertSeq;
         private String gradeName;
         private Integer totalTickets;
@@ -44,7 +44,12 @@ public class AggregateDto {
         private String message;
         private final LocalDateTime createdAt = LocalDateTime.now();
 
-        public Response(Long concertSeq, String gradeName, Integer totalTickets, Integer orderTry) {
+        public Response(
+                @Nullable Long concertSeq,
+                @Nullable String gradeName,
+                @Nullable Integer totalTickets,
+                @Nullable Integer orderTry
+        ) {
             this.concertSeq = concertSeq;
             this.gradeName = gradeName;
             this.totalTickets = totalTickets;

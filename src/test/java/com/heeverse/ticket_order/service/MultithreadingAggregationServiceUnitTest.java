@@ -1,7 +1,7 @@
 package com.heeverse.ticket_order.service;
 
 import com.heeverse.ticket_order.domain.dto.enums.StrategyType;
-import com.heeverse.ticket_order.service.reader.MultiAggregationReader;
+import com.heeverse.ticket_order.service.reader.strategy.MultithreadingStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,20 +18,20 @@ class MultithreadingAggregationServiceUnitTest {
             AnnotationConfigApplicationContext(AppConfig.class);
     static class AppConfig {
         @Bean
-        public MultiAggregationReader multiAggregationReader() {
-            return new MultiAggregationReader(any(), any());
+        public MultithreadingStrategy multithreadingStrategy() {
+            return new MultithreadingStrategy(any(), any());
         }
     }
 
 
     @Test
-    @DisplayName("MultiAggregationReader 클래스 타입 리턴 테스트")
+    @DisplayName("MultiAggregationStrategy 클래스 타입 리턴 테스트")
     void getReaderBeanTest() throws Exception {
 
         //given
         StrategyType type = StrategyType.MULTI_THREAD;
 
-        Assertions.assertInstanceOf(MultiAggregationReader.class, ac.getBean(StrategyType.getReaderClazz(type)));
+        Assertions.assertInstanceOf(MultithreadingStrategy.class, ac.getBean(StrategyType.getReaderClazz(type)));
     }
 
 

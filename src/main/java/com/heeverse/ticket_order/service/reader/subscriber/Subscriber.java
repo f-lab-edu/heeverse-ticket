@@ -1,9 +1,7 @@
 package com.heeverse.ticket_order.service.reader.subscriber;
 
-import com.heeverse.ticket_order.domain.dto.persistence.AggregateInsertMapperDto;
-import com.heeverse.ticket_order.service.reader.producer.TaskMessage;
-import com.heeverse.ticket_order.service.transfer.ResultTransfer;
+import com.heeverse.ticket_order.service.reader.firstclass.ResultConcurrentMap;
 
 public interface Subscriber<E> {
-    void subscribe(TaskMessage<E> taskMessage, ResultTransfer<AggregateInsertMapperDto> transfer);
+    ResultConcurrentMap subscribe(TaskMessage<E> taskMessage);
 }

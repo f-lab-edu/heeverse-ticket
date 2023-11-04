@@ -5,8 +5,10 @@ import com.heeverse.common.util.TicketUtils;
 import com.heeverse.ticket.domain.entity.Ticket;
 import com.heeverse.ticket_order.domain.dto.persistence.AggregateInsertMapperDto;
 import com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto;
+import com.heeverse.ticket_order.service.reader.StreamHelper;
 import com.heeverse.ticket_order.service.reader.TicketAggrFacade;
 import com.heeverse.ticket_order.service.reader.firstclass.GradeInfo;
+import com.heeverse.ticket_order.service.reader.firstclass.ResultHashMap;
 import com.heeverse.ticket_order.service.transfer.ResultDBTransfer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +17,8 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+
+import static com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto.*;
 
 /**
  * @author gutenlee
@@ -28,46 +31,28 @@ public class SingleThreadStrategy implements AggregationStrategy {
 
     private final TicketAggrFacade ticketAggrFacade;
     private final ResultDBTransfer resultDBTransfer;
-    private final static int CHUNK_SIZE = 100;
 
     @Override
-    public void execute(long concertSeq, List<Ticket> ticketList) {
+    public void execute(AggregationJobWrapper jobWrapper) {
 
-        GradeInfo gradeInfo = new GradeInfo(ticketList);
-        List<Long> collectedTicketSeq = TicketUtils.collectTicketSeq(ticketList);
+        ResultHashMap resultHashMap = new ResultHashMap(new HashMap<>());
 
-        List<List<Long>> chunks = PaginationProvider.toChunk(collectedTicketSeq, CHUNK_SIZE);
-        log.info("chunk size {}", chunks.size());
-
-        final HashMap<String, Long> resultMap = new HashMap<>();
-        for (List<Long> chunk : chunks) {
-            List<AggregateSelectMapperDto.SimpleResponse> simpleResponses = ticketAggrFacade.read(chunk);
-            Map<String, Long> map = simpleResponses.stream().collect(Collectors.groupingBy(res -> gradeInfo.getGrade(res.ticketSeq()), Collectors.counting()));
-            reduceTask(resultMap, map);
+        for (var chunk : jobWrapper.chunks()) {
+            reduceTask(resultHashMap, jobWrapper.gradeInfo(), ticketAggrFacade.read(chunk));
         }
 
-        resultDBTransfer.transferAll(getAggregateInsertMapperDtoList(concertSeq, resultMap));
+        resultDBTransfer.transferAll(resultHashMap.toList(jobWrapper.concertSeq()));
     }
 
-    private void reduceTask(HashMap<String, Long> resultMap, Map<String, Long> map) {
-        for (Map.Entry<String, Long> entry : map.entrySet()) {
-            String key = entry.getKey();
-            Long value = entry.getValue();
-            if (!resultMap.containsKey(key)) {
-                resultMap.put(key, value);
-            } else {
-                Long v1 = resultMap.get(key);
-                resultMap.put(key, value = (v1 + value));
-            }
-        }
-    }
-
-    private static List<AggregateInsertMapperDto> getAggregateInsertMapperDtoList(
-            long concertSeq,
-            HashMap<String, Long> resultMap
+    private void reduceTask(
+            ResultHashMap resultMap,
+            GradeInfo gradeInfo,
+            List<SimpleResponse> simpleResponses
     ) {
-        return resultMap.entrySet().stream()
-                .map(entry -> new AggregateInsertMapperDto(concertSeq, entry.getKey(), entry.getValue()))
-                .toList();
+        Map<String, Long> map = simpleResponses.stream().collect(StreamHelper.countGroupingByKey(gradeInfo));
+        for (var entry : map.entrySet()) {
+            resultMap.add(entry);
+        }
     }
+
 }

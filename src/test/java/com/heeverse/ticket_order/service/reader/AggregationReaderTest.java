@@ -4,6 +4,9 @@ import com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto
 import com.heeverse.ticket_order.domain.entity.TicketOrderLog;
 import com.heeverse.ticket_order.domain.mapper.TicketOrderAggregationMapper;
 import com.heeverse.ticket_order.domain.mapper.TicketOrderLogMapper;
+import com.heeverse.ticket_order.service.reader.strategy.MultithreadingStrategy;
+import com.heeverse.ticket_order.service.reader.strategy.SingleThreadStrategy;
+import com.heeverse.ticket_order.service.reader.strategy.StreamAggregationStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,14 +33,18 @@ class AggregationReaderTest {
     @Autowired
     private TicketOrderLogMapper logMapper;
     @Autowired
-    private MultiAggregationReader reader;
+    private CommonAggregationReader reader;
+
     @Autowired
-    private SingleAggregationReader singleReader;
+    private MultithreadingStrategy multithreadingStrategy;
     @Autowired
-    private StreamAggregationReader streamReader;
+    private SingleThreadStrategy singleThreadStrategy;
+    @Autowired
+    private StreamAggregationStrategy streamAggregationStrategy;
 
     private Logger log = LoggerFactory.getLogger(AggregationReaderTest.class);
     private static final int LOOP = 1;
+    private static final int QUERY_LOOP = 1;
     private static AggregateSelectMapperDto.Request request;
 
     @BeforeEach
@@ -51,7 +58,7 @@ class AggregationReaderTest {
         CountDownLatch latch = new CountDownLatch(1);
 
         for (int i = 0; i < LOOP; i++) {
-            reader.getResultGroupByGrade(request);
+            reader.doAggregation(multithreadingStrategy, request);
             log.info( "===== {} ====", i);
         }
 
@@ -63,7 +70,7 @@ class AggregationReaderTest {
     void streamAggregationTest() throws Exception {
 
         for (int i = 0; i < LOOP; i++) {
-            streamReader.getResultGroupByGrade(request);
+            reader.doAggregation(streamAggregationStrategy, request);
             log.info( "===== {} ====", i);
         }
     }
@@ -73,9 +80,8 @@ class AggregationReaderTest {
     @DisplayName("싱글 스레드로 집계 처리")
     void synchronousAggregationTest() throws Exception {
 
-        // DB CPU 25%
         for (int i = 0; i < LOOP; i++) {
-            singleReader.getResultGroupByGrade(request);
+            reader.doAggregation(singleThreadStrategy, request);
             log.info( "===== {} ====", i);
         }
     }
@@ -83,10 +89,10 @@ class AggregationReaderTest {
     @Test
     @DisplayName("비정규화 테이블에서 처리")
     void queryAggrTest() throws Exception {
-        // DB CPU 38%, TPS 6/sec
-        for (int i = 0; i < LOOP; i++) {
+        for (int i = 0; i < QUERY_LOOP; i++) {
             List<AggregateSelectMapperDto.Response> deNormalization
                     = aggregationMapper.selectGroupByGradeNameDeNormalization(1L);
+            System.out.println("deNormalization = " + deNormalization);
             log.info("{}", i);
         }
     }
@@ -94,8 +100,7 @@ class AggregationReaderTest {
     @Test
     @DisplayName("정규화 테이블에서 처리")
     void queryAggrNormalizationTest() throws Exception {
-        //  CPU 86%, TPS 1.3/sec
-        for (int i = 0; i < LOOP; i++) {
+        for (int i = 0; i < QUERY_LOOP; i++) {
             List<AggregateSelectMapperDto.Response> normalization
                     = aggregationMapper.selectGroupByGradeName(1L);
             log.info("{}", i);
@@ -107,8 +112,8 @@ class AggregationReaderTest {
     @DisplayName("테스트용 데이터 넣기")
     void insert() throws Exception {
 
-        int KSPO_DOME_TICKETS = 10_000;
-        int tryOrderPerTicket = 500;
+        int KSPO_DOME_TICKETS = 7_500;
+        int tryOrderPerTicket = 266;
         String[] grades = new String[] {"VIP", "S", "R"};
 
         for (int i = 0; i < KSPO_DOME_TICKETS; i++) {
@@ -122,6 +127,7 @@ class AggregationReaderTest {
                 );
             }
             logMapper.insertTicketOrderLogDeNormalization(ticketOrderLogs);
+            logMapper.insertTicketOrderLog(ticketOrderLogs);
         }
     }
 
