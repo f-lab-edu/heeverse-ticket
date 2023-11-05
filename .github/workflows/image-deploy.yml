@@ -3,7 +3,7 @@ name: heeverse-deploy
 on:
   push:
     branches: [ dev, version/** ]
-    paths: [ '**.java', '.github/workflows/image-deploy.yml', 'build.gradle' ,'application-**.xml', 'logback-spring.xml', 'Dockerfile', 'script/deploy.sh']
+    paths: [ '**.java', '.github/workflows/image-deploy.yml', 'build.gradle' ,'src/main/resources/application-prod.xml', 'logback-spring.xml', 'Dockerfile', 'script/deploy.sh']
 
 env:
   # aws
