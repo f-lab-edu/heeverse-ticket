@@ -11,4 +11,6 @@ RUN useradd -r -u 1026 -g ubuntu ubuntu
 RUN chown -R ubuntu:ubuntu /workspace
 USER ubuntu
 
+CMD ["java", "-cp", "/workspace/heeverse-api.jar:/workspace/heeverse-api-dependencies/*", "com.heeverse.HeeverseTicketApplication"]
+
 ENTRYPOINT [ "sh", "deploy.sh", "-Dspring.profiles.active=${PROFILE}"]
