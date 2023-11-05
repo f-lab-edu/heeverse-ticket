@@ -6,6 +6,7 @@ logging:
   level:
     org:
       springframework:
+        context: DEBUG
         security: INFO
 
 vault:
