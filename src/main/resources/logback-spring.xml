@@ -20,7 +20,7 @@
         </root>
     </springProfile>
 
-    <springProfile name="local | dev | dev-test | prod">
+    <springProfile name="local | dev | dev-test ">
         <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
             <encoder>
                 <pattern>${CONSOLE_LOG_PATTERN}</pattern>
@@ -42,19 +42,19 @@
         </root>
     </springProfile>
 
-  <!--  <springProfile name="prod">
-        &lt;!&ndash;<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <springProfile name="prod">
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
             <encoder>
                 <pattern>${CONSOLE_LOG_PATTERN}</pattern>
                 <charset>${CONSOLE_LOG_CHARSET}</charset>
             </encoder>
-        </appender>&ndash;&gt;
+        </appender>
         <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
             <file>${LOG_DIR}/${spring.profiles.active}/${LOG_FILE}.log</file>
             <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                &lt;!&ndash; 주 1회 rollover &ndash;&gt;
+                <!-- 주 1회 rollover -->
                 <fileNamePattern>${LOG_FILE}.%d{yyyy-ww}.gz</fileNamePattern>
-                &lt;!&ndash; 4주치 로그 파일 보관. 단, 1GB 까지 가능 &ndash;&gt;
+                <!-- 4주치 로그 파일 보관. 단, 1GB 까지 가능 -->
                 <maxHistory>4</maxHistory>
                 <totalSizeCap>1GB</totalSizeCap>
             </rollingPolicy>
@@ -69,9 +69,9 @@
                 <level>ERROR</level>
             </filter>
             <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                &lt;!&ndash; 주 1회 rollover &ndash;&gt;
+                <!-- 주 1회 rollover -->
                 <fileNamePattern>${ERROR_LOG_FILE}.%d{yyyy-ww}.gz</fileNamePattern>
-                &lt;!&ndash; 10주치 로그 파일 보관. 단, 1GB 까지 가능 &ndash;&gt;
+                <!-- 10주치 로그 파일 보관. 단, 1GB 까지 가능 -->
                 <maxHistory>10</maxHistory>
                 <totalSizeCap>1GB</totalSizeCap>
             </rollingPolicy>
@@ -90,5 +90,5 @@
         <root level="ERROR">
             <appender-ref ref="ERROR_FILE" />
         </root>
-    </springProfile>-->
+    </springProfile>
 </configuration>
