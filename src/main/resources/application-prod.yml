@@ -8,6 +8,7 @@ logging:
       springframework:
         context: DEBUG
         security: INFO
+      mybatis: DEBUG
 
 vault:
   scheme: http
