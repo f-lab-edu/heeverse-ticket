@@ -7,9 +7,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.mybatis.spring.boot.autoconfigure.SpringBootVFS;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.*;
 import org.springframework.core.io.ClassPathResource;
 
 import javax.sql.DataSource;
@@ -19,7 +17,8 @@ import javax.sql.DataSource;
  * @date 10/28/23
  */
 @Configuration
-@MapperScan(value = "com.heeverse.concert.domain.mapper", sqlSessionFactoryRef = "primarySqlSessionFactory")
+@MapperScan(value = "com.heeverse.*.domain.mapper", annotationClass = LockScanMapper.class,
+        sqlSessionFactoryRef = "primarySqlSessionFactory")
 public class SqlSessionFactoryConfiguration {
 
     @Primary
