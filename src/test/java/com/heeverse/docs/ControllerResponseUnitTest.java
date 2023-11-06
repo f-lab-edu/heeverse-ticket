@@ -17,6 +17,7 @@ import com.heeverse.ticket_order.domain.dto.*;
 import com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto;
 import com.heeverse.ticket_order.domain.dto.persistence.TicketOrderRequestMapperDto;
 import com.heeverse.ticket_order.domain.dto.persistence.TicketRemainsResponseMapperDto;
+import com.heeverse.ticket_order.service.MultithreadingAggregationService;
 import com.heeverse.ticket_order.service.QueryAggregationService;
 import com.heeverse.ticket_order.service.TicketOrderFacade;
 import com.heeverse.ticket_order.service.TicketOrderTestHelper;
@@ -63,6 +64,8 @@ public class ControllerResponseUnitTest {
     private TicketOrderFacade ticketOrderFacade;
     @MockBean
     private QueryAggregationService aggregationService;
+    @MockBean
+    private MultithreadingAggregationService multithreadingAggregationService;
 
     @Autowired
     private ObjectMapper om;
