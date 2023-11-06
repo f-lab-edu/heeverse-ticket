@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
 
@@ -40,10 +41,11 @@ public class DataSourceMonitoring implements DataSourceMonitoringMBean {
 
     @PostConstruct
     public void init() throws Exception {
-        try {
-            ManagementFactory.getPlatformMBeanServer().registerMBean(this, new ObjectName("com.xxx:type=DataSource,name=HikariPool-1"));
-        } catch (Exception e) {
-            log.error("MBean Register Error", e);
-        }
+        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        ObjectName objectName = new ObjectName("com.heeverse:type=HikariDataSource,name=HikariPool-1,context=/");
+
+        DataSourceMonitoring dataSourceMonitoring = new DataSourceMonitoring(lockDataSource);
+
+        mBeanServer.registerMBean(dataSourceMonitoring, objectName);
     }
 }
