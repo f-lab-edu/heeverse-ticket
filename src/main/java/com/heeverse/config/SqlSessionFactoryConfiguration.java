@@ -19,7 +19,7 @@ import javax.sql.DataSource;
  * @date 10/28/23
  */
 @Configuration
-@MapperScan(value = "com.heeverse.*.domain.mapper", sqlSessionFactoryRef = "primarySqlSessionFactory")
+@MapperScan(value = "com.heeverse.concert.domain.mapper", sqlSessionFactoryRef = "primarySqlSessionFactory")
 public class SqlSessionFactoryConfiguration {
 
     @Primary
