@@ -2,8 +2,8 @@ package com.heeverse.ticket_order.domain.dto;
 
 import com.heeverse.ticket_order.domain.dto.enums.StrategyType;
 import com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto;
+import jakarta.annotation.Nullable;
 import lombok.Getter;
-import org.springframework.lang.Nullable;
 
 import java.time.LocalDateTime;
 
