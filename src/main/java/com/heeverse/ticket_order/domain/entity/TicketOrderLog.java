@@ -15,11 +15,12 @@ public class TicketOrderLog extends BaseEntity {
     private final long concertSeq;
     private String gradeName;
 
-    public TicketOrderLog(long ticketSeq, long memberSeq, long ticketOrderSeq, long concertSeq) {
+    public TicketOrderLog(long ticketSeq, long memberSeq, long ticketOrderSeq, long concertSeq, String gradeName) {
         this.ticketSeq = ticketSeq;
         this.memberSeq = memberSeq;
         this.ticketOrderSeq = ticketOrderSeq;
         this.concertSeq = concertSeq;
+        this.gradeName = gradeName;
     }
 
     public TicketOrderLog(Ticket ticket, Long memberSeq, Long ticketOrderSeq) {

@@ -39,6 +39,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 import static com.heeverse.ControllerTestHelper.getRestDocsMockMvc;
+import static com.heeverse.ticket_order.domain.dto.enums.StrategyType.QUERY;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -177,7 +178,7 @@ public class ControllerResponseUnitTest {
                 .thenReturn(List.of(response));
 
         mockMvc.perform(get(ControllerTestHelper.Endpoint.TICKET.티켓_예매_집계)
-                        .content(om.writeValueAsString(new AggregateDto.Request(1L, true)))
+                        .content(om.writeValueAsString(new AggregateDto.Request(1L, true, QUERY)))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(res -> status().is2xxSuccessful().match(res))
                 .andDo(TicketDocsResultFactory.ticketOrderLogDocs());

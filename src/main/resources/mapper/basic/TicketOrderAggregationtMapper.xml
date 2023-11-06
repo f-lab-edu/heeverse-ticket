@@ -4,7 +4,7 @@
 
 <mapper namespace="com.heeverse.ticket_order.domain.mapper.TicketOrderAggregationMapper">
 
-    <!--티켓 등급별 예매 시도 집계-->
+    <!--티켓 등급별 예매 시도 집계 : 정규화된 테이블-->
     <select id="selectGroupByGradeName" parameterType="java.lang.Long"
                                     resultType="com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto$Response">
         SELECT
@@ -13,16 +13,16 @@
             count(distinct t.seq, grade_name) AS total_tickets,
             count(order_seq) AS order_try
         FROM ticket t
-                 LEFT JOIN ticket_order_log t_log
+                 LEFT JOIN ticket_order_log_copy t_log
                            ON t.seq = t_log.ticket_seq
                  LEFT JOIN ticket_order t_order
                            ON t.order_seq = t_order.seq
-        WHERE concert_seq =  #{concertSeq}
+        WHERE t.concert_seq =  #{concertSeq}
         GROUP BY grade_name
         WITH ROLLUP
     </select>
 
-    <!--티켓 등급별 예매 시도 집계-->
+    <!--티켓 등급별 예매 시도 집계 : 역정규화된 테이블-->
     <select id="selectGroupByGradeNameDeNormalization" parameterType="java.lang.Long"
             resultType="com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto$Response">
         SELECT
@@ -30,7 +30,7 @@
             IF(GROUPING(t.grade_name), 'ALL', grade_name) AS grade_name,
             0  AS total_tickets,
             count(t.grade_name) AS order_try
-        FROM ticket_order_log_denormalization t
+        FROM ticket_order_log_denormalization_copy t
         WHERE concert_seq = #{concertSeq}
         GROUP BY grade_name
         WITH ROLLUP
@@ -39,21 +39,31 @@
     <insert id="insertAggregationResult" parameterType="java.util.List">
         INSERT INTO ticket_order_result (
             concert_seq,
-             ticket_seq,
              grade_name,
-             total_tickets,
              order_try
         ) VALUES
             <foreach item="result" collection="list" separator=",">
                 (
                     #{result.concertSeq},
-                    #{result.ticketSeq},
                     #{result.gradeName},
-                    #{result.totalTickets},
                     #{result.orderTry}
                 )
             </foreach>
-
     </insert>
+
+
+    <!--티켓 등급별 예매 시도 조회 : WHERE IN-->
+    <select id="selectTicketSeqWhereIn" parameterType="java.lang.Long"
+            resultType="com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto$SimpleResponse">
+        SELECT
+            t.seq,
+            t.ticket_seq
+        FROM
+            ticket_order_log_copy t
+        WHERE ticket_seq IN
+            <foreach collection="list" item="ticketSeq" separator="," open="(" close=")">
+                #{ticketSeq}
+            </foreach>
+    </select>
 
 </mapper>

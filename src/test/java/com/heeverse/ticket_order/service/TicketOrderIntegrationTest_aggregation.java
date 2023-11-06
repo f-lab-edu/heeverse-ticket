@@ -2,26 +2,20 @@ package com.heeverse.ticket_order.service;
 
 import com.heeverse.common.factory.TicketLogFactory;
 import com.heeverse.common.factory.TicketOrderingDto;
-import com.heeverse.ticket.service.TicketService;
 import com.heeverse.ticket_order.domain.dto.AggregateDto;
-import com.heeverse.ticket_order.domain.exception.TicketingFailException;
-import com.heeverse.ticket_order.domain.mapper.TicketOrderMapper;
+import com.heeverse.ticket_order.domain.dto.enums.StrategyType;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
+import static com.heeverse.ticket_order.domain.dto.enums.StrategyType.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
 
 /**
  * @author gutenlee
@@ -33,6 +27,8 @@ public class TicketOrderIntegrationTest_aggregation {
 
     @Autowired
     private QueryAggregationService aggregationService;
+    @Autowired
+    private MultithreadingAggregationService multithreadingAggregationService;
     @Autowired
     private TicketLogFactory ticketLogFactory;
 
@@ -49,7 +45,7 @@ public class TicketOrderIntegrationTest_aggregation {
 
         // then
         List<AggregateDto.Response> aggregated
-                = aggregationService.aggregate(new AggregateDto.Request(orderInfo.getConcertSeq(), false));
+                = aggregationService.aggregate(new AggregateDto.Request(orderInfo.getConcertSeq(), false, QUERY));
 
         Assertions.assertAll(
                 () -> assertEquals(

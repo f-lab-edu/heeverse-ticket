@@ -2,6 +2,7 @@ package com.heeverse.ticket_order.controller;
 
 import com.heeverse.member.domain.entity.Member;
 import com.heeverse.ticket_order.domain.dto.*;
+import com.heeverse.ticket_order.service.MultithreadingAggregationService;
 import com.heeverse.ticket_order.service.QueryAggregationService;
 import com.heeverse.ticket_order.service.TicketOrderFacade;
 import jakarta.validation.Valid;
@@ -29,6 +30,7 @@ public class TicketOrderController {
 
     private final TicketOrderFacade ticketOrderFacade;
     private final QueryAggregationService queryAggregationService;
+    private final MultithreadingAggregationService multithreadingAggregationService;
 
     @PostMapping
     public ResponseEntity<List<TicketOrderResponseDto>> orderTicket(
@@ -52,7 +54,11 @@ public class TicketOrderController {
     public ResponseEntity<List<AggregateDto.Response>> aggregate(
             @RequestBody AggregateDto.Request request
     ) {
-        log.info("OK");
-        return ResponseEntity.ok(queryAggregationService.aggregate(request));
+        log.info("전략 타입 {}", request.getStrategyType());
+        if (request.isQuery()) {
+            return ResponseEntity.ok(queryAggregationService.aggregate(request));
+        }
+        multithreadingAggregationService.aggregate(request);
+        return ResponseEntity.ok(List.of(new AggregateDto.Response("시작")));
     }
 }

@@ -15,4 +15,16 @@ public class AggregateSelectMapperDto {
             Integer totalTickets,
             Integer orderTry
     ) { }
+
+
+    public record SimpleResponse (
+            long seq,
+            long ticketSeq
+    ) {
+        public SimpleResponse(long seq, long ticketSeq) {
+            this.seq = seq;
+            this.ticketSeq = ticketSeq;
+        }
+    }
+
 }
