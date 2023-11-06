@@ -54,7 +54,7 @@ public class TicketOrderController {
     public ResponseEntity<List<AggregateDto.Response>> aggregate(
             @RequestBody AggregateDto.Request request
     ) {
-        log.info("전략 타입 {}", request.getStrategyType());
+        log.info("Request : 전략 {} / size {}", request.getStrategyType(), request.getSize());
         if (request.isQuery()) {
             return ResponseEntity.ok(queryAggregationService.aggregate(request));
         }
