@@ -2,6 +2,7 @@ package com.heeverse.config;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -16,6 +17,7 @@ import static com.heeverse.common.Constants.*;
  * @author jeongheekim
  * @date 10/31/23
  */
+@Slf4j
 @Configuration
 public class MultiDataSource {
     private final VaultOperationService vaultOperationService;
@@ -29,17 +31,22 @@ public class MultiDataSource {
     @Primary
     @Bean(name = "primaryDataSource")
     public HikariDataSource primaryDataSource() {
-        return new HikariDataSource(getDataSourceProperties());
+        HikariConfig hikariConfig = getDataSourceProperties();
+        hikariConfig.setMaximumPoolSize(5);
+        return new HikariDataSource(hikariConfig);
     }
 
     @Bean(name = "lockDataSource")
     public HikariDataSource lockDataSource() {
-        return new HikariDataSource(getDataSourceProperties());
+        HikariConfig hikariConfig = getDataSourceProperties();
+        hikariConfig.setMaximumPoolSize(15);
+        return new HikariDataSource(hikariConfig);
     }
 
     private HikariConfig getDataSourceProperties() {
         String[] activeProfiles = environment.getActiveProfiles();
         HikariConfig hikariConfig = new HikariConfig();
+
         if (Arrays.asList(activeProfiles).contains(LOCAL)) {
             hikariConfig.setJdbcUrl(environment.getProperty("spring.datasource.url"));
             hikariConfig.setDriverClassName(environment.getProperty("spring.datasource.driver-class-name"));
@@ -50,7 +57,6 @@ public class MultiDataSource {
             hikariConfig.setUsername(dbProps.username());
             hikariConfig.setPassword(dbProps.password());
         }
-
         return hikariConfig;
     }
 
