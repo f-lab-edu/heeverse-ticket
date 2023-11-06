@@ -59,6 +59,6 @@ public class TicketOrderController {
             return ResponseEntity.ok(queryAggregationService.aggregate(request));
         }
         multithreadingAggregationService.aggregate(request);
-        return ResponseEntity.ok(List.of(new AggregateDto.Response("시작")));
+        return ResponseEntity.ok(List.of(new AggregateDto.Response()));
     }
 }

@@ -4,6 +4,7 @@ import com.heeverse.ticket_order.domain.dto.enums.StrategyType;
 import com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto;
 import jakarta.annotation.Nullable;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -43,12 +44,13 @@ public class AggregateDto {
 
 
     @Getter
+    @NoArgsConstructor
     public static class Response {
         private Long concertSeq;
         private String gradeName;
         private Integer totalTickets;
         private Integer orderTry;
-        private String message;
+        private String message = "집계 작업이 시작되었습니다";
         private final LocalDateTime createdAt = LocalDateTime.now();
 
         public Response(
@@ -67,10 +69,6 @@ public class AggregateDto {
                 AggregateSelectMapperDto.Response mapperResponse
         ) {
             this(mapperResponse.concertSeq(), mapperResponse.gradeName(), mapperResponse.totalTickets(), mapperResponse.orderTry());
-        }
-
-        public Response(String message) {
-            this.message = message;
         }
 
         @Override

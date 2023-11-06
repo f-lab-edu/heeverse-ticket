@@ -40,8 +40,9 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 import static com.heeverse.ControllerTestHelper.getRestDocsMockMvc;
-import static com.heeverse.ticket_order.domain.dto.enums.StrategyType.QUERY;
+import static com.heeverse.ticket_order.domain.dto.enums.StrategyType.MULTI_THREAD;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -177,11 +178,11 @@ public class ControllerResponseUnitTest {
                 122_342
         ));
 
-        when(aggregationService.aggregate(any()))
-                .thenReturn(List.of(response));
+        doNothing().when(multithreadingAggregationService).aggregate(any());
+
 
         mockMvc.perform(get(ControllerTestHelper.Endpoint.TICKET.티켓_예매_집계)
-                        .content(om.writeValueAsString(new AggregateDto.Request(1L, true, QUERY)))
+                        .content(om.writeValueAsString(new AggregateDto.Request(1L, true, MULTI_THREAD)))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(res -> status().is2xxSuccessful().match(res))
                 .andDo(TicketDocsResultFactory.ticketOrderLogDocs());

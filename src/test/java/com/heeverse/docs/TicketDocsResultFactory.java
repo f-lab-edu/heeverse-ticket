@@ -67,13 +67,18 @@ public class TicketDocsResultFactory {
                 getDocumentResponse(),
                 requestFields(
                         fieldWithPath("concertSeq").type(JsonFieldType.NUMBER).description("공연 시퀀스"),
-                        fieldWithPath("normalization").type(JsonFieldType.BOOLEAN).description("정규화된 테이블에서 조회 여부")
+                        fieldWithPath("query").type(JsonFieldType.BOOLEAN).description("쿼리로 처리 여부"),
+                        fieldWithPath("normalization").type(JsonFieldType.BOOLEAN).description("집계 쿼리 사용 시 정규화된 테이블에서 조회 여부"),
+                        fieldWithPath("strategyType").type(JsonFieldType.STRING).description("전략 타입 종류"),
+                        fieldWithPath("size").type(JsonFieldType.NUMBER).description("페이징 사이즈")
                 ),
                 responseFields(
-                        fieldWithPath("[]concertSeq").type(JsonFieldType.NUMBER).description("공연 시퀀스"),
-                        fieldWithPath("[]gradeName").type(JsonFieldType.STRING).description("티켓 등급"),
-                        fieldWithPath("[]totalTickets").type(JsonFieldType.NUMBER).description("전체 티켓 수"),
-                        fieldWithPath("[]orderTry").type(JsonFieldType.NUMBER).description("예매 시도 수")
+                        fieldWithPath("[]concertSeq").type(JsonFieldType.NULL).description("공연 시퀀스"),
+                        fieldWithPath("[]gradeName").type(JsonFieldType.NULL).description("티켓 등급"),
+                        fieldWithPath("[]totalTickets").type(JsonFieldType.NULL).description("전체 티켓 수"),
+                        fieldWithPath("[]orderTry").type(JsonFieldType.NULL).description("예매 시도 수"),
+                        fieldWithPath("[]message").type(JsonFieldType.STRING).description("메세지"),
+                        fieldWithPath("[]createdAt").type(JsonFieldType.STRING).description("작업 시작일시")
                 )
         );
     }
