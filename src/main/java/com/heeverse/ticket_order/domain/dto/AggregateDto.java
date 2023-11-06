@@ -20,13 +20,20 @@ public class AggregateDto {
         private Long concertSeq;
         private boolean normalization;
         private StrategyType strategyType;
+        private int size;
 
         protected Request() {
         }
+
         public Request(Long concertSeq, boolean normalization, StrategyType strategyType) {
+            this(concertSeq, normalization, strategyType, 50);
+        }
+
+        public Request(Long concertSeq, boolean normalization, StrategyType strategyType, int size) {
             this.concertSeq = concertSeq;
             this.normalization = normalization;
             this.strategyType = strategyType;
+            this.size = size;
         }
 
         public boolean isQuery() {

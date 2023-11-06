@@ -46,7 +46,7 @@ public class StreamAggregationStrategy implements AggregationStrategy {
                         Collectors.summingLong(Map.Entry::getValue)
                 ));
 
-        resultDBTransfer.transferAll(new ResultHashMap(result).toList(jobWrapper.concertSeq()));
+        resultDBTransfer.transferAll(ResultHashMap.toList(result, jobWrapper.concertSeq()));
     }
 
 

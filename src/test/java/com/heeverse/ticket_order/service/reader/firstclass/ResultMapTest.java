@@ -26,7 +26,7 @@ class ResultMapTest {
          //given
         String key = "A";
         Map.Entry<String, Long> entry = Map.entry(key, 100L);
-        ResultConcurrentMap resultMap = new ResultConcurrentMap(new ConcurrentHashMap<>());
+        ResultConcurrentMap resultMap = new ResultConcurrentMap();
 
         // when
         resultMap.add(entry);
@@ -47,7 +47,7 @@ class ResultMapTest {
         //given
         String key = "A";
         Map.Entry<String, Long> entry = Map.entry(key, 100L);
-        ResultConcurrentMap resultMap = new ResultConcurrentMap(new ConcurrentHashMap<>());
+        ResultConcurrentMap resultMap = new ResultConcurrentMap();
 
         // when
         int loop = 2;
@@ -71,7 +71,7 @@ class ResultMapTest {
     @DisplayName("ResultMap 연산 동기 처리 테스트 - 1~50까지 합은 1275 여야 한다")
     void 동기처리_테스트() throws Exception {
         // given
-        ResultConcurrentMap resultMap = new ResultConcurrentMap(new ConcurrentHashMap<>());
+        ResultConcurrentMap resultMap = new ResultConcurrentMap();
 
         // when
         String[] keys = {"A", "B", "C", "D"};
@@ -96,7 +96,7 @@ class ResultMapTest {
     void resultMapThreadSafeTest() throws Exception {
 
         // given
-        ResultConcurrentMap resultMap = new ResultConcurrentMap(new ConcurrentHashMap<>());
+        ResultConcurrentMap resultMap = new ResultConcurrentMap();
 
         // when
         String[] keys = {"A", "B", "C", "D"};

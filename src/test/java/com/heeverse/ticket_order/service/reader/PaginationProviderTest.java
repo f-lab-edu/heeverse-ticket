@@ -73,7 +73,6 @@ public class PaginationProviderTest {
 
         @Test
         @Disabled
-        @Order(1)
         @DisplayName("CURSOR 쿼리")
         void cursorTest() throws Exception {
             // 26
@@ -95,7 +94,6 @@ public class PaginationProviderTest {
         }
 
         @Test
-        @Order(2)
         @DisplayName("NO OFFSET 쿼리")
         void noOffsetTest() throws Exception {
             // 1 min 27 sec
@@ -140,7 +138,6 @@ public class PaginationProviderTest {
 
         @Test
         @DisplayName("WHERE IN 쿼리")
-        @Order(3)
         void whereInTest() {
             // 3M 28S
             log.info("WHERE IN 쿼리 시작 시간 {}", LocalDateTime.now());
@@ -189,17 +186,6 @@ public class PaginationProviderTest {
 
             log.info("KEY SET 쿼리 종료 시간 {}", LocalDateTime.now());
         }
-
-
-        @Test
-        void syncListTest() throws Exception {
-
-
-
-        }
-
-
-
 
         private String generateQMarkString(int size) {
             if (size == 0) {

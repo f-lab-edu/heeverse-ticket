@@ -35,7 +35,7 @@ public class SingleThreadStrategy implements AggregationStrategy {
     @Override
     public void execute(AggregationJobWrapper jobWrapper) {
 
-        ResultHashMap resultHashMap = new ResultHashMap(new HashMap<>());
+        ResultHashMap resultHashMap = new ResultHashMap();
 
         for (var chunk : jobWrapper.chunks()) {
             reduceTask(resultHashMap, jobWrapper.gradeInfo(), ticketAggrFacade.read(chunk));

@@ -4,6 +4,7 @@ import com.heeverse.ticket_order.domain.dto.persistence.AggregateInsertMapperDto
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.function.BiFunction;
 
@@ -13,8 +14,8 @@ import java.util.function.BiFunction;
  */
 public class ResultConcurrentMap extends ResultMap<String, LongAdder, Long> {
 
-    public ResultConcurrentMap(Map<String, LongAdder> map) {
-        super(map);
+    public ResultConcurrentMap() {
+        super(new ConcurrentHashMap<>());
     }
 
     @Override

@@ -18,7 +18,7 @@ import static com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMa
 public class AggregateSubscriber implements Subscriber<List<SimpleResponse>> {
 
     @ThreadSafe
-    private final ResultConcurrentMap resultConcurrentMap = new ResultConcurrentMap(new ConcurrentHashMap<>());
+    private final ResultConcurrentMap resultConcurrentMap = new ResultConcurrentMap();
 
     public ResultConcurrentMap subscribe(
             TaskMessage<List<SimpleResponse>> taskMessage
