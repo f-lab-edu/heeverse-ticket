@@ -11,9 +11,6 @@ RUN useradd -r -u 1026 -g ubuntu ubuntu
 RUN chown -R ubuntu:ubuntu /workspace
 USER ubuntu
 
-# ENV CLASSPATH /workspace/heeverse-api.jar:/workspace/heeverse-api-dependencies/*
-
-# CMD ["java", "-cp", "$CLASSPATH", "com.heeverse.Main"]
 
 
 ENTRYPOINT [ "sh", "deploy.sh", "-Dspring.profiles.active=${PROFILE}"]
