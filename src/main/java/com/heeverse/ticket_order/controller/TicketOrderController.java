@@ -2,6 +2,7 @@ package com.heeverse.ticket_order.controller;
 
 import com.heeverse.member.domain.entity.Member;
 import com.heeverse.ticket_order.domain.dto.*;
+import com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto;
 import com.heeverse.ticket_order.service.MultithreadingAggregationService;
 import com.heeverse.ticket_order.service.QueryAggregationService;
 import com.heeverse.ticket_order.service.TicketOrderFacade;
@@ -54,11 +55,15 @@ public class TicketOrderController {
     public ResponseEntity<List<AggregateDto.Response>> aggregate(
             @RequestBody AggregateDto.Request request
     ) {
-        log.info("Request : 전략 {} / size {}", request.getStrategyType(), request.getSize());
+        log.info("Request : 전략 {} / pageSize {}", request.getStrategyType(), request.getPageSize());
+
+        AggregateSelectMapperDto.Request requestSelect = AggregateSelectMapperDto.Request.from(request);
+
         if (request.isQuery()) {
-            return ResponseEntity.ok(queryAggregationService.aggregate(request));
+            return ResponseEntity.ok(queryAggregationService.aggregate(requestSelect, request.isQuery()));
         }
-        multithreadingAggregationService.aggregate(request);
+
+        multithreadingAggregationService.aggregate(requestSelect);
         return ResponseEntity.ok(List.of(new AggregateDto.Response()));
     }
 }

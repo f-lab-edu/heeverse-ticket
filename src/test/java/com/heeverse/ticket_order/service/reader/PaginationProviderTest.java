@@ -44,7 +44,7 @@ public class PaginationProviderTest {
     }
 
     @Test
-    @DisplayName("리스트를 chuckSize 만큼 sublist로 분할하면 개수는 (list size / size) 결과의 올림한 값과 같아야 한다")
+    @DisplayName("리스트를 chuckSize 만큼 sublist로 분할하면 개수는 (list pageSize / pageSize) 결과의 올림한 값과 같아야 한다")
     void chunkTest() {
 
         // given

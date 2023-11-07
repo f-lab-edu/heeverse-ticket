@@ -31,7 +31,7 @@ class MultithreadingAggregationServiceUnitTest {
         //given
         StrategyType type = StrategyType.MULTI_THREAD;
 
-        Assertions.assertInstanceOf(MultithreadingStrategy.class, ac.getBean(StrategyType.getReaderClazz(type)));
+        Assertions.assertInstanceOf(MultithreadingStrategy.class, ac.getBean(StrategyType.getStrategyClass(type)));
     }
 
 
