@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.ClassPathResource;
 
 import javax.sql.DataSource;
@@ -20,6 +21,7 @@ import javax.sql.DataSource;
 @MapperScan(value = "com.heeverse.*.domain.mapper", sqlSessionFactoryRef = "primarySqlSessionFactory")
 public class SqlSessionFactoryConfiguration {
 
+    @Primary
     @Bean(name = "primarySqlSessionFactory")
     public SqlSessionFactory primarySqlSessionFactory(@Qualifier("primaryDataSource") DataSource primaryDataSource, ApplicationContext applicationContext) throws Exception {
         SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
