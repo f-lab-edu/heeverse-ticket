@@ -113,46 +113,6 @@ class AggregationReaderTest {
 
 
 
-
-//    @Test
-//    @DisplayName("비정규화 테이블에서 처리")
-//    void queryAggrTest() {
-//
-//        //given
-//        AggregateSelectMapperDto.Request request
-//                = new AggregateSelectMapperDto.Request(1L,null);
-//
-//
-//        Mockito.when(mock.selectGroupByGradeNameDeNormalization(request.concertSeq()))
-//                .thenReturn(getAnswer(request.concertSeq()));
-//
-//        List<AggregateSelectMapperDto.Response> deNormalization
-//                = mock.selectGroupByGradeNameDeNormalization(request.concertSeq());
-//
-//        Assertions.assertEquals(deNormalization, getAnswer(request.concertSeq()));
-//    }
-//
-//    @Test
-//    @DisplayName("정규화 테이블에서 처리")
-//    void queryAggrNormalizationTest() {
-//
-//        //given
-//        AggregateSelectMapperDto.Request request
-//                = new AggregateSelectMapperDto.Request(1L,null);
-//
-//
-//        Mockito.when(mock.selectGroupByGradeName(request.concertSeq()))
-//                .thenReturn(getAnswer(request.concertSeq()));
-//
-//        List<AggregateSelectMapperDto.Response> deNormalization
-//                = mock.selectGroupByGradeName(request.concertSeq());
-//
-//        Assertions.assertEquals(deNormalization, getAnswer(request.concertSeq()));
-//
-//    }
-
-
-
     List<TicketOrderLog> insert() {
 
         TicketOrderingDto orderingDto = ticketLogFactory.givenTicketOrder();
