@@ -57,13 +57,11 @@ public class TicketOrderController {
     ) {
         log.info("Request : 전략 {} / pageSize {}", request.getStrategyType(), request.getPageSize());
 
-        AggregateSelectMapperDto.Request requestSelect = AggregateSelectMapperDto.Request.from(request);
-
         if (request.isQuery()) {
-            return ResponseEntity.ok(queryAggregationService.aggregate(requestSelect, request.isQuery()));
+            return ResponseEntity.ok(queryAggregationService.aggregate(AggregateSelectMapperDto.QueryRequest.of(request)));
         }
 
-        multithreadingAggregationService.aggregate(requestSelect);
+        multithreadingAggregationService.aggregate(AggregateSelectMapperDto.Request.of(request));
         return ResponseEntity.ok(List.of(new AggregateDto.Response()));
     }
 }

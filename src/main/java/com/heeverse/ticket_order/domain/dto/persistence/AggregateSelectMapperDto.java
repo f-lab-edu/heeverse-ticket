@@ -10,18 +10,22 @@ import jakarta.validation.constraints.Min;
  */
 public class AggregateSelectMapperDto {
 
+    public record QueryRequest (
+            @Min(0)
+            long concertSeq,
+            boolean useNormalization
+    ) {
+        public static QueryRequest of(AggregateDto.Request request) {
+            return new QueryRequest(request.getConcertSeq(), request.isNormalization());
+        }
+    }
+
     public record Request (
             @Min(0)
             long concertSeq,
             StrategyDto strategyDto
     ) {
-
-        public static Request from(AggregateDto.Request request) {
-
-            if (request.isQuery()) {
-                return new Request(request.getConcertSeq(), null);
-            }
-
+        public static Request of(AggregateDto.Request request) {
             return new Request(
                     request.getConcertSeq(),
                     new StrategyDto(request.getStrategyType(), request.getPageSize())

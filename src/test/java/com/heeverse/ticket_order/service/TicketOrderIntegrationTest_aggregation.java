@@ -43,7 +43,7 @@ public class TicketOrderIntegrationTest_aggregation {
 
         // then
         List<AggregateDto.Response> aggregated
-                = aggregationService.aggregate(new AggregateSelectMapperDto.Request(orderInfo.getConcertSeq(), null), false);
+                = aggregationService.aggregate(new AggregateSelectMapperDto.QueryRequest(orderInfo.getConcertSeq(), true));
 
         Assertions.assertAll(
                 () -> assertEquals(

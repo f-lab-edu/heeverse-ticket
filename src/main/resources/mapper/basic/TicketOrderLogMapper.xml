@@ -5,7 +5,7 @@
 <mapper namespace="com.heeverse.ticket_order.domain.mapper.TicketOrderLogMapper">
 
     <insert id="insertTicketOrderLog" parameterType="java.util.List">
-        INSERT INTO ticket_order_log(
+        INSERT INTO ticket_order_log_copy (
             ticket_seq,
             concert_seq,
             member_seq,

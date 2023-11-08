@@ -24,8 +24,6 @@ public class AggregateDto {
         private StrategyType strategyType;
         private int pageSize;
 
-        protected Request() {}
-
         public Request(Long concertSeq, boolean normalization, StrategyType strategyType) {
             this(concertSeq, normalization, strategyType, DEFAULT_SIZE);
         }
@@ -81,4 +79,5 @@ public class AggregateDto {
                     '}';
         }
     }
+
 }

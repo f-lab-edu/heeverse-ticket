@@ -26,17 +26,13 @@ public class QueryAggregationService implements SynchronizableAggregation {
 
     @Transactional(readOnly = true)
     @Override
-    public List<AggregateDto.Response> aggregate(
-            AggregateSelectMapperDto.Request aggrDto,
-            boolean useNormalization
-    ) {
-
-        List<AggregateSelectMapperDto.Response> responseList = getResultGroupByGrade(aggrDto, useNormalization);
-
-        return responseList.stream()
+    public List<AggregateDto.Response> aggregate(AggregateSelectMapperDto.QueryRequest aggrDto) {
+        return getResultGroupByGrade(aggrDto, aggrDto.useNormalization())
+                .stream()
                 .map(AggregateDto.Response::new)
                 .collect(Collectors.toList());
     }
+
 
     @Transactional
     public List<AggregateDto.Response> transfer(List<AggregateDto.Response> responses) {
@@ -48,7 +44,7 @@ public class QueryAggregationService implements SynchronizableAggregation {
     }
 
     private List<AggregateSelectMapperDto.Response> getResultGroupByGrade(
-            AggregateSelectMapperDto.Request aggrDto, boolean useNormalization) {
+            AggregateSelectMapperDto.QueryRequest aggrDto, boolean useNormalization) {
         if (useNormalization) {
             return reader.getResultGroupByGrade(aggrDto);
         }

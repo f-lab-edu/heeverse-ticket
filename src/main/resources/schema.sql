@@ -8,6 +8,7 @@ DROP TABLE IF EXISTS artist cascade;
 DROP TABLE IF EXISTS ticket_order_log cascade;
 DROP TABLE IF EXISTS ticket_order_log_copy cascade;
 DROP TABLE IF EXISTS ticket_order_log_denormalization_copy cascade;
+DROP TABLE IF EXISTS ticket_order_result cascade;
 
 
 CREATE TABLE member
@@ -120,5 +121,16 @@ create table ticket_order_log_denormalization_copy
     grade_name       varchar(20) ,
     ticket_order_seq bigint      ,
     create_datetime  datetime
+)
+;
+
+
+create table ticket_order_result
+(
+    concert_seq     int                                not null,
+    grade_name      varchar(20)                        not null,
+    total_tickets   int                                null,
+    order_try       int                                null,
+    create_datetime datetime default CURRENT_TIMESTAMP null
 )
 ;

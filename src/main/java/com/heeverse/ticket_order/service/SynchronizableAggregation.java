@@ -7,8 +7,5 @@ import java.util.List;
 
 public interface SynchronizableAggregation {
 
-    List<AggregateDto.Response> aggregate(
-            AggregateSelectMapperDto.Request aggrDto,
-            boolean useNormalization
-    );
+    List<AggregateDto.Response> aggregate(AggregateSelectMapperDto.QueryRequest aggrDto);
 }
