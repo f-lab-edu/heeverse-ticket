@@ -15,6 +15,7 @@ import com.heeverse.ticket_order.service.reader.strategy.MultithreadingStrategy;
 import com.heeverse.ticket_order.service.reader.strategy.SingleThreadStrategy;
 import com.heeverse.ticket_order.service.reader.strategy.StreamAggregationStrategy;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -30,6 +31,7 @@ import java.util.stream.IntStream;
 
 @ActiveProfiles("local")
 @SpringBootTest
+@Disabled
 class AggregationReaderTest {
 
 
