@@ -179,10 +179,7 @@ public class ControllerResponseUnitTest {
         mockMvc.perform(get(ControllerTestHelper.Endpoint.TICKET.티켓_예매_집계)
                         .content(om.writeValueAsString(new AggregateDto.Request(1L, true, MULTI_THREAD)))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(res -> {
-                    System.out.println(res.getResponse().getContentAsString());
-                    status().is2xxSuccessful().match(res);
-                })
+                .andExpect(res -> status().is2xxSuccessful().match(res))
                 .andDo(TicketDocsResultFactory.ticketOrderLogDocs());
     }
 
