@@ -32,6 +32,9 @@ import java.util.stream.IntStream;
 @SpringBootTest
 class AggregationReaderTest {
 
+
+
+
     @Autowired
     private TicketOrderAggregationMapper aggregationMapper;
     @Autowired
@@ -45,7 +48,7 @@ class AggregationReaderTest {
     private SingleThreadStrategy singleThreadStrategy;
     @Autowired
     private StreamAggregationStrategy streamAggregationStrategy;
-    
+
     @Autowired
     private TicketLogFactory ticketLogFactory;
 
@@ -70,7 +73,13 @@ class AggregationReaderTest {
 
         // then
         List<AggregateSelectMapperDto.SimpleResponse> response
-                = aggregationMapper.selectTicketSeqWhereIn(saved.stream().map(TicketOrderLog::getTicketSeq).toList());
+                = null;
+        try {
+            response = aggregationMapper.selectTicketSeqWhereIn(saved.stream().map(TicketOrderLog::getTicketSeq).toList());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
         Assertions.assertEquals(response.size(), saved.size());
 
     }
@@ -110,7 +119,6 @@ class AggregationReaderTest {
                 = aggregationMapper.selectTicketSeqWhereIn(saved.stream().map(TicketOrderLog::getTicketSeq).toList());
 
     }
-
 
 
     private List<TicketOrderLog> insert() {
