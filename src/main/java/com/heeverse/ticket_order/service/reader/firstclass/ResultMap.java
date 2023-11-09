@@ -8,6 +8,10 @@ import java.util.Map;
 import java.util.function.BiFunction;
 
 /**
+ * K : Map의 Key 타입 <br>
+ * V : Map의 Value 타입 <br>
+ * E : Map에 {@link #add} 로 추가할 Map.Entry의 Value 타입 <br>
+ *
  * @author gutenlee
  * @since 2023/10/28
  */

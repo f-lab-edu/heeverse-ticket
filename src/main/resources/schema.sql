@@ -93,12 +93,12 @@ CREATE TABLE venue
 
 create table ticket_order_log
 (
-    seq              int auto_increment primary key,
-    member_seq       int      null,
-    ticket_seq       int      null,
-    ticket_order_seq int      null,
+    seq              bigint auto_increment primary key,
+    member_seq       bigint      null,
+    ticket_seq       bigint      null,
+    ticket_order_seq bigint      null,
     create_datetime  datetime null,
-    concert_seq      int      null
+    concert_seq      bigint      null
 )
 ;
 
@@ -127,10 +127,10 @@ create table ticket_order_log_denormalization_copy
 
 create table ticket_order_result
 (
-    concert_seq     int                                not null,
+    concert_seq     bigint                                not null,
     grade_name      varchar(20)                        not null,
-    total_tickets   int                                null,
-    order_try       int                                null,
+    total_tickets   bigint                                null,
+    order_try       bigint                                null,
     create_datetime datetime default CURRENT_TIMESTAMP null
 )
 ;

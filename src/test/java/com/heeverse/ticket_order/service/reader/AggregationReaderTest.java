@@ -113,7 +113,7 @@ class AggregationReaderTest {
 
 
 
-    List<TicketOrderLog> insert() {
+    private List<TicketOrderLog> insert() {
 
         TicketOrderingDto orderingDto = ticketLogFactory.givenTicketOrder();
 

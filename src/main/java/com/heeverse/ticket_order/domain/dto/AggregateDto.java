@@ -24,6 +24,8 @@ public class AggregateDto {
         private StrategyType strategyType;
         private int pageSize;
 
+        protected Request(){};
+
         public Request(Long concertSeq, boolean normalization, StrategyType strategyType) {
             this(concertSeq, normalization, strategyType, DEFAULT_SIZE);
         }
@@ -32,7 +34,7 @@ public class AggregateDto {
             this.concertSeq = concertSeq;
             this.normalization = normalization;
             this.strategyType = strategyType;
-            this.pageSize = pageSize == 0 ? DEFAULT_SIZE : pageSize;
+            this.pageSize = pageSize <= 0 ? DEFAULT_SIZE : pageSize;
         }
 
         public boolean isQuery() {

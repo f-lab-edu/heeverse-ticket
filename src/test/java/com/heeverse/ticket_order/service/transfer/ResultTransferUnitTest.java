@@ -13,7 +13,7 @@ import java.util.List;
 
 import static org.mockito.Mockito.doNothing;
 
-@SpringBootTest(classes = {ResultDBTransfer.class})
+@SpringBootTest(classes = {ResultDBTransfer.class, TicketOrderAggregationMapper.class})
 class ResultTransferUnitTest {
 
     @MockBean

@@ -15,7 +15,7 @@ import java.util.concurrent.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-@DisplayName("병렬 프로그래밍의 ResultMap 안전성 단위 테스트")
+@DisplayName("병렬 프로그래밍의 ResultMap 안전성 단위테스트")
 class ResultMapUnitTest {
 
     private final static Logger log = LoggerFactory.getLogger(ResultMapUnitTest.class);
@@ -43,7 +43,7 @@ class ResultMapUnitTest {
     }
 
     @Test
-    @DisplayName("존재하는 key 인 경우 add 테스트")
+    @DisplayName("존재하는 key에 add() 호출하는 경우 value는 기존값에 누적 되어야한다")
     void addWhenExistKeyTest() {
         //given
         final String gradeName = "A";
@@ -67,7 +67,7 @@ class ResultMapUnitTest {
 
 
     @Test
-    @DisplayName("ResultConcurrentMap 동기 처리 테스트")
+    @DisplayName("ResultConcurrentMap 동기적으로 add 호출 테스트")
     void resultConcurrentMapSynchronousTest() {
         // given
         final ResultConcurrentMap resultConcurrentMap = new ResultConcurrentMap();
@@ -87,7 +87,7 @@ class ResultMapUnitTest {
 
 
     @RepeatedTest(100)
-    @DisplayName("ResultConcurrentMap thread-safe 테스트")
+    @DisplayName("ResultConcurrentMap thread-safe 하므로 동시적으로 add 호출해도 안전성을 보장한다")
     void resultMapThreadSafeTest() {
 
         // given
@@ -111,7 +111,7 @@ class ResultMapUnitTest {
     }
 
     @RepeatedTest(10)
-    @DisplayName("resultHashMap 은 NOT thread-safe 하다. ConcurrentModificationException or IllegalStateException or InterruptedException 발생한다")
+    @DisplayName("resultHashMap 은 NOT thread-safe 하므로 동시적으로 add 호출하면 ConcurrentModificationException or IllegalStateException or InterruptedException 발생할 수 있다")
     void resultHashMapThreadNotSafeTest() {
 
         // given

@@ -11,7 +11,7 @@ import jakarta.validation.constraints.Min;
 public class AggregateSelectMapperDto {
 
     public record QueryRequest (
-            @Min(0)
+            @Min(1)
             long concertSeq,
             boolean useNormalization
     ) {

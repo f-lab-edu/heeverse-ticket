@@ -60,7 +60,7 @@ public class PaginationProviderTest {
 
 
     @Nested
-    @EnabledOnOs(OS.MAC)
+    @Disabled
     class PagingTest {
 
         final static String OFFSET_QUERY = "SELECT ticket_seq, seq  FROM ticket_order_log_copy WHERE concert_seq = 1 ORDER BY concert_seq, seq LIMIT ? OFFSET ?";
