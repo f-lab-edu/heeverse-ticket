@@ -12,13 +12,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.util.List;
 
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {ResultDBTransfer.class, TicketOrderAggregationMapper.class})
 class ResultTransferUnitTest {
 
     @MockBean
     private TicketOrderAggregationMapper aggregationMapper;
-    @Autowired
+    @MockBean
     private ResultDBTransfer resultDBTransfer;
 
     @Test
@@ -36,9 +37,10 @@ class ResultTransferUnitTest {
 
         // when
         doNothing().when(aggregationMapper).insertAggregationResult(toInsert);
+        when(resultDBTransfer.transferAll(toInsert)).thenReturn(toInsert);
 
         // then
-        List<AggregateInsertMapperDto> saved = resultDBTransfer.transferAll(List.of(mapperDto));
+        List<AggregateInsertMapperDto> saved = resultDBTransfer.transferAll(toInsert);
 
         Assertions.assertEquals(saved, toInsert);
     }

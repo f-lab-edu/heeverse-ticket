@@ -113,7 +113,7 @@ build {
 
 test {
     testLogging {
-        exceptionFormat = 'full'
+        exceptionFormat = 'SHORT'
     }
 }
 

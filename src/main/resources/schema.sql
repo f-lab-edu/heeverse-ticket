@@ -131,6 +131,6 @@ create table ticket_order_result
     grade_name      varchar(20)                        not null,
     total_tickets   bigint                                null,
     order_try       bigint                                null,
-    create_datetime datetime default CURRENT_TIMESTAMP null
+    create_datetime datetime null
 )
 ;
