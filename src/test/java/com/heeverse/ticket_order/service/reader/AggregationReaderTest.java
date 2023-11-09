@@ -33,8 +33,6 @@ import java.util.stream.IntStream;
 class AggregationReaderTest {
 
 
-
-
     @Autowired
     private TicketOrderAggregationMapper aggregationMapper;
     @Autowired

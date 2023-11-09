@@ -111,3 +111,9 @@ build {
 }
 
 
+test {
+    testLogging {
+        exceptionFormat = 'full'
+    }
+}
+
