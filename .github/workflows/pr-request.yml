@@ -42,7 +42,7 @@ jobs:
       - name: Test
         run: |
           chmod +x gradlew
-          SPRING_PROFILES_ACTIVE=dev-test ./gradlew test --stacktrace
+          SPRING_PROFILES_ACTIVE=dev-test ./gradlew test --debug
 
       - name: Remove Github Actions IP from security group
         run: |
