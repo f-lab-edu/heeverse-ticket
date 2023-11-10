@@ -18,23 +18,23 @@ public class AggregateDto {
     @Getter
     public static class Request {
 
+        private static final int DEFAULT_SIZE = 50;
         private Long concertSeq;
         private boolean normalization;
         private StrategyType strategyType;
-        private int size;
+        private int pageSize;
 
-        protected Request() {
-        }
+        protected Request(){};
 
         public Request(Long concertSeq, boolean normalization, StrategyType strategyType) {
-            this(concertSeq, normalization, strategyType, 50);
+            this(concertSeq, normalization, strategyType, DEFAULT_SIZE);
         }
 
-        public Request(Long concertSeq, boolean normalization, StrategyType strategyType, int size) {
+        public Request(Long concertSeq, boolean normalization, StrategyType strategyType, int pageSize) {
             this.concertSeq = concertSeq;
             this.normalization = normalization;
             this.strategyType = strategyType;
-            this.size = size;
+            this.pageSize = pageSize <= 0 ? DEFAULT_SIZE : pageSize;
         }
 
         public boolean isQuery() {
@@ -81,4 +81,5 @@ public class AggregateDto {
                     '}';
         }
     }
+
 }

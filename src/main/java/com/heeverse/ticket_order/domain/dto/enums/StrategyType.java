@@ -14,17 +14,17 @@ public enum StrategyType{
     ;
 
 
-    private final Class<? extends AggregationStrategy> reader;
+    private final Class<? extends AggregationStrategy> strategyClazz;
 
-    StrategyType(Class<? extends AggregationStrategy> reader) {
-        this.reader = reader;
+    StrategyType(Class<? extends AggregationStrategy> strategyClazz) {
+        this.strategyClazz = strategyClazz;
     }
 
-    public static Class<? extends AggregationStrategy> getReaderClazz(StrategyType strategyType) {
+    public static Class<? extends AggregationStrategy> getStrategyClass(StrategyType strategyType) {
         return switch (strategyType) {
-            case SINGLE_THREAD -> SINGLE_THREAD.reader;
-            case MULTI_THREAD -> MULTI_THREAD.reader;
-            case STREAM -> STREAM.reader;
+            case SINGLE_THREAD -> SINGLE_THREAD.strategyClazz;
+            case MULTI_THREAD -> MULTI_THREAD.strategyClazz;
+            case STREAM -> STREAM.strategyClazz;
             case QUERY -> throw new IllegalArgumentException("잘못된 타입 " + strategyType);
         };
     }

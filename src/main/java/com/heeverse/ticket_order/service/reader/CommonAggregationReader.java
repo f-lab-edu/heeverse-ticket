@@ -24,7 +24,6 @@ import java.util.List;
 public class CommonAggregationReader implements AggregationReader {
 
     private final TicketMapper ticketMapper;
-    private final static int CHUNK_SIZE = 100;
 
     @Override
     public void doAggregation(AggregationStrategy strategy, AggregateSelectMapperDto.Request request) {
@@ -35,7 +34,7 @@ public class CommonAggregationReader implements AggregationReader {
         AggregationJobWrapper jobWrapper = new AggregationJobWrapper(
                 concertSeq,
                 ticketList,
-                PaginationProvider.toChunk(TicketUtils.collectTicketSeq(ticketList), CHUNK_SIZE),
+                PaginationProvider.toChunk(TicketUtils.collectTicketSeq(ticketList), request.strategyDto().pageSize()),
                 new GradeInfo(ticketList)
         );
 

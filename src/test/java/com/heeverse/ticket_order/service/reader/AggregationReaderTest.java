@@ -1,37 +1,36 @@
 package com.heeverse.ticket_order.service.reader;
 
+import com.heeverse.common.factory.TicketLogFactory;
+import com.heeverse.common.factory.TicketOrderingDto;
+import com.heeverse.ticket_order.domain.dto.StrategyDto;
+import com.heeverse.ticket_order.domain.dto.enums.StrategyType;
 import com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto;
-import com.heeverse.ticket_order.domain.entity.TicketOrderLog;
 import com.heeverse.ticket_order.domain.mapper.TicketOrderAggregationMapper;
-import com.heeverse.ticket_order.domain.mapper.TicketOrderLogMapper;
 import com.heeverse.ticket_order.service.reader.strategy.MultithreadingStrategy;
 import com.heeverse.ticket_order.service.reader.strategy.SingleThreadStrategy;
 import com.heeverse.ticket_order.service.reader.strategy.StreamAggregationStrategy;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledOnOs;
-import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-@ActiveProfiles("dev-test")
+@ActiveProfiles(profiles = "local")
 @SpringBootTest
-@EnabledOnOs({OS.MAC})
 class AggregationReaderTest {
+
 
     @Autowired
     private TicketOrderAggregationMapper aggregationMapper;
-    @Autowired
-    private TicketOrderLogMapper logMapper;
     @Autowired
     private CommonAggregationReader reader;
 
@@ -42,95 +41,83 @@ class AggregationReaderTest {
     @Autowired
     private StreamAggregationStrategy streamAggregationStrategy;
 
-    private Logger log = LoggerFactory.getLogger(AggregationReaderTest.class);
-    private static final int LOOP = 1;
-    private static final int QUERY_LOOP = 1;
-    private static AggregateSelectMapperDto.Request request;
+    @Autowired
+    private TicketLogFactory ticketLogFactory;
 
-    @BeforeEach
-    void setUp() {
-        request = new AggregateSelectMapperDto.Request(1L);
-    }
+    private Logger log = LoggerFactory.getLogger(AggregationReaderTest.class);
+    private static final int PAGE_SIZE = 100;
+    private static final ExecutorService es = Executors.newFixedThreadPool(1);
+
 
     @Test
     @DisplayName("멀티스레드로 집계")
     void multithreadingAggregationTest() throws Exception {
+
+        //given
+        OrderLog saved = insert();
+
+        // when
         CountDownLatch latch = new CountDownLatch(1);
 
-        for (int i = 0; i < LOOP; i++) {
-            reader.doAggregation(multithreadingStrategy, request);
-            log.info( "===== {} ====", i);
-        }
+        var request = new AggregateSelectMapperDto.Request(saved.concertSeq(), new StrategyDto(StrategyType.MULTI_THREAD, PAGE_SIZE));
+        CompletableFuture.runAsync(() -> reader.doAggregation(multithreadingStrategy, request), es)
+                .thenAccept(r -> latch.countDown());
 
         latch.await();
+
+        // then
+        List<AggregateSelectMapperDto.SimpleResponse> response = ticketLogFactory.selectLog(saved.ticketList);
+
+        Assertions.assertEquals(response.size(), saved.ticketList().size());
     }
 
     @Test
-    @DisplayName("스트림으로 집계")
-    void streamAggregationTest() throws Exception {
+    @DisplayName("[스트림 처리] 예매 시도 log와 집계 결과 order try 값은 일치한다")
+    void streamAggregationTest() throws InterruptedException {
 
-        for (int i = 0; i < LOOP; i++) {
-            reader.doAggregation(streamAggregationStrategy, request);
-            log.info( "===== {} ====", i);
-        }
-    }
+        //given
+        OrderLog saved = insert();
 
+        // when
+        var request = new AggregateSelectMapperDto.Request(saved.concertSeq(), new StrategyDto(StrategyType.STREAM, PAGE_SIZE));
+        reader.doAggregation(streamAggregationStrategy, request);
 
-    @Test
-    @DisplayName("싱글 스레드로 집계 처리")
-    void synchronousAggregationTest() throws Exception {
+        // then
+        List<AggregateSelectMapperDto.Response> responses = ticketLogFactory.selectAggregateResult(saved.concertSeq());
+        int sum = responses.stream().mapToInt(AggregateSelectMapperDto.Response::orderTry).sum();
 
-        for (int i = 0; i < LOOP; i++) {
-            reader.doAggregation(singleThreadStrategy, request);
-            log.info( "===== {} ====", i);
-        }
-    }
+        Assertions.assertEquals(saved.ticketList().size(), sum);
 
-    @Test
-    @DisplayName("비정규화 테이블에서 처리")
-    void queryAggrTest() throws Exception {
-        for (int i = 0; i < QUERY_LOOP; i++) {
-            List<AggregateSelectMapperDto.Response> deNormalization
-                    = aggregationMapper.selectGroupByGradeNameDeNormalization(1L);
-            System.out.println("deNormalization = " + deNormalization);
-            log.info("{}", i);
-        }
     }
 
     @Test
-    @DisplayName("정규화 테이블에서 처리")
-    void queryAggrNormalizationTest() throws Exception {
-        for (int i = 0; i < QUERY_LOOP; i++) {
-            List<AggregateSelectMapperDto.Response> normalization
-                    = aggregationMapper.selectGroupByGradeName(1L);
-            log.info("{}", i);
-        }
+    @DisplayName("[싱글 스레드] 예매 시도 log와 집계 결과 order try 값은 일치한다")
+    void synchronousAggregationTest() throws InterruptedException {
+
+        //given
+        OrderLog saved = insert();
+
+        // when
+        var request = new AggregateSelectMapperDto.Request(saved.concertSeq(), new StrategyDto(StrategyType.STREAM, PAGE_SIZE));
+        reader.doAggregation(singleThreadStrategy, request);
+
+        // then
+        List<AggregateSelectMapperDto.Response> responses = ticketLogFactory.selectAggregateResult(saved.concertSeq());
+        int sum = responses.stream().mapToInt(AggregateSelectMapperDto.Response::orderTry).sum();
+
+        Assertions.assertEquals(saved.ticketList().size(), sum);
+
     }
 
+    public OrderLog insert() {
+        TicketOrderingDto orderInfo = ticketLogFactory.givenTicketOrder();
+        ticketLogFactory.whenStartTicketOrder(orderInfo.getCreatedTicketSeqList(), orderInfo.getMemberSeq());
 
-    @Test
-    @DisplayName("테스트용 데이터 넣기")
-    void insert() throws Exception {
-
-        int KSPO_DOME_TICKETS = 7_500;
-        int tryOrderPerTicket = 266;
-        String[] grades = new String[] {"VIP", "S", "R"};
-
-        for (int i = 0; i < KSPO_DOME_TICKETS; i++) {
-            ArrayList<TicketOrderLog> ticketOrderLogs = new ArrayList<>(tryOrderPerTicket);
-            int ticketSeq = ThreadLocalRandom.current().nextInt(1, KSPO_DOME_TICKETS);
-            int memberSeq = ThreadLocalRandom.current().nextInt(1, 1_000_000);
-            for (int j = 0; j < tryOrderPerTicket; j++) {
-                ticketOrderLogs.add(new TicketOrderLog(
-                        ticketSeq, memberSeq, 12, 1,
-                        grades[ThreadLocalRandom.current().nextInt(0, 3)])
-                );
-            }
-            logMapper.insertTicketOrderLogDeNormalization(ticketOrderLogs);
-            logMapper.insertTicketOrderLog(ticketOrderLogs);
-        }
+        return new OrderLog(orderInfo.getCreatedTicketSeqList(), orderInfo.getConcertSeq());
     }
 
+    private record OrderLog(List<Long> ticketList, long concertSeq) {
 
+    }
 
 }

@@ -1,8 +1,8 @@
 package com.heeverse.ticket_order.service;
 
-import com.heeverse.ticket_order.domain.dto.AggregateDto;
 import com.heeverse.ticket_order.domain.dto.enums.StrategyType;
 import com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto;
+import com.heeverse.ticket_order.domain.dto.StrategyDto;
 import com.heeverse.ticket_order.service.reader.CommonAggregationReader;
 import com.heeverse.ticket_order.service.reader.strategy.AggregationStrategy;
 import lombok.RequiredArgsConstructor;
@@ -23,17 +23,17 @@ public class MultithreadingAggregationService implements AsynchronizableAggregat
     private final CommonAggregationReader aggregationReader;
 
     @Override
-    public void aggregate(AggregateDto.Request request) {
-
+    public void aggregate(AggregateSelectMapperDto.Request request) {
+        StrategyDto strategyDto = request.strategyDto();
         aggregationReader.doAggregation(
-                getReaderStrategy(request.getStrategyType()),
-                new AggregateSelectMapperDto.Request(request.getConcertSeq())
+                getReaderStrategy(strategyDto.strategyType()),
+                request
         );
 
     }
 
     private AggregationStrategy getReaderStrategy(StrategyType strategyType) {
-        return beanFactory.getBean(StrategyType.getReaderClazz(strategyType));
+        return beanFactory.getBean(StrategyType.getStrategyClass(strategyType));
     }
 
 }

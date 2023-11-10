@@ -70,7 +70,7 @@ public class TicketDocsResultFactory {
                         fieldWithPath("query").type(JsonFieldType.BOOLEAN).description("쿼리로 처리 여부"),
                         fieldWithPath("normalization").type(JsonFieldType.BOOLEAN).description("집계 쿼리 사용 시 정규화된 테이블에서 조회 여부"),
                         fieldWithPath("strategyType").type(JsonFieldType.STRING).description("전략 타입 종류"),
-                        fieldWithPath("size").type(JsonFieldType.NUMBER).description("페이징 사이즈")
+                        fieldWithPath("pageSize").type(JsonFieldType.NUMBER).description("페이징 사이즈")
                 ),
                 responseFields(
                         fieldWithPath("[]concertSeq").type(JsonFieldType.NULL).description("공연 시퀀스"),
