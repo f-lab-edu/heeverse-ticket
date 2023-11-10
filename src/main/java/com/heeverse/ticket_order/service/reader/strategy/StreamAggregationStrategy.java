@@ -38,6 +38,7 @@ public class StreamAggregationStrategy implements AggregationStrategy {
         GradeInfo gradeInfo = jobWrapper.gradeInfo();
         List<List<Long>> chunks = jobWrapper.chunks();
 
+        log.info("chunks size {}", chunks.size());
         Map<String, Long> result = getTicketOrderLog(chunks)
                 .map(list -> getGroupByGrade(gradeInfo, list))
                 .flatMap(StreamHelper::toEntrySetStream)
