@@ -2,13 +2,9 @@ package com.heeverse.ticket_order.service.reader;
 
 import com.heeverse.common.factory.TicketLogFactory;
 import com.heeverse.common.factory.TicketOrderingDto;
-import com.heeverse.common.util.PrimitiveUtils;
-import com.heeverse.common.util.TicketUtils;
-import com.heeverse.ticket.domain.entity.GradeTicket;
 import com.heeverse.ticket_order.domain.dto.StrategyDto;
 import com.heeverse.ticket_order.domain.dto.enums.StrategyType;
 import com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto;
-import com.heeverse.ticket_order.domain.entity.TicketOrderLog;
 import com.heeverse.ticket_order.domain.mapper.TicketOrderAggregationMapper;
 import com.heeverse.ticket_order.service.reader.strategy.MultithreadingStrategy;
 import com.heeverse.ticket_order.service.reader.strategy.SingleThreadStrategy;
@@ -22,10 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.*;
-import java.util.stream.IntStream;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @ActiveProfiles(profiles = "local")
 @SpringBootTest
@@ -57,97 +54,70 @@ class AggregationReaderTest {
     void multithreadingAggregationTest() throws Exception {
 
         //given
-        List<TicketOrderLog> saved = insert();
-        CountDownLatch latch = new CountDownLatch(1);
-        var request = new AggregateSelectMapperDto.Request(1L, new StrategyDto(StrategyType.MULTI_THREAD, PAGE_SIZE));
+        OrderLog saved = insert();
 
+        // when
+        CountDownLatch latch = new CountDownLatch(1);
+
+        var request = new AggregateSelectMapperDto.Request(saved.concertSeq(), new StrategyDto(StrategyType.MULTI_THREAD, PAGE_SIZE));
         CompletableFuture.runAsync(() -> reader.doAggregation(multithreadingStrategy, request), es)
                 .thenAccept(r -> latch.countDown());
 
         latch.await();
 
         // then
-        List<AggregateSelectMapperDto.SimpleResponse> response = aggregationMapper.selectTicketSeqWhereIn(saved.stream().map(TicketOrderLog::getTicketSeq).toList());
-        Assertions.assertEquals(response.size(), saved.size());
+        List<AggregateSelectMapperDto.SimpleResponse> response = ticketLogFactory.selectLog(saved.ticketList);
 
+        Assertions.assertEquals(response.size(), saved.ticketList().size());
     }
 
     @Test
-    @DisplayName("스트림으로 집계")
+    @DisplayName("[스트림 처리] 예매 시도 log와 집계 결과 order try 값은 일치한다")
     void streamAggregationTest() throws InterruptedException {
 
         //given
-        List<TicketOrderLog> saved = insert();
-        var request = new AggregateSelectMapperDto.Request(1L, new StrategyDto(StrategyType.STREAM, PAGE_SIZE));
-
+        OrderLog saved = insert();
 
         // when
+        var request = new AggregateSelectMapperDto.Request(saved.concertSeq(), new StrategyDto(StrategyType.STREAM, PAGE_SIZE));
         reader.doAggregation(streamAggregationStrategy, request);
 
         // then
-        List<AggregateSelectMapperDto.SimpleResponse> response
-                = aggregationMapper.selectTicketSeqWhereIn(saved.stream().map(TicketOrderLog::getTicketSeq).toList());
+        List<AggregateSelectMapperDto.Response> responses = ticketLogFactory.selectAggregateResult(saved.concertSeq());
+        int sum = responses.stream().mapToInt(AggregateSelectMapperDto.Response::orderTry).sum();
 
-        Assertions.assertEquals(response.size(), saved.size());
+        Assertions.assertEquals(saved.ticketList().size(), sum);
+
     }
 
     @Test
-    @DisplayName("싱글 스레드로 집계 처리")
+    @DisplayName("[싱글 스레드] 예매 시도 log와 집계 결과 order try 값은 일치한다")
     void synchronousAggregationTest() throws InterruptedException {
 
         //given
-        List<TicketOrderLog> saved = insert();
-        var request = new AggregateSelectMapperDto.Request(1L, new StrategyDto(StrategyType.STREAM, PAGE_SIZE));
+        OrderLog saved = insert();
 
         // when
+        var request = new AggregateSelectMapperDto.Request(saved.concertSeq(), new StrategyDto(StrategyType.STREAM, PAGE_SIZE));
         reader.doAggregation(singleThreadStrategy, request);
 
         // then
-        List<AggregateSelectMapperDto.SimpleResponse> response
-                = aggregationMapper.selectTicketSeqWhereIn(saved.stream().map(TicketOrderLog::getTicketSeq).toList());
+        List<AggregateSelectMapperDto.Response> responses = ticketLogFactory.selectAggregateResult(saved.concertSeq());
+        int sum = responses.stream().mapToInt(AggregateSelectMapperDto.Response::orderTry).sum();
+
+        Assertions.assertEquals(saved.ticketList().size(), sum);
 
     }
 
+    public OrderLog insert() {
+        TicketOrderingDto orderInfo = ticketLogFactory.givenTicketOrder();
+        ticketLogFactory.whenStartTicketOrder(orderInfo.getCreatedTicketSeqList(), orderInfo.getMemberSeq());
 
-    private List<TicketOrderLog> insert() {
-
-        TicketOrderingDto orderingDto = ticketLogFactory.givenTicketOrder();
-
-        int KSPO_DOME_TICKETS = 100;
-        int tryOrderPerTicket = 5;
-        List<GradeTicket> gradeTicketList = orderingDto.getGradeTicketList();
-
-        List<TicketOrderLog> saved = new ArrayList<>();
-
-        for (int i = 0; i < KSPO_DOME_TICKETS; i++) {
-            List<TicketOrderLog> ticketOrderLogs = getTicketOrderLogs(orderingDto, gradeTicketList, tryOrderPerTicket);
-            ticketLogFactory.insertTicketLog(ticketOrderLogs);
-            saved.addAll(ticketOrderLogs);
-        }
-
-        return saved;
+        return new OrderLog(orderInfo.getCreatedTicketSeqList(), orderInfo.getConcertSeq());
     }
 
+    private record OrderLog(List<Long> ticketList, long concertSeq) {
 
-    private static List<TicketOrderLog> getTicketOrderLogs(
-            TicketOrderingDto orderingDto,
-            List<GradeTicket> gradeTicketList,
-            int tryOrderPerTicket
-    ) {
-
-        long minTicket = TicketUtils.minSeq(orderingDto.getTicketList());
-        long maxTicket = TicketUtils.maxSeq(orderingDto.getTicketList());
-        int ticketSeq = ThreadLocalRandom.current().nextInt(PrimitiveUtils.toIntSafely(minTicket), PrimitiveUtils.toIntSafely(maxTicket));
-
-        return IntStream.range(0, tryOrderPerTicket)
-                .mapToObj(r -> new TicketOrderLog(
-                        ticketSeq,
-                        orderingDto.getMemberSeq(),
-                        12,
-                        orderingDto.getConcertSeq(),
-                        gradeTicketList.get(ThreadLocalRandom.current().nextInt(0, gradeTicketList.size())).getGradeName()
-                )).toList();
     }
-
 
 }

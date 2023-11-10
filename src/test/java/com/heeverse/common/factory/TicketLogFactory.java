@@ -9,8 +9,8 @@ import com.heeverse.ticket.domain.entity.GradeTicket;
 import com.heeverse.ticket.domain.entity.Ticket;
 import com.heeverse.ticket.domain.mapper.TicketTestHelper;
 import com.heeverse.ticket_order.domain.dto.TicketOrderRequestDto;
-import com.heeverse.ticket_order.domain.entity.TicketOrderLog;
-import com.heeverse.ticket_order.domain.mapper.TicketOrderLogMapper;
+import com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto;
+import com.heeverse.ticket_order.domain.mapper.TicketOrderAggregationMapper;
 import com.heeverse.ticket_order.service.TicketOrderFacade;
 import org.junit.jupiter.api.Assertions;
 import org.slf4j.LoggerFactory;
@@ -39,7 +39,8 @@ public class TicketLogFactory {
     private JdbcTemplate jdbcTemplate;
     private final Logger log = (Logger) LoggerFactory.getLogger(TicketLogFactory.class);
     @Autowired
-    private TicketOrderLogMapper ticketOrderLogMapper;
+    private TicketOrderAggregationMapper ticketOrderLogMapper;
+
 
 
 
@@ -100,8 +101,8 @@ public class TicketLogFactory {
 
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void whenStartTicketOrder(List<Long> targetSeq, long createdMemberSeq) {
-        orderFacade.startTicketOrderJob(new TicketOrderRequestDto(targetSeq), createdMemberSeq);
+    public void whenStartTicketOrder(List<Long> toOrderTicketSeqs, long createdMemberSeq) {
+        orderFacade.startTicketOrderJob(new TicketOrderRequestDto(toOrderTicketSeqs), createdMemberSeq);
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -119,11 +120,18 @@ public class TicketLogFactory {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void insertTicketLog(List<TicketOrderLog> logList) {
-        ticketOrderLogMapper.insertTicketOrderLog(logList);
-        ticketOrderLogMapper.insertTicketOrderLogDeNormalization(logList);
+    public List<AggregateSelectMapperDto.SimpleResponse> selectLog(List<Long> whereIn) {
+        return ticketOrderLogMapper.selectTicketSeqWhereIn(whereIn);
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public List<AggregateSelectMapperDto.Response> selectAggregateResult(long concertSeq) {
+        return jdbcTemplate.query(TICKET_ORDER_AGGR_SELECT, new Integer[]{Math.toIntExact(concertSeq)}, (rs, rowNum) -> new AggregateSelectMapperDto.Response(
+                rs.getLong(1),
+                rs.getString(2),
+                rs.getInt(3),
+                rs.getInt(4)));
+    }
 
     private static final String CONCERT_DELETE = "DELETE FROM concert where seq = ?";
     private static final String TICKET_DELETE = "DELETE FROM ticket where concert_seq = ?";
@@ -131,5 +139,6 @@ public class TicketLogFactory {
     private static final String GRADET_ICKET_DELETE = "DELETE FROM grade_ticket where concert_seq = ?";
     private static final String MEMBER_DELETE = "DELETE FROM member where seq = ?";
     private static final String TICKET_ORDER_DELETE = "DELETE FROM ticket_order where member_seq = ?";
+    private static final String TICKET_ORDER_AGGR_SELECT = "SELECT * FROM ticket_order_result WHERE concert_seq = ?";
 
 }
