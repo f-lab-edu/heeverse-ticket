@@ -10,11 +10,9 @@ import com.heeverse.ticket_order.domain.dto.enums.StrategyType;
 import com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto;
 import com.heeverse.ticket_order.domain.entity.TicketOrderLog;
 import com.heeverse.ticket_order.domain.mapper.TicketOrderAggregationMapper;
-import com.heeverse.ticket_order.domain.mapper.TicketOrderLogMapper;
 import com.heeverse.ticket_order.service.reader.strategy.MultithreadingStrategy;
 import com.heeverse.ticket_order.service.reader.strategy.SingleThreadStrategy;
 import com.heeverse.ticket_order.service.reader.strategy.StreamAggregationStrategy;
-import com.heeverse.ticket_order.service.transfer.ResultDBTransfer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,14 +29,11 @@ import java.util.stream.IntStream;
 
 @ActiveProfiles(profiles = "local")
 @SpringBootTest
-//@Disabled
 class AggregationReaderTest {
 
 
     @Autowired
     private TicketOrderAggregationMapper aggregationMapper;
-    @Autowired
-    private TicketOrderLogMapper logMapper;
     @Autowired
     private CommonAggregationReader reader;
 
@@ -72,14 +67,7 @@ class AggregationReaderTest {
         latch.await();
 
         // then
-        List<AggregateSelectMapperDto.SimpleResponse> response
-                = null;
-        try {
-            response = aggregationMapper.selectTicketSeqWhereIn(saved.stream().map(TicketOrderLog::getTicketSeq).toList());
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
+        List<AggregateSelectMapperDto.SimpleResponse> response = aggregationMapper.selectTicketSeqWhereIn(saved.stream().map(TicketOrderLog::getTicketSeq).toList());
         Assertions.assertEquals(response.size(), saved.size());
 
     }
@@ -133,9 +121,7 @@ class AggregationReaderTest {
 
         for (int i = 0; i < KSPO_DOME_TICKETS; i++) {
             List<TicketOrderLog> ticketOrderLogs = getTicketOrderLogs(orderingDto, gradeTicketList, tryOrderPerTicket);
-            logMapper.insertTicketOrderLogDeNormalization(ticketOrderLogs);
-            logMapper.insertTicketOrderLog(ticketOrderLogs);
-
+            ticketLogFactory.insertTicketLog(ticketOrderLogs);
             saved.addAll(ticketOrderLogs);
         }
 
@@ -162,17 +148,6 @@ class AggregationReaderTest {
                         gradeTicketList.get(ThreadLocalRandom.current().nextInt(0, gradeTicketList.size())).getGradeName()
                 )).toList();
     }
-
-
-    @Autowired
-    private ResultDBTransfer transfer;
-
-//    @Test
-//    void test() throws Exception {
-//        transfer.transferAll(Collections.emptyList());
-//    }
-
-
 
 
 }

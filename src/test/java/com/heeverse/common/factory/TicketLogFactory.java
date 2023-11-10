@@ -9,6 +9,8 @@ import com.heeverse.ticket.domain.entity.GradeTicket;
 import com.heeverse.ticket.domain.entity.Ticket;
 import com.heeverse.ticket.domain.mapper.TicketTestHelper;
 import com.heeverse.ticket_order.domain.dto.TicketOrderRequestDto;
+import com.heeverse.ticket_order.domain.entity.TicketOrderLog;
+import com.heeverse.ticket_order.domain.mapper.TicketOrderLogMapper;
 import com.heeverse.ticket_order.service.TicketOrderFacade;
 import org.junit.jupiter.api.Assertions;
 import org.slf4j.LoggerFactory;
@@ -36,6 +38,8 @@ public class TicketLogFactory {
     @Autowired
     private JdbcTemplate jdbcTemplate;
     private final Logger log = (Logger) LoggerFactory.getLogger(TicketLogFactory.class);
+    @Autowired
+    private TicketOrderLogMapper ticketOrderLogMapper;
 
 
 
@@ -112,6 +116,12 @@ public class TicketLogFactory {
 
         jdbcTemplate.update(MEMBER_DELETE, dto.getMemberSeq());
         jdbcTemplate.update(TICKET_ORDER_DELETE, dto.getMemberSeq());
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void insertTicketLog(List<TicketOrderLog> logList) {
+        ticketOrderLogMapper.insertTicketOrderLog(logList);
+        ticketOrderLogMapper.insertTicketOrderLogDeNormalization(logList);
     }
 
 
