@@ -32,14 +32,12 @@ public class MultiDataSource {
     @Bean(name = "primaryDataSource")
     public HikariDataSource primaryDataSource() {
         HikariConfig hikariConfig = getDataSourceProperties();
-        hikariConfig.setMaximumPoolSize(20);
         return new HikariDataSource(hikariConfig);
     }
 
     @Bean(name = "lockDataSource")
     public HikariDataSource lockDataSource() {
         HikariConfig hikariConfig = getDataSourceProperties();
-        hikariConfig.setMaximumPoolSize(20);
         return new HikariDataSource(hikariConfig);
     }
 
