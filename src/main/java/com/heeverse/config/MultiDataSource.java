@@ -22,6 +22,7 @@ import static com.heeverse.common.Constants.*;
 public class MultiDataSource {
     private final VaultOperationService vaultOperationService;
     private final Environment environment;
+    public static final int MAX_POOL_SIZE = 20;
 
     public MultiDataSource(VaultOperationService vaultOperationService, Environment environment) {
         this.vaultOperationService = vaultOperationService;
@@ -32,12 +33,14 @@ public class MultiDataSource {
     @Bean(name = "primaryDataSource")
     public HikariDataSource primaryDataSource() {
         HikariConfig hikariConfig = getDataSourceProperties();
+        hikariConfig.setMaximumPoolSize(MAX_POOL_SIZE);
         return new HikariDataSource(hikariConfig);
     }
 
     @Bean(name = "lockDataSource")
     public HikariDataSource lockDataSource() {
         HikariConfig hikariConfig = getDataSourceProperties();
+        hikariConfig.setMaximumPoolSize(MAX_POOL_SIZE);
         return new HikariDataSource(hikariConfig);
     }
 
