@@ -28,8 +28,8 @@ import static com.heeverse.common.util.MultiThreadUtils.*;
 public class MultithreadingStrategy implements AggregationStrategy {
 
     private final TicketAggrFacade ticketAggrFacade;
-    private final ExecutorService ioBoundWorker = Executors.newFixedThreadPool(availableCores() / 2);
-    private final ExecutorService cpuBoundWorker = Executors.newFixedThreadPool(availableCores());
+    private final ExecutorService ioBoundWorker = Executors.newFixedThreadPool(4);
+    private final ExecutorService cpuBoundWorker = Executors.newFixedThreadPool(2);
     private final ResultDBTransfer transfer;
 
 
