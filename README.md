@@ -27,7 +27,7 @@
 - @Transactional 전파 레벨 설정을 통한 비즈니스 로직 보장
 - 데이터베이스 부하를 최소화 하기 위해 레코드 레벨 락 설정
 - Vault 서버를 설정하여 민감정보 관리
-- Nignx를 Reverse Proxy로 사용하여 로드밸런싱
+- Nginx를 Reverse Proxy로 사용하여 로드밸런싱
 - 쿼리 분석, 인덱싱을 통한 성능 개선
 - Docker로 서버 환경에 격리되고 Github Action으로 자동화된 CI/CD 구축
 - nGrinder로 부하&성능 테스트를 거치며 점진적 개선
