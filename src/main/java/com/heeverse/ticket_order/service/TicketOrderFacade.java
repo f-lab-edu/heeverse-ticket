@@ -27,11 +27,10 @@ public class TicketOrderFacade {
 
     private final TicketService ticketService;
     private final TicketOrderService ticketOrderService;
-    private final TicketOrderEventHandler ticketOrderEventHandler;
 
     public List<TicketOrderResponseDto> startTicketOrderJob(TicketOrderRequestDto dto, Long memberSeq) {
         try {
-            Long ticketOrderSeq = orderTicket(dto, memberSeq);
+            Long ticketOrderSeq = ticketOrderService.orderTicket(dto, memberSeq);
             return ticketOrderService.getOrderTicket(ticketOrderSeq);
         } catch (Exception e) {
             log.error("티켓 예매가 실패했습니다. : {} ", e.getMessage());
@@ -39,21 +38,11 @@ public class TicketOrderFacade {
         }
     }
 
-    protected Long orderTicket(TicketOrderRequestDto dto, Long memberSeq) throws Exception {
-        Long ticketOrderSeq = ticketOrderService.createTicketOrder(memberSeq);
-        ticketOrderEventHandler.saveTicketOrderLog(new TicketOrderEvent(dto, memberSeq, ticketOrderSeq));
-        ticketService.getTicketLock(dto.ticketSetList());
-        Assert.notNull(ticketOrderSeq);
-        ticketOrderService.orderTicket(dto, ticketOrderSeq);
-        return ticketOrderSeq;
-    }
-
-
     public List<TicketRemainsResponseDto> getTicketRemains(TicketRemainsDto ticketRemainsDto) {
         try {
             return ticketService.getTicketRemains(ticketRemainsDto.concertSeq());
         } catch (IllegalArgumentException e) {
-            throw  new TicketAggregationFailException(e);
+            throw new TicketAggregationFailException(e);
         }
     }
 }

@@ -8,14 +8,18 @@ import com.heeverse.ticket.domain.mapper.TicketMapper;
 import com.heeverse.ticket.dto.TicketRequestDto;
 import com.heeverse.ticket.dto.persistence.TicketRequestMapperDto;
 import com.heeverse.ticket.exception.DuplicatedTicketException;
+import com.heeverse.ticket_order.domain.dto.TicketOrderRequestDto;
 import com.heeverse.ticket_order.domain.dto.TicketRemainsResponseDto;
 import com.heeverse.ticket_order.domain.dto.persistence.TicketRemainsResponseMapperDto;
+import com.heeverse.ticket_order.domain.exception.AlreadyBookedTicketException;
 import com.heeverse.ticket_order.domain.exception.LockOccupancyFailureException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
@@ -101,12 +105,14 @@ public class TicketService {
         }
     }
 
+    @Transactional(propagation = Propagation.MANDATORY, isolation = Isolation.READ_COMMITTED)
     public void getTicketLock(List<Long> ticketSeqList) {
         log.info("[Ticket Lock] start record Lock");
         try {
+            log.info("lock before tx name : {}", TransactionSynchronizationManager.getCurrentTransactionName());
             List<Ticket> lockedTicketList = ticketMapper.getTicketLock(ticketSeqList);
-            lockedTicketList.forEach(v -> log.info("lock target ticket seq : {}", v.getSeq()));
-            log.info("[Ticket Lock] success get Lock");
+            log.info("lock after name : {}", TransactionSynchronizationManager.getCurrentTransactionName());
+            log.info("ticketSeqList.size : {}, lockedTicketList.size : {}",ticketSeqList.size(), lockedTicketList.size());
 
         } catch (Exception e) {
             log.error("[Ticket Lock] fail get Lock");
@@ -131,5 +137,17 @@ public class TicketService {
     public void rollbackTicketOrderSeq(List<Long> ticketSeqList) {
         int rollbackCount = ticketMapper.rollbackTicketOrderSeq(ticketSeqList);
         log.info("티켓 예매 rollback success count : {}", rollbackCount);
+    }
+
+    public void checkBookedTicket(TicketOrderRequestDto dto, List<Long> reqTicketSeqList) {
+        List<Ticket> availableTicketList = ticketMapper.findTicketsByTicketSeqList(reqTicketSeqList)
+                .stream()
+                .filter(d -> ObjectUtils.isEmpty(d.getOrderSeq()))
+                .toList();
+        int requestSize = dto.ticketSetList().size();
+        if (requestSize != availableTicketList.size()) {
+            log.error("요청 티켓 수 :{}, 예약 가능 티켓 수 : {}", requestSize, availableTicketList.size());
+            throw new AlreadyBookedTicketException("이미 예약된 티켓이 포함되어 있습니다.");
+        }
     }
 }

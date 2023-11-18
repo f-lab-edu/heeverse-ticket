@@ -16,8 +16,10 @@ import io.jsonwebtoken.lang.Assert;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDateTime;
@@ -38,15 +40,26 @@ public class TicketOrderService {
     private final TicketService ticketService;
     private final TicketOrderMapper ticketOrderMapper;
 
-    @Transactional(noRollbackFor = TicketNotNormallyUpdatedException.class)
-    public void orderTicket(TicketOrderRequestDto dto, Long ticketOrderSeq) {
+    @Transactional(noRollbackFor = TicketNotNormallyUpdatedException.class,isolation = Isolation.READ_COMMITTED)
+    public Long orderTicket(TicketOrderRequestDto dto, Long memberSeq) {
+
         List<Long> reqTicketSeqList = dto.ticketSetList();
+        Long ticketOrderSeq = createTicketOrder(memberSeq);
+        Assert.notNull(ticketOrderSeq);
         BookingStatus bookingStatus = BookingStatus.SUCCESS;
         try {
-            checkBookedTicket(dto, reqTicketSeqList);
+
+            log.info("1 tx name : {}", TransactionSynchronizationManager.getCurrentTransactionName());
+            //ticketOrderEventHandler.saveTicketOrderLog(new TicketOrderEvent(dto, memberSeq, ticketOrderSeq));
+            ticketService.checkBookedTicket(dto, dto.ticketSetList());
+            ticketService.getTicketLock(dto.ticketSetList());
+
+            log.info("2 tx name : {}", TransactionSynchronizationManager.getCurrentTransactionName());
+
+            ticketService.checkBookedTicket(dto, reqTicketSeqList);
             int updateCount = ticketService.updateTicketInfo(reqTicketSeqList, ticketOrderSeq);
             if (updateCount == UPDATE_FAIL_COUNT) {
-                log.error("이미 예매 성공한 티켓으로 인해 티켓 테이블에 order_seq update 실패");
+                //log.error("이미 예매 성공한 티켓으로 인해 티켓 테이블에 order_seq update 실패");
                 throw new TicketNotNormallyUpdatedException("이미 예매 성공한 티켓으로 인해 티켓 테이블에 order_seq update 실패");
             }
         } catch (Exception e) {
@@ -56,13 +69,14 @@ public class TicketOrderService {
         } finally {
             changeTicketOrderStatus(new TicketOrderUpdateMapperDto(ticketOrderSeq, bookingStatus));
         }
+        return ticketOrderSeq;
     }
 
     private void changeTicketOrderStatus(TicketOrderUpdateMapperDto dto) {
         ticketOrderMapper.updateTicketOrderStatus(dto);
     }
 
-    private void checkBookedTicket(TicketOrderRequestDto dto, List<Long> reqTicketSeqList) {
+   /* private void checkBookedTicket(TicketOrderRequestDto dto, List<Long> reqTicketSeqList) {
         List<Ticket> availableTicketList = ticketService.getTicketsByTicketSeqList(reqTicketSeqList)
                 .stream()
                 .filter(d -> ObjectUtils.isEmpty(d.getOrderSeq()))
@@ -72,7 +86,7 @@ public class TicketOrderService {
             log.error("요청 티켓 수 :{}, 예약 가능 티켓 수 : {}", requestSize, availableTicketList.size());
             throw new AlreadyBookedTicketException("이미 예약된 티켓이 포함되어 있습니다.");
         }
-    }
+    }*/
 
     @Transactional(readOnly = true)
     public List<TicketOrderResponseDto> getOrderTicket(Long ticketOrderSeq) {
