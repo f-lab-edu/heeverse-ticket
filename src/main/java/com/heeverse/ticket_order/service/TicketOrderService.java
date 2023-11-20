@@ -44,7 +44,6 @@ public class TicketOrderService {
         try {
             ticketService.checkBookedTicket(dto, dto.ticketSetList());
             ticketService.getTicketLock(ticketOrderSeq, dto.ticketSetList());
-            ticketService.checkBookedTicket(dto, reqTicketSeqList);
             ticketService.updateTicketInfo(reqTicketSeqList, ticketOrderSeq);
 
         } catch (Exception e) {
@@ -58,7 +57,7 @@ public class TicketOrderService {
     }
 
 
-     private void changeTicketOrderStatus(TicketOrderUpdateMapperDto dto) {
+    private void changeTicketOrderStatus(TicketOrderUpdateMapperDto dto) {
         ticketOrderMapper.updateTicketOrderStatus(dto);
     }
 

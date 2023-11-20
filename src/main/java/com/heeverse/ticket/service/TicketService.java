@@ -92,7 +92,7 @@ public class TicketService {
                         ticketRequestDto.concertSeq(), grade, idx)), grade);
     }
 
-    @Transactional(propagation = Propagation.MANDATORY, isolation = Isolation.READ_COMMITTED, noRollbackFor = TicketNotNormallyUpdatedException.class)
+    @Transactional(propagation = Propagation.MANDATORY, noRollbackFor = TicketNotNormallyUpdatedException.class)
     public void updateTicketInfo(List<Long> lockTicketSeqList, Long ticketOrderSeq) {
         validateTicketOrder(lockTicketSeqList, ticketOrderSeq);
         lockTicketSeqList.forEach(seq -> log.info("[requested ticket seq] : {}", seq));
@@ -109,7 +109,7 @@ public class TicketService {
         }
     }
 
-    @Transactional(propagation = Propagation.MANDATORY, isolation = Isolation.READ_COMMITTED, noRollbackFor = LockOccupancyFailureException.class)
+    @Transactional(propagation = Propagation.MANDATORY, noRollbackFor = LockOccupancyFailureException.class)
     public void getTicketLock(Long ticketOrderSeq, List<Long> ticketSeqList) {
         log.info("[Ticket Lock] start record Lock");
         try {
@@ -137,11 +137,11 @@ public class TicketService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional(propagation = Propagation.MANDATORY, isolation = Isolation.READ_COMMITTED, noRollbackFor = AlreadyBookedTicketException.class)
+    @Transactional(propagation = Propagation.MANDATORY, noRollbackFor = AlreadyBookedTicketException.class)
     public void checkBookedTicket(TicketOrderRequestDto dto, List<Long> reqTicketSeqList) {
         List<Ticket> availableTicketList = ticketMapper.findTicketsByTicketSeqList(reqTicketSeqList)
                 .stream()
-                .filter(d -> ObjectUtils.isEmpty(d.getOrderSeq()))
+                .filter(Ticket::isNotOrdered)
                 .toList();
         int requestSize = dto.ticketSetList().size();
         if (requestSize != availableTicketList.size()) {
