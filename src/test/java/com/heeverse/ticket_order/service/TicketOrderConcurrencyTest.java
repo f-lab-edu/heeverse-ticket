@@ -91,7 +91,7 @@ public class TicketOrderConcurrencyTest extends IntegrationTestService {
                 try {
                     orderTicket(ticketSeqList, memberSeq);
                 } catch (Exception e) {
-                    log.error("[TicketOrderFacadeTest] ticket order test fail : {}", e.getMessage());
+                    log.error("[TicketOrderConcurrencyTest] ticket order test fail : {}", e.getMessage());
                 } finally {
                     latch.countDown();
                 }
