@@ -5,6 +5,7 @@ import com.heeverse.common.SerialNumber;
 import lombok.Getter;
 import org.apache.ibatis.annotations.AutomapConstructor;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.util.ObjectUtils;
 
 /**
  * @author gutenlee
@@ -12,7 +13,7 @@ import org.apache.ibatis.annotations.Param;
  */
 @Getter
 public class Ticket extends BaseEntity {
-
+    
     private Long seq;
     private final String ticketSerialNumber;
     private final Long concertSeq;
@@ -49,5 +50,9 @@ public class Ticket extends BaseEntity {
                 ", concertSeq=" + concertSeq +
                 ", orderSeq=" + orderSeq +
                 '}';
+    }
+
+    public boolean isNotOrdered() {
+        return ObjectUtils.isEmpty(orderSeq);
     }
 }

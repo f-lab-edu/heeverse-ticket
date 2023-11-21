@@ -43,7 +43,7 @@ public class TicketOrderConcurrencyTest extends IntegrationTestService {
     private TicketOrderFacade ticketOrderFacade;
     @Autowired
     private TicketOrderMapper ticketOrderMapper;
-    private static final int threadCount = 2;
+    private static final int threadCount = 10;
     private static final int threadPoolSize = 32;
     private final Logger log = (Logger) LoggerFactory.getLogger(TicketOrderFacadeTest.class);
 
@@ -91,7 +91,7 @@ public class TicketOrderConcurrencyTest extends IntegrationTestService {
                 try {
                     orderTicket(ticketSeqList, memberSeq);
                 } catch (Exception e) {
-                    log.error("[TicketOrderFacadeTest] ticket order test fail : {}", e.getMessage());
+                    log.error("[TicketOrderConcurrencyTest] ticket order test fail : {}", e.getMessage());
                 } finally {
                     latch.countDown();
                 }

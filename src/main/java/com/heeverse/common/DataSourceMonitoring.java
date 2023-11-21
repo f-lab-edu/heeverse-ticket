@@ -20,7 +20,7 @@ public class DataSourceMonitoring implements DataSourceMonitoringMBean {
 
     private final HikariDataSource lockDataSource;
 
-    public DataSourceMonitoring(@Qualifier("lockDataSource") HikariDataSource lockDataSource) {
+    public DataSourceMonitoring(HikariDataSource lockDataSource) {
         this.lockDataSource = lockDataSource;
     }
 

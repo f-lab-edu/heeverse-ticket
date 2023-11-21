@@ -9,10 +9,10 @@ import com.heeverse.ticket_order.domain.exception.TicketAggregationFailException
 import com.heeverse.ticket_order.domain.exception.TicketingFailException;
 import com.heeverse.ticket_order.service.event.TicketOrderEvent;
 import com.heeverse.ticket_order.service.event.TicketOrderEventHandler;
-import io.jsonwebtoken.lang.Assert;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import java.util.List;
 
@@ -42,18 +42,16 @@ public class TicketOrderFacade {
     protected Long orderTicket(TicketOrderRequestDto dto, Long memberSeq) throws Exception {
         Long ticketOrderSeq = ticketOrderService.createTicketOrder(memberSeq);
         ticketOrderEventHandler.saveTicketOrderLog(new TicketOrderEvent(dto, memberSeq, ticketOrderSeq));
-        ticketService.getTicketLock(dto.ticketSetList());
-        Assert.notNull(ticketOrderSeq);
+        Assert.notNull(ticketOrderSeq, "ticketOrderSeq Must Not Null");
         ticketOrderService.orderTicket(dto, ticketOrderSeq);
         return ticketOrderSeq;
     }
-
 
     public List<TicketRemainsResponseDto> getTicketRemains(TicketRemainsDto ticketRemainsDto) {
         try {
             return ticketService.getTicketRemains(ticketRemainsDto.concertSeq());
         } catch (IllegalArgumentException e) {
-            throw  new TicketAggregationFailException(e);
+            throw new TicketAggregationFailException(e);
         }
     }
 }
