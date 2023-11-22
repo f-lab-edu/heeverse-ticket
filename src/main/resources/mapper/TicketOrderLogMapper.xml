@@ -5,8 +5,9 @@
 <mapper namespace="com.heeverse.ticket_order.domain.mapper.TicketOrderLogMapper">
 
     <insert id="insertTicketOrderLog" parameterType="java.util.List">
-        INSERT INTO ticket_order_log(
+        INSERT INTO ticket_order_log_copy (
             ticket_seq,
+            concert_seq,
             member_seq,
             ticket_order_seq,
             create_datetime
@@ -15,6 +16,7 @@
         <foreach item="ticketOrderLog" collection="list" separator=",">
             (
             #{ticketOrderLog.ticketSeq},
+            #{ticketOrderLog.concertSeq},
             #{ticketOrderLog.memberSeq},
             #{ticketOrderLog.ticketOrderSeq},
             #{ticketOrderLog.createDateTime}
@@ -23,7 +25,7 @@
     </insert>
 
     <insert id="insertTicketOrderLogDeNormalization" parameterType="java.util.List">
-        INSERT INTO ticket_order_log_denormalization(
+        INSERT INTO ticket_order_log_denormalization_copy(
             concert_seq,
             ticket_seq,
             member_seq,

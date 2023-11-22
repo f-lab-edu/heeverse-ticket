@@ -8,12 +8,16 @@ import com.heeverse.ticket.domain.mapper.TicketMapper;
 import com.heeverse.ticket.dto.TicketRequestDto;
 import com.heeverse.ticket.dto.persistence.TicketRequestMapperDto;
 import com.heeverse.ticket.exception.DuplicatedTicketException;
+import com.heeverse.ticket_order.domain.dto.TicketOrderRequestDto;
 import com.heeverse.ticket_order.domain.dto.TicketRemainsResponseDto;
 import com.heeverse.ticket_order.domain.dto.persistence.TicketRemainsResponseMapperDto;
+import com.heeverse.ticket_order.domain.exception.AlreadyBookedTicketException;
 import com.heeverse.ticket_order.domain.exception.LockOccupancyFailureException;
+import com.heeverse.ticket_order.domain.exception.TicketNotNormallyUpdatedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -31,7 +35,7 @@ import java.util.stream.IntStream;
 @Service
 @RequiredArgsConstructor
 public class TicketService {
-
+    public final int UPDATE_FAIL_COUNT = 0;
     private final TicketMapper ticketMapper;
 
     @Transactional(propagation = Propagation.MANDATORY)
@@ -88,11 +92,15 @@ public class TicketService {
                         ticketRequestDto.concertSeq(), grade, idx)), grade);
     }
 
-    @Transactional(propagation = Propagation.MANDATORY)
-    public int updateTicketInfo(List<Long> lockTicketSeqList, Long ticketOrderSeq) {
+    @Transactional(propagation = Propagation.MANDATORY, noRollbackFor = TicketNotNormallyUpdatedException.class)
+    public void updateTicketInfo(List<Long> lockTicketSeqList, Long ticketOrderSeq) {
         validateTicketOrder(lockTicketSeqList, ticketOrderSeq);
         lockTicketSeqList.forEach(seq -> log.info("[requested ticket seq] : {}", seq));
-        return ticketMapper.updateTicketOrderSeq(new TicketRequestMapperDto(lockTicketSeqList, ticketOrderSeq));
+        int updateCount = ticketMapper.updateTicketOrderSeq(new TicketRequestMapperDto(lockTicketSeqList, ticketOrderSeq));
+        if (updateCount == UPDATE_FAIL_COUNT) {
+            log.error("이미 예매 성공한 티켓으로 인해 티켓 테이블에 order_seq update 실패");
+            throw new TicketNotNormallyUpdatedException("이미 예매 성공한 티켓으로 인해 티켓 테이블에 order_seq update 실패");
+        }
     }
 
     private void validateTicketOrder(List<Long> lockTicketSeqList, Long ticketOrderSeq) {
@@ -101,17 +109,18 @@ public class TicketService {
         }
     }
 
-    public void getTicketLock(List<Long> ticketSeqList) {
+    @Transactional(propagation = Propagation.MANDATORY, noRollbackFor = LockOccupancyFailureException.class)
+    public void getTicketLock(Long ticketOrderSeq, List<Long> ticketSeqList) {
         log.info("[Ticket Lock] start record Lock");
         try {
             List<Ticket> lockedTicketList = ticketMapper.getTicketLock(ticketSeqList);
-            lockedTicketList.forEach(v -> log.info("lock target ticket seq : {}", v.getSeq()));
-            log.info("[Ticket Lock] success get Lock");
+            log.info("ticketSeqList.size : {}, lockedTicketList.size : {}", ticketSeqList.size(), lockedTicketList.size());
 
         } catch (Exception e) {
-            log.error("[Ticket Lock] fail get Lock");
+            log.error("[Ticket Lock] fail get Lock : {}", e.getMessage());
             throw new LockOccupancyFailureException("해당 티켓 요청에 대한 LOCK 획득을 실패하였습니다.");
         }
+        log.info("[Ticket Lock] success get Lock : {}, ticketSeqList : {} ", ticketOrderSeq, ticketSeqList);
     }
 
     @Transactional(readOnly = true)
@@ -128,8 +137,16 @@ public class TicketService {
                 .collect(Collectors.toList());
     }
 
-    public void rollbackTicketOrderSeq(List<Long> ticketSeqList) {
-        int rollbackCount = ticketMapper.rollbackTicketOrderSeq(ticketSeqList);
-        log.info("티켓 예매 rollback success count : {}", rollbackCount);
+    @Transactional(propagation = Propagation.MANDATORY, noRollbackFor = AlreadyBookedTicketException.class)
+    public void checkBookedTicket(TicketOrderRequestDto dto, List<Long> reqTicketSeqList) {
+        List<Ticket> availableTicketList = ticketMapper.findTicketsByTicketSeqList(reqTicketSeqList)
+                .stream()
+                .filter(Ticket::isNotOrdered)
+                .toList();
+        int requestSize = dto.ticketSetList().size();
+        if (requestSize != availableTicketList.size()) {
+            log.error("요청 티켓 수 :{}, 예약 가능 티켓 수 : {}", requestSize, availableTicketList.size());
+            throw new AlreadyBookedTicketException("이미 예약된 티켓이 포함되어 있습니다.");
+        }
     }
 }

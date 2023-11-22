@@ -59,6 +59,7 @@ jobs:
             sudo docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
             sudo docker run -e PROFILE=prod -d --rm \
             --name=${{ env.IMAGE_NAME }} \
+            --restart=always \
             -p 8080:8080 \
             --add-host=host.docker.internal:host-gateway \
             -v /home/ubuntu/workspace/heeverse/logs:/workspace/heeverse/logs \

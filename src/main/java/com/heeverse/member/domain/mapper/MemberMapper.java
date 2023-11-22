@@ -1,5 +1,6 @@
 package com.heeverse.member.domain.mapper;
 
+import com.heeverse.config.LockScanMapper;
 import com.heeverse.member.domain.entity.Member;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -9,6 +10,7 @@ import org.apache.ibatis.annotations.Param;
  * @date 2023/07/22
  */
 @Mapper
+@LockScanMapper
 public interface MemberMapper {
 
     Member findById(@Param("id") String id);

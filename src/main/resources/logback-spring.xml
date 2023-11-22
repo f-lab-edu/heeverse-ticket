@@ -14,13 +14,15 @@
         <logger name="com.heeverse" level="DEBUG"  />
         <logger name="jdbc.sqlonly" level="DEBUG"  />
         <logger name="jdbc.resultsettable" level="INFO"  />
+        <logger name="com.zaxxer.hikari.HikariConfig" level="TRACE" />
+        <logger name="com.zaxxer.hikari" level="TRACE" />
 
-        <root level="INFO">
+        <root level="TRACE">
             <appender-ref ref="CONSOLE" />
         </root>
     </springProfile>
 
-    <springProfile name="local | dev | dev-test">
+    <springProfile name="local | dev | dev-test ">
         <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
             <encoder>
                 <pattern>${CONSOLE_LOG_PATTERN}</pattern>
@@ -37,11 +39,12 @@
             <appender-ref ref="FILE" />
         </root>
         <root level="ERROR">
+            <appender-ref ref="CONSOLE" />
             <appender-ref ref="ERROR_FILE" />
         </root>
     </springProfile>
 
-    <springProfile name="prod">
+    <springProfile name="prod | dev-test">
         <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
             <encoder>
                 <pattern>${CONSOLE_LOG_PATTERN}</pattern>
@@ -81,8 +84,10 @@
         </appender>
 
         <logger name="com.heeverse" level="INFO"  />
+        <logger name="com.zaxxer.hikari.HikariConfig" level="TRACE" />
+        <logger name="com.zaxxer.hikari" level="TRACE" />
 
-        <root level="INFO">
+        <root level="TRACE">
             <appender-ref ref="CONSOLE" />
             <appender-ref ref="FILE" />
         </root>

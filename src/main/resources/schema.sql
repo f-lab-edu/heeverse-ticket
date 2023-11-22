@@ -6,6 +6,9 @@ DROP TABLE IF EXISTS concert cascade;
 DROP TABLE IF EXISTS venue cascade;
 DROP TABLE IF EXISTS artist cascade;
 DROP TABLE IF EXISTS ticket_order_log cascade;
+DROP TABLE IF EXISTS ticket_order_log_copy cascade;
+DROP TABLE IF EXISTS ticket_order_log_denormalization_copy cascade;
+DROP TABLE IF EXISTS ticket_order_result cascade;
 
 
 CREATE TABLE member
@@ -88,11 +91,46 @@ CREATE TABLE venue
     create_datetime datetime              NOT NULL COMMENT '데이터 생성일'
 );
 
-CREATE TABLE ticket_order_log
+create table ticket_order_log
 (
-    seq             bigint AUTO_INCREMENT NOT NULL PRIMARY KEY COMMENT 'ticket 예매 시도 seq',
-    member_seq      bigint           NOT NULL COMMENT '멤버 시퀀스',
-    ticket_seq      bigint          NOT NULL COMMENT '티켓 시퀀스',
-    ticket_order_Seq        bigint        NOT NULL COMMENT 'ticker order 시퀀스',
-    create_datetime datetime              NOT NULL COMMENT '데이터 생성일'
-);
+    seq              bigint auto_increment primary key,
+    member_seq       bigint      null,
+    ticket_seq       bigint      null,
+    ticket_order_seq bigint      null,
+    create_datetime  datetime null,
+    concert_seq      bigint      null
+)
+;
+
+create table ticket_order_log_copy
+(
+    seq              bigint auto_increment PRIMARY KEY,
+    member_seq       bigint   ,
+    ticket_seq       bigint   ,
+    ticket_order_seq bigint   ,
+    create_datetime  datetime ,
+    concert_seq      bigint
+)
+;
+
+create table ticket_order_log_denormalization_copy
+(
+    concert_seq      bigint         not null,
+    ticket_seq       bigint      ,
+    member_seq       bigint      ,
+    grade_name       varchar(20) ,
+    ticket_order_seq bigint      ,
+    create_datetime  datetime
+)
+;
+
+
+create table ticket_order_result
+(
+    concert_seq     bigint                                not null,
+    grade_name      varchar(20)                        not null,
+    total_tickets   bigint                                null,
+    order_try       bigint                                null,
+    create_datetime datetime null
+)
+;

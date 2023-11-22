@@ -3,7 +3,7 @@ name: Code Coverage
 on:
   pull_request:
     branches: [ dev ]
-    paths: [ '**.java', '.github/workflows/pr-request.yml', 'build.gradle', 'application-**.xml']
+    paths: [ '**.java', '.github/workflows/pr-request.yml', 'build.gradle', 'application-**.xml', 'logback-*.yml']
   workflow_dispatch:
 
 env:
@@ -29,11 +29,11 @@ jobs:
         uses: actions/setup-java@v3.12.0
         with:
           java-version: 17
-          distribution: 'temurin'
+          distribution: 'oracle'
 
       - name: Get Github Actions IP
         id: ip
-        uses: haythem/public-ip@v1.2
+        uses: haythem/public-ip@v1.3
 
       - name: Add Github Actions IP to Security group
         run: |
@@ -42,7 +42,7 @@ jobs:
       - name: Test
         run: |
           chmod +x gradlew
-          SPRING_PROFILES_ACTIVE=dev-test ./gradlew test 
+          SPRING_PROFILES_ACTIVE=dev-test ./gradlew clean test
 
       - name: Remove Github Actions IP from security group
         run: |

@@ -19,14 +19,14 @@ public class QueryAggregationReader {
 
 
     public List<AggregateSelectMapperDto.Response> getResultGroupByGrade(
-            AggregateSelectMapperDto.Request request
+            AggregateSelectMapperDto.QueryRequest request
     ) {
         return resultMapper.selectGroupByGradeName(request.concertSeq());
     }
 
 
     public List<AggregateSelectMapperDto.Response> getResultDeNormalization(
-            AggregateSelectMapperDto.Request request
+            AggregateSelectMapperDto.QueryRequest request
     ) {
 
         return resultMapper.selectGroupByGradeNameDeNormalization(request.concertSeq());

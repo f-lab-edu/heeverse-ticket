@@ -28,7 +28,6 @@ public interface TicketMapper {
 
     List<Ticket> getTicketLock(@Param("ticketSeqList") List<Long> ticketSeqList);
 
-    int rollbackTicketOrderSeq(List<Long> ticketSeqList);
     List<TicketRemainsResponseMapperDto> aggregateTicketRemains(@Param("concertSeq") long concertSeq,
                                                                 @Param("cancelledFlag") boolean cancelledFlag);
 }

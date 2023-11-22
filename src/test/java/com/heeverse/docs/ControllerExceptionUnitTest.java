@@ -13,6 +13,7 @@ import com.heeverse.ticket.exception.DuplicatedTicketException;
 import com.heeverse.ticket_order.domain.dto.TicketRemainsDto;
 import com.heeverse.ticket_order.domain.exception.TicketAggregationFailException;
 import com.heeverse.ticket_order.domain.exception.TicketingFailException;
+import com.heeverse.ticket_order.service.MultithreadingAggregationService;
 import com.heeverse.ticket_order.service.QueryAggregationService;
 import com.heeverse.ticket_order.service.TicketOrderFacade;
 import com.heeverse.ticket_order.service.TicketOrderTestHelper;
@@ -55,6 +56,8 @@ public class ControllerExceptionUnitTest {
     private TicketOrderFacade ticketOrderFacade;
     @MockBean
     private QueryAggregationService aggregationService;
+    @MockBean
+    private MultithreadingAggregationService multithreadingAggregationService;
 
     @Autowired
     private ObjectMapper om;

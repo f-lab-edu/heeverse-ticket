@@ -11,4 +11,6 @@ RUN useradd -r -u 1026 -g ubuntu ubuntu
 RUN chown -R ubuntu:ubuntu /workspace
 USER ubuntu
 
+
+
 ENTRYPOINT [ "sh", "deploy.sh", "-Dspring.profiles.active=${PROFILE}"]

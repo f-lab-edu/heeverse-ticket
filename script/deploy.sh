@@ -12,6 +12,8 @@ JAR_NAME=$(basename $BUILD_JAR)
 # scouter 경로
 SCOUTER_BASE_PATH=./scouter
 mkdir -p $SCOUTER_BASE_PATH
+# run scouter agent.host
+. $SCOUTER_BASE_PATH/scouter/agent.host/host.sh
 
 DEPLOY_JAR=$JAR_NAME
 #echo ">>> DEPLOY_JAR 배포 시작"    >> $LOG_PATH/deploy.log
