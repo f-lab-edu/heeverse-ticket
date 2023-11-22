@@ -14,8 +14,10 @@
         <logger name="com.heeverse" level="DEBUG"  />
         <logger name="jdbc.sqlonly" level="DEBUG"  />
         <logger name="jdbc.resultsettable" level="INFO"  />
+        <logger name="com.zaxxer.hikari.HikariConfig" level="TRACE" />
+        <logger name="com.zaxxer.hikari" level="TRACE" />
 
-        <root level="INFO">
+        <root level="TRACE">
             <appender-ref ref="CONSOLE" />
         </root>
     </springProfile>
@@ -82,8 +84,10 @@
         </appender>
 
         <logger name="com.heeverse" level="INFO"  />
+        <logger name="com.zaxxer.hikari.HikariConfig" level="TRACE" />
+        <logger name="com.zaxxer.hikari" level="TRACE" />
 
-        <root level="INFO">
+        <root level="TRACE">
             <appender-ref ref="CONSOLE" />
             <appender-ref ref="FILE" />
         </root>
