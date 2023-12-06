@@ -9,7 +9,7 @@ import java.util.StringJoiner;
 import static com.heeverse.common.util.StringUtils.leftPad;
 
 /**
- * @author gutenlee
+ * @author gutenl ee
  * @since 2023/08/10
  */
 public class TicketSerialNumber implements SerialNumber<String> {

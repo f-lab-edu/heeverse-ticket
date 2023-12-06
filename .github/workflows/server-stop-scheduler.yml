@@ -1,30 +1,30 @@
-name: server-stop
+# name: server-stop
 
-on:
-  schedule:
-    - cron: '0 10 * * *'
+# on:
+#   schedule:
+#     - cron: '0 10 * * *'
 
-jobs:
-  server-stop:
-    runs-on: ubuntu-latest
-    environment: prod
+# jobs:
+#   server-stop:
+#     runs-on: ubuntu-latest
+#     environment: prod
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with: { ref: main }
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v3
+#         with: { ref: main }
 
 
-      - name: Make the script files executable
-        run: chmod +x ./script/runNcpApi.sh
+#       - name: Make the script files executable
+#         run: chmod +x ./script/runNcpApi.sh
 
-      - name: Stop nGrinder Servers
-        run: |
-          set -e
-          ./script/runNcpApi.sh
-        env:
-          NGRINDER_AGENT_INSTANCE_ID: ${{ secrets.NGRINDER_AGENT_INSTANCE_ID }}
-          NGRINDER_CONTROLLER_INSTANCE_ID: ${{ secrets.NGRINDER_CONTROLLER_INSTANCE_ID }}
-          NCP_ACCESS_KEY: ${{ secrets.NCP_ACCESS_KEY }}
-          NCP_SECRET_KEY: ${{ secrets.NCP_SECRET_KEY }}
-          API_PATH: stopServerInstances
+#       - name: Stop nGrinder Servers
+#         run: |
+#           set -e
+#           ./script/runNcpApi.sh
+#         env:
+#           NGRINDER_AGENT_INSTANCE_ID: ${{ secrets.NGRINDER_AGENT_INSTANCE_ID }}
+#           NGRINDER_CONTROLLER_INSTANCE_ID: ${{ secrets.NGRINDER_CONTROLLER_INSTANCE_ID }}
+#           NCP_ACCESS_KEY: ${{ secrets.NCP_ACCESS_KEY }}
+#           NCP_SECRET_KEY: ${{ secrets.NCP_SECRET_KEY }}
+#           API_PATH: stopServerInstances
