@@ -16,6 +16,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Arrays;
 
+import static com.heeverse.security.ClaimConstants.TOKEN_TYPE;
+
 /**
  * @author jeongheekim
  * @date 2023/08/02
@@ -24,7 +26,7 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtProvider jwtProvider;
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
     private final SecurityConfig.UrlProps urlProps;
 
@@ -38,8 +40,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        Authentication auth = jwtTokenProvider.parsing(request.getHeader(HttpHeaders.AUTHORIZATION));
-        SecurityContextHolder.getContext().setAuthentication(auth);
+
+
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION).replaceAll(TOKEN_TYPE, "").trim();
+        if(jwtProvider.validate(token)){
+            Authentication authentication = jwtProvider.getAuthentication(token);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
+
         filterChain.doFilter(request, response);
     }
 

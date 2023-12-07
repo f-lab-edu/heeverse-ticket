@@ -3,7 +3,7 @@ package com.heeverse.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heeverse.security.JsonAuthenticationFilter;
 import com.heeverse.security.JwtAuthenticationFilter;
-import com.heeverse.security.JwtTokenProvider;
+import com.heeverse.security.JwtProvider;
 import jakarta.servlet.DispatcherType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -40,7 +40,7 @@ import static com.heeverse.common.Constants.VAULT_URL_SECRETES;
 public class SecurityConfig {
 
     private final ObjectMapper objectMapper;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtProvider jwtProvider;
     private final VaultOperationService vaultOperationService;
 
     @Bean
@@ -71,11 +71,10 @@ public class SecurityConfig {
                     securityContext.securityContextRepository(
                             new HttpSessionSecurityContextRepository());
                 })
-                .addFilterAt(new JwtAuthenticationFilter(jwtTokenProvider, urlProps()),
-                        BasicAuthenticationFilter.class)
+                .addFilterAt(new JwtAuthenticationFilter(jwtProvider, urlProps()), BasicAuthenticationFilter.class)
                 .addFilterAt(new JsonAuthenticationFilter(
                         authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)),
-                        jwtTokenProvider, objectMapper), UsernamePasswordAuthenticationFilter.class)
+                        jwtProvider, objectMapper), UsernamePasswordAuthenticationFilter.class)
 
                 .authorizeHttpRequests((request) -> request
                         .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
@@ -89,6 +88,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig)

@@ -30,15 +30,15 @@ import static com.heeverse.security.ClaimConstants.TOKEN_TYPE;
 public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final ObjectMapper objectMapper;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtProvider jwtProvider;
 
     public JsonAuthenticationFilter(
         AuthenticationManager authenticationManager,
-        JwtTokenProvider jwtTokenProvider,
+        JwtProvider jwtProvider,
         ObjectMapper objectMapper
     ) {
         super.setAuthenticationManager(authenticationManager);
-        this.jwtTokenProvider = jwtTokenProvider;
+        this.jwtProvider = jwtProvider;
         this.objectMapper = objectMapper;
     }
 
@@ -69,11 +69,10 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request,
-        HttpServletResponse response, FilterChain chain, Authentication authResult)
-        throws IOException, ServletException {
+        HttpServletResponse response, FilterChain chain, Authentication authResult) {
 
         String principal = (String) authResult.getPrincipal();
-        String token = jwtTokenProvider.generateToken(principal, authResult);
+        String token = jwtProvider.generateToken(principal, authResult);
 
         response.setHeader(HttpHeaders.AUTHORIZATION, TOKEN_TYPE + " " + token);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);

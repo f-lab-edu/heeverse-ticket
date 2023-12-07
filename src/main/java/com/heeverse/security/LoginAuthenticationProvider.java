@@ -2,6 +2,7 @@ package com.heeverse.security;
 
 import com.heeverse.member.domain.entity.Member;
 import com.heeverse.member.service.MemberService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -19,6 +20,7 @@ import java.util.List;
  * @author gutenlee
  * @since 2023/07/23
  */
+@Slf4j
 @Component
 public class LoginAuthenticationProvider implements AuthenticationProvider {
 
