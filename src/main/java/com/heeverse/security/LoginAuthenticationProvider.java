@@ -1,6 +1,7 @@
 package com.heeverse.security;
 
 import com.heeverse.member.domain.entity.Member;
+import com.heeverse.member.dto.AuthenticatedMember;
 import com.heeverse.member.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -41,12 +42,15 @@ public class LoginAuthenticationProvider implements AuthenticationProvider {
         Member member = memberService.findMember(authentication.getName())
                 .orElseThrow(() -> new AuthenticationServiceException("존재하지 않는 멤버입니다."));
 
-        String rawPassword = authentication.getCredentials().toString();
-        if (pwdEncoder.matches(rawPassword, member.getPassword())) {
-            return toUsernamePwdAuthenticationToken(authentication);
+        if (isMatched((String) authentication.getCredentials(), member.getPassword())) {
+            return toUsernamePwdAuthenticationToken(new AuthenticatedMember(member.getSeq(), member.getId()));
         }
 
         throw new BadCredentialsException("인증에 실패했습니다");
+    }
+
+    private boolean isMatched(String inputPassword, String password) {
+        return pwdEncoder.matches(inputPassword, password);
     }
 
     @Override
@@ -55,11 +59,8 @@ public class LoginAuthenticationProvider implements AuthenticationProvider {
     }
 
 
-    private UsernamePasswordAuthenticationToken toUsernamePwdAuthenticationToken(Authentication authentication) {
-        return new UsernamePasswordAuthenticationToken(
-                authentication.getName(),
-                authentication.getCredentials(),
-                getAuthority());
+    private UsernamePasswordAuthenticationToken toUsernamePwdAuthenticationToken(AuthenticatedMember member) {
+        return new UsernamePasswordAuthenticationToken(member, null, getAuthority());
     }
 
 

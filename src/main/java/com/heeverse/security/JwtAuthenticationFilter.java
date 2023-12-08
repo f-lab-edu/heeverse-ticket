@@ -1,14 +1,17 @@
 package com.heeverse.security;
 
 import com.heeverse.config.SecurityConfig;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -41,15 +44,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-
-        String token = request.getHeader(HttpHeaders.AUTHORIZATION).replaceAll(TOKEN_TYPE, "").trim();
-        if(jwtProvider.validate(token)){
-            Authentication authentication = jwtProvider.getAuthentication(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        Authentication authentication = null;
+        try {
+            String token = request.getHeader(HttpHeaders.AUTHORIZATION).replaceAll(TOKEN_TYPE, "").trim();
+            if(jwtProvider.validate(token)){
+                authentication = jwtProvider.getAuthentication(token);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+        } catch (ExpiredJwtException e) {
+            log.info("Token refreshed");
+            response.setHeader(HttpHeaders.AUTHORIZATION, TOKEN_TYPE + StringUtils.SPACE + jwtProvider.generateToken(authentication));
         }
 
         filterChain.doFilter(request, response);
     }
-
 
 }

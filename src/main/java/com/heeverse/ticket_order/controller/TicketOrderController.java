@@ -1,6 +1,7 @@
 package com.heeverse.ticket_order.controller;
 
 import com.heeverse.member.domain.entity.Member;
+import com.heeverse.member.dto.AuthenticatedMember;
 import com.heeverse.ticket_order.domain.dto.*;
 import com.heeverse.ticket_order.domain.dto.persistence.AggregateSelectMapperDto;
 import com.heeverse.ticket_order.service.MultithreadingAggregationService;
@@ -36,8 +37,8 @@ public class TicketOrderController {
     @PostMapping
     public ResponseEntity<List<TicketOrderResponseDto>> orderTicket(
             @RequestBody @Valid TicketOrderRequestDto dto,
-            @AuthenticationPrincipal Member member) throws Exception {
-
+            @AuthenticationPrincipal AuthenticatedMember member
+    ) {
         return ResponseEntity
                 .created(URI.create(INDEX_URI))
                 .body(ticketOrderFacade.startTicketOrderJob(dto, member.getSeq()));

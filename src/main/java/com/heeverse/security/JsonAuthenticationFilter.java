@@ -6,6 +6,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -50,8 +51,7 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
             loginRequestDto.id(), loginRequestDto.password());
         setDetails(request, token);
-        return super.getAuthenticationManager()
-            .authenticate(token);
+        return super.getAuthenticationManager().authenticate(token);
     }
 
 
@@ -68,13 +68,13 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
     }
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest request,
-        HttpServletResponse response, FilterChain chain, Authentication authResult) {
-
-        String principal = (String) authResult.getPrincipal();
-        String token = jwtProvider.generateToken(principal, authResult);
-
-        response.setHeader(HttpHeaders.AUTHORIZATION, TOKEN_TYPE + " " + token);
+    protected void successfulAuthentication(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain chain,
+            Authentication authentication
+    ) {
+        response.setHeader(HttpHeaders.AUTHORIZATION, TOKEN_TYPE + StringUtils.SPACE + jwtProvider.generateToken(authentication));
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
     }
